@@ -1,0 +1,426 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name">DTS</string>
+
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <!-- TODO: Remove or change this placeholder text.. -->
+
+    <string name="indie">Indie</string>
+    <string name="home_page">Home Page</string>
+
+    <string name="logout">Logout</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment1">Hello blank fragment Indices</string>
+    <string name="pivot">Pivot</string>
+    <string name="live_tips">Live Tips</string>
+
+    <string name="open">Open</string>
+
+    <string name="market">Market</string>
+    <string name="market_watch">Market Watch</string>
+    <string name="market_mover">Market Movers</string>
+    <string name="portfolio">Portfolio</string>
+    <string name="new_high_low">New High Low</string>
+    <string name="summary">Summary</string>
+    <string name="today_gain_loss">Today Gain/Loss</string>
+    <string name="portfolio_worth">Portfolio Worth</string>
+    <string name="hold_value">Hold Value</string>
+    <string name="market_value">Market Value</string>
+    <string name="home">Home</string>
+    <string name="trade_n_quote">Trade /Quote</string>
+    <string name="news">News</string>
+    <string name="trade">Trade</string>
+    <string name="profile">Profile</string>
+    <string name="wallet">Wallet</string>
+    <string name="binary">Binary</string>
+    <string name="setting">Settings</string>
+    <string name="alert">Alert</string>
+    <string name="crypto">Crypto</string>
+    <string name="reports">Reports</string>
+    <string name="performance">Performance</string>
+    <string name="fx">FX</string>
+    <string name="sec_60">60 Sec</string>
+    <string name="binary_option">Binary Option</string>
+    <string name="binary_n_option">Binary\nOption</string>
+    <string name="pairs">Pairs</string>
+    <string name="long_term">Long Term</string>
+    <string name="long_n_term">Long\nTerm</string>
+
+    <string name="product">Product</string>
+    <string name="asset">Asset</string>
+    <string name="account">Account</string>
+    <string name="exit">Exit</string>
+    <string name="select_asset">Select Asset</string>
+    <string name="commodities">Commodities</string>
+    <string name="asset_list">Asset List</string>
+
+    <string name="rate_info" translatable="false">Underlying asset market Bid/Ask rates as accepted by the platform provider. *Assets that do not have Bid/Ask rates will show the \"last\" rate.</string>
+    <!--
+    <string name=""></string>
+    <string name=""></string>
+    <string name=""></string>
+    -->
+
+
+    <string-array name="exchange">
+        <item>Exchange1</item>
+        <item>Exchange2</item>
+        <item>Exchange3</item>
+    </string-array>
+
+    <string-array name="asset">
+        <item>Asset1</item>
+        <item>Asset2</item>
+        <item>Asset3</item>
+    </string-array>
+
+    <string-array name="indie_trade_array">
+        <item>Day</item>
+        <item>CNF</item>
+        <item>Both</item>
+    </string-array>
+
+
+    <string-array name="pivot">
+        <item>Pivot1</item>
+        <item>Pivot2</item>
+        <item>Pivot3</item>
+    </string-array>
+    <string name="title_activity_sport">SportActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
+    <string name="action_settings">Settings</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="title_activity_sports">SportsActivity</string>
+
+
+    <string-array name="Member_names">
+        <item>Other</item>
+    </string-array>
+
+
+    <array name="profile_pics">
+        <item>@drawable/circle</item>
+
+    </array>
+
+
+    <!-- Status -->
+    <string-array name="statues">
+        <item>Welcome! Thank you for choosing<br> DTS.Use your ID to get notification fromMQL5 Community and Expert Advisors</br></item>
+    </string-array>
+
+    <!-- contact type -->
+    <string-array name="contactType">
+        <item>14 February,3:04PM</item>
+
+    </string-array>
+
+    <!-- Names Mailbox -->
+
+
+
+
+
+
+    <!-- Names News -->
+
+
+    <string-array name="Member_names2">
+        <item>Custom Strategy Tester based on fast mathematical calculations</item>
+        <item>Automatic construction of supports and resistance lines</item>
+
+    </string-array>
+
+    <!-- Pictures -->
+
+
+    <!-- Status -->
+    <string-array name="statues2">
+        <item>MQL5 Articles, 2018.02.27 13:31</item>
+        <item>MQL5 Articles, 2018.02.27 13:46</item>
+        <!--<item>Available</item>-->
+        <!--<item>Busy</item>-->
+        <!--<item>In a meeting</item>-->
+        <!--<item>At work</item>-->
+        <!--<item>At gym</item>-->
+    </string-array>
+    <string name="title_activity_indicators">Indicators</string>
+    <string-array name="spinners">
+        <item>Administrator |</item>
+        <item>Administrator ||</item>
+        <item>Complience / Docs</item>
+    </string-array>
+
+    <!--//quotes edit-->
+    <string-array name="Member_names5">
+        <item>NZDUSD</item>
+        <item>USDSEK</item>
+        <item>USDJPY</item>
+        <item>USDCHF</item>
+        <item>GBPUSD</item>
+        <item>USDRUB</item>
+        <item>USDCAD</item>
+        <item>EURUSD</item>
+        <item>USDCNH</item>
+
+    </string-array>
+
+    <!-- Pictures -->
+    <array name="profile_pics5">
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+        <item>@drawable/ic_view_headline_blue_grey_200_18dp</item>
+    </array>
+
+
+    <!-- Status -->
+    <string-array name="statues5">
+        <item>New Zealand Dollar vs US Dollar</item>
+        <item>US Dollar vs Sweden Dollar</item>
+        <item>US Dollar vs US Japanese Yen</item>
+        <item>US Dollar vs US Swiss Franc</item>
+        <item>Great Britain Pound vs US Dollar</item>
+        <item>US Dollar vs Russian Ruble</item>
+        <item>US Dollar vs canadian Dollar</item>
+        <item>Euro vs US Dollar</item>
+        <item>US Dollar vs Chinese Yuan</item>
+
+
+    </string-array>
+
+    <string name="title_activity_tab">TabActivity</string>
+    <string name="Setting_switch">One Click Betting</string>
+
+    <string-array name="array_name">
+        <item>1 pixcel</item>
+        <item>2 pixcel</item>
+        <item>3 pixcel</item>
+        <item>4 pixcel</item>
+    </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string-array name="Indie_Data_Streaming_spinner">
+        <item>1 Sec</item>
+        <item>5 Sec</item>
+        <item>Manual</item>
+    </string-array>
+    <string-array name="Indie_Default_view_spinner">
+        <item>Home</item>
+        <item>Market Watch</item>
+        <item>Market Movers</item>
+    </string-array>
+    <string-array name="Indie_Theme_spinner">
+        <item>White Theme</item>
+        <item>Black Theme</item>
+    </string-array>
+
+
+    <string-array name="Add_symbols">
+        <item>NZDUSD</item>
+        <item>USDSEK</item>
+        <item>USDJPY</item>
+        <item>USDCHF</item>
+        <item>GBPUSD</item>
+        <item>USDRUB</item>
+        <item>USDCAD</item>
+        <item>Australlian Dollar Vs Canadian Dollar</item>
+
+    </string-array>
+
+    <string name="teenpatti_app_name">Teen Patti</string>
+    <string name="language_english">English</string>
+    <string name="language_hindi">हिंदी</string>
+    <string name="language_gujarati">ગુજરાતી</string>
+    <string name="language_marathi">मराठी</string>
+    <string name="user_name">Name</string>
+    <string name="table_boot">Boot Value:</string>
+    <string name="table_pot">Pot Limit:</string>
+    <string name="table_max">Max Bet:</string>
+    <string name="close">CLOSE</string>
+    <string name="backtolobby">BACK TO LOBBY</string>
+    <string name="standup">STAND-UP</string>
+    <string name="nxtround">STAND-UP\nNEXT ROUND\n</string>
+    <string name="switchtble">SWITCH TABLE</string>
+    <string name="festival">Festival</string>
+    <string name="places">Places</string>
+    <string name="sports">Sports</string>
+    <string name="nature">Nature</string>
+    <string name="mood">Mood</string>
+    <string name="colors">Colors</string>
+    <string name="selcetv">IS SELECTING THE VARIATION</string>
+    <string name="cvariation">CURRENT VARIATION :</string>
+    <string name="howtoplay">HOW TO PLAY</string>
+    <string name="selectvariation">SELECT VARIATION</string>
+    <string name="joker">Joker</string>
+    <string name="ak">AK47</string>
+    <string name="xboot">4x Boot</string>
+    <string name="hukum">Hukum</string>
+    <string name="muflis">Muflis</string>
+    <string name="faceoff">FaceOff</string>
+    <string name="lowestjoker">Lowest Joker</string>
+    <string name="nine">999</string>
+    <string-array name="count_array">
+        <item>850Cr</item>
+        <item>240Cr</item>
+        <item>85Cr</item>
+        <item>23Cr</item>
+        <item>9Cr</item>
+        <item>4Cr</item>
+        <item>25L</item>
+    </string-array>
+    <string-array name="price_array">
+        <item>₹26,000.00</item>
+        <item>₹7,900.00</item>
+        <item>₹4,000.00</item>
+        <item>₹1,200.00</item>
+        <item>₹500.00</item>
+        <item>₹250.00</item>
+        <item>₹30.00</item>
+    </string-array>
+    <string-array name="specification_array">
+        <item>850 Crore Chips for Power User (Teen Patti-Indian Poker)</item>
+        <item>240 Crore Chips for Power User (Teen Patti-Indian Poker)</item>
+        <item>85 Crore Chips for Elite Player (Teen Patti-Indian Poker)</item>
+        <item>23 Crore Chips for Elite Player (Teen Patti-Indian Poker)</item>
+        <item>9 Crore Chips for Power User (Teen Patti-Indian Poker)</item>
+        <item>4 Crore Chips for Power User (Teen Patti-Indian Poker)</item>
+        <item>25 Lakh Chips for Power User (Teen Patti-Indian Poker)</item>
+    </string-array>
+    <string-array name="diamond_count">
+        <item>2,80,000</item>
+        <item>60,000</item>
+        <item>25,000</item>
+        <item>5,000</item>
+    </string-array>
+    <string-array name="diamond_price">
+        <item>₹4,000.00</item>
+        <item>₹1,000.00</item>
+        <item>₹500.00</item>
+        <item>₹150.00</item>
+    </string-array>
+
+
+    <string name="send">Send</string>
+    <string name="msg">MESSAGE</string>
+    <string name="block">BLOCK</string>
+    <string name="play">Play</string>
+    <string name="achive">Achievements : Yet to come...</string>
+    <string name="edittxt">Input private chat here.</string>
+
+    <!--Instructions for 321-->
+    <string name="game_prep">One deck used per round. 6 cards are dealt to each player on the table.</string>
+    <string name="game_play1">• Select table level and click on "JOIN NOW" to enter the tournament.</string>
+    <string name="game_play2">• 3 empty sets displayed on the bottom left side.</string>
+    <string name="game_play3">• 6 cards displayed on bottom right side.</string>
+    <string name="game_play4">• Place the best possible cards in the sets of 3 cards, 2 cards, 1 card respectively.</string>
+    <string name="game_play4_1">◦ Assume one card in set of 2; assume two cards in set of 1.</string>
+    <string name="game_play5">• Cards can be placed using any of the following methods.</string>
+    <string name="game_play5_1">◦ One card at a time: Drag any one card to a particular set.</string>
+    <string name="game_play5_2">◦ Multiple cards together: Click and select multiple cards then click on the set where you want to drop the cards.</string>
+    <string name="game_play6">• After placing all the 6 cards in 3 sets, place "GO" button.</string>
+    <string name="game_play7">• Then there will be a consecutive showdown on the table for all the 3 sets.</string>
+    <string name="score1">• Winning of a set will be decided based on Teenpatti ranking of hands.</string>
+    <string name="score2">• Player will get 60 points on winning a hand. So, in a single round 3 hands will be played.</string>
+    <string name="score3">• Maximum 180 points can be scored in one round.</string>
+    <string name="score4">• There will be total 5 rounds in the tournament with max score 900 for a single player.</string>
+    <string name="score5">• In case of tie, points will be divided equally amongst the players.</string>
+    <string name="score6">• Click on "PLAY AGAIN" to enter the same level tournament.</string>
+
+
+
+    <!--Instructions for 6 patti-->
+    <string name="firstpoint">• Click on "6 PATTI" Button</string>
+    <string name="g_play1">Set the Buy-in value using slider.Then Click on "Join Now " button.</string>
+    <string name="g_play2">• Once all the players have joined,game will start.</string>
+    <string name="g_play3">• Each player will get 6 cards</string>
+    <string name="g_play3_1">◦ Note:Each player will be assigned wwith their own deck of cards and cards will be randomly distributed from the same.</string>
+    <string name="g_play4">• Choose 3 out 6 cards to play your best suitable* chal.</string>
+    <string name="g_play4_1">◦ Tap on cards that you want to select.</string>
+    <string name="g_play4_2">◦ Then click on "GO" button to proceed.</string>
+    <string name="g_play4_3">◦ You will get 10 seconds to complete your chaal.</string>
+    <string name="g_play5">• After your chaal the selected 3 cards will be played on the table.\n
+                            Note You can also view selected cards other players after their respective chaal.</string>
+    <string name="g_play6">• Player with the higher hand wins.
+                            (Ranking of hands is the same as in the classic Teen Patti game,refer\n
+                            details at the end of the documentation) Winner will be declared after all the players have completed their chaal.</string>
+    <string name="g_play7">• Then next round will start within 5 second.\n
+                            3 new random cards will be distributed from your respective set.
+                            These 3 along with 3 remaining cards will be your 6 cards for this round.
+                            Repeat above steps to play your chaal.</string>
+    <string name="g_play8">Note: There will be 5 players and 15 rounds. Deck of 45 cards will be assigned to each player in which randomly 7 cards will be removed. But those randomly removed 7 cards will be same from every deck.</string>
+    <string name="g_play9">• Ranking of the players will be declared at the end of the tournament. Ranks will be given based on the number of rounds won by a player and winner takes it all.</string>
+    <string name="g_play9_1">* If its not your first chance then you can play smartly. You can decide your cards by looking at other players cards. If your best cards cant make you win that round, then better save it for next round and give away the worst ones. Hence, the best suitable chaal.</string>
+    <string name="g_play10">• Trail - three cards of the same rank.
+                            Three aces are the best trail and three twos are the lowest.</string>
+    <string name="g_play11">• Straight run - three consecutive cards of the same suit.
+                            A-2-3, which is the highest straight run. Next comes A-K-Q, K-Q-J and so on down to 4-3-2, which is the lowest.</string>
+    <string name="g_play12">• Normal run - three consecutive cards, not all of the same suit.
+                            A-2-3 is the best normal run, then A-K-Q, K-Q-J and so on down to 4-3-2.</string>
+    <string name="g_play13">• Color - any three cards of the same suit.</string>
+    <string name="g_play14">• Pair - two cards of the same rank.\n
+                            Between two such hands, compare the pair first, then the odd card if these are equal.
+                            The highest pair hand is therefore A-A-K and the lowest is 2-2-3. </string>
+    <string name="g_play15">• High card - three cards that do not belong to any of the above types. Compare the highest card first, then the second highest, then the lowest. The best hand of this type is A-K-J of mixed suits, and the worst is 5-3-2 </string>
+    <string name="g_play16">Any hand of a higher type beats any hand of a lower type </string>
+    <string name="sixpatti_infogame">This cards have been discarded for this tournament : </string>
+
+    <!--/////-->
+    <string name="tourney_info">This is a high stakes knock-out tournament where you can win 5 times your buy in amount. All players start with the same number of chips. Players get knocked out when their balance chips become less than 10 times the boot value for the next round. The boot value will increase after every 2 rounds. There is a Force Show if any player does not have enough chips to place the next bet. In this case the dealer lends the player the balance chips. In case the player wins the round, 2 times the borrowed chips are returned to the dealer. </string>
+    <string name="round_won_tourney">Rounds Won</string>
+
+    <!--Helps for variations-->
+
+    <string name="jokertxt" tools:ignore="DuplicateDefinition">The dealer pulls out one\n card at random after \ndealing and nominates \nall other cards of the \nsame rank/strength/\nnumber as jokers(wild \ncards).</string>
+    <string name="ak47">Ace,King,4 and 7\n become the jokers\n in this variation.</string>
+    <string name="xbootinfo">Boot will be\n 4 times in\nthis variation.</string>
+    <string name="hukaminfo">One HUKAM card in the\n centre of the table\n Any card with the \nsame number as the \nHUKAM card is a \njoker card.</string>
+    <string name="muflisinfo">The least ranking \n combination has the \n highest rank and vice versa</string>
+    <string name="faceoffinfo">Everyone gets face\n card. A face card is any\n suit card of 10/J/Q/K/\nA denomination</string>
+    <string name="lowestjokerinfo">Each players lowest-\nranking card (and all\n other cards of that \nsame rank/strength/\nnumber) are  jokers\n(wild cards) in that\nplayer's hand  only.If the \ntwo lowest cards are a \npair then that pair is \nconsidered as two jokers.</string>
+    <string name="nineinfo">There cards are dealt\n and  the player has to \nmake tthe game closest\n to the figure 999(nine\n hundred ninety nine). \nAll face cards(jack,\nQueen and King) and 10 \nare considered Zero \nfor this game and Ace\n is considered as One.\n For e.g. if you have 5-7-\nJack then closeset\n number
+to 999 will be 750.\n If you have 9-Ace-9 \nthen you havea 991 and \nyou are probably a winner!</string>
+
+    <string name="revolve_joker_desc">The dealer pulls out 3 cards at random. These 3 cards and all other cards of the same rank are jokers. If any player packs, then the dealer pulls 3 new joker cards.</string>
+    <string name="revolving_joker">Revolving Joker</string>
+    <string name="in_out_desc">In this variation, highest hand wins. After viewing the cards, each player may drop or continue in the game. Now there is show. Winner takes the pot money. The remaining players put 1.5 times the pot money to fill the pot, and the game continues.</string>
+
+
+
+    <!--Crypto-->
+
+    <string-array name="limit">
+        <item>Limit Order</item>
+        <item>Market Order</item>
+        <item>Stop Limit</item>
+    </string-array>
+
+    <string name="buy_sell">Buy &amp; Sell</string>
+
+    <string-array name="bet_history_time">
+        <item>Just for Today</item>
+        <item>From Yesterday</item>
+        <item>Last 7 Days</item>
+        <item>Last 30 Days</item>
+        <item>Last 2 Months</item>
+        <item>Last 3 Months</item>
+    </string-array>
+
+    <string name="in_out">In Out</string>
+    <string name="lessText"><![CDATA[<]]></string>
+    <string name="greaterText"><![CDATA[>]]></string>
+    <string name="equalsText">=</string>
+
+</resources>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/loginbg"
+    android:gravity="end"
+    tools:context="com.affwl.exchange.teenpatti.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!--<ImageView-->
+        <!--android:id="@+id/imbtn1"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/login_game_title" />-->
+
+        <!--<ImageView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="40dp"-->
+        <!--android:src="@drawable/step0001" />-->
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginLeft="65dp"
+            android:orientation="vertical">
+            <!--Layout for avatar-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="#250400"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/avatar1"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar1" />
+
+                <ImageView
+                    android:id="@+id/avatar2"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar2" />
+
+                <ImageView
+                    android:id="@+id/avatar3"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar3" />
+
+                <ImageView
+                    android:id="@+id/avatar4"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar4" />
+
+                <ImageView
+                    android:id="@+id/avatar5"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar5" />
+
+                <ImageView
+                    android:id="@+id/avatar6"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar6" />
+
+                <ImageView
+                    android:id="@+id/avatar7"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_margin="3dp"
+                    android:src="@drawable/avatar7" />
+
+                <!--<ImageView-->
+                <!--android:layout_width="60dp"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_margin="3dp"-->
+                <!--android:id="@+id/avatar8"-->
+                <!--android:src="@drawable/avatar8" />-->
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="5dp"
+                    android:id="@+id/camera"
+                    android:src="@drawable/btncamera" />
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_margin="5dp"
+                    android:id="@+id/choosepic"
+                    android:src="@drawable/btnchoosepic" />
+            </LinearLayout>
+            <!--Layout for Edit text and login Button-->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:orientation="horizontal">
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/selectimage"
+                        android:layout_width="65dp"
+                        android:layout_height="65dp"
+                        android:src="@drawable/userpicborder" />
+
+                    <ImageView
+                        android:id="@+id/avatarimage"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/avatar1" />
+                </FrameLayout>
+
+                <EditText
+                    android:id="@+id/nametext"
+                    android:layout_width="130dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/user_edit"
+                    android:textColor="@color/colorWhite"
+                    android:textSize="12sp"
+                    android:layout_marginTop="10dp"
+                    android:textAlignment="center"/>
+
+                <!--<TextView-->
+                <!--android:layout_width="85dp"-->
+                <!--android:layout_height="40dp"-->
+                <!--android:layout_marginLeft="5dp"-->
+                <!--android:id="@+id/login"-->
+                <!--android:layout_marginTop="27dp"-->
+                <!--android:background="@drawable/btnlogin_of_playguest"-->
+                <!--android:text="Login"-->
+                <!--android:textSize="12sp"-->
+                <!--android:paddingTop="10dp"-->
+                <!--android:textColor="#ffffff"-->
+                <!--android:paddingLeft="37dp" />-->
+
+                <TextView
+                    android:id="@+id/login"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/playasguestnew"
+                    android:gravity="center"
+                    android:text="@string/play"
+                    android:textColor="#ffffff" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="80dp"
+                android:layout_marginTop="30dp"
+                android:background="@color/colorLanguageBg"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/bg_select_language"
+                    android:gravity="center"
+                    android:text="@string/language_english"
+                    android:textColor="@color/colorWhite" />
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/bg_deselect_language"
+                    android:gravity="center"
+                    android:text="@string/language_hindi"
+                    android:textColor="@color/colorWhite" />
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/bg_deselect_language"
+                    android:gravity="center"
+                    android:text="@string/language_gujarati"
+                    android:textColor="@color/colorWhite" />
+
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="30dp"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/bg_deselect_language"
+                    android:gravity="center"
+                    android:text="@string/language_marathi"
+                    android:textColor="@color/colorWhite" />
+            </LinearLayout>
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

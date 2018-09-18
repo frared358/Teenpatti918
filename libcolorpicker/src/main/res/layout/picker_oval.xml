@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+
+    <com.guna.libcolorpicker.ColorPickerOvalView
+        android:id="@+id/viewOval"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp" />
+
+    <EditText
+        android:id="@+id/etHexColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:digits="0123456789ABCDEF"
+        android:ems="8"
+        android:hint="Hex color"
+        android:inputType="textCapCharacters"
+        android:maxLength="9" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/etR"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="R"
+            android:inputType="number"
+            android:maxLength="3"
+            android:text="0" />
+
+        <EditText
+            android:id="@+id/etG"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="3"
+            android:hint="G"
+            android:inputType="number"
+            android:maxLength="3"
+            android:text="0" />
+
+        <EditText
+            android:id="@+id/etB"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ems="3"
+            android:hint="B"
+            android:inputType="number"
+            android:maxLength="3"
+            android:text="0" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:layout_marginTop="5dp"
+        android:text="Standard colors"
+        android:textColor="?attr/colorAccent"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/Grey" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewColors"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

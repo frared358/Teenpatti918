@@ -108,7 +108,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         user_id2 = findViewById(R.id.user_id2);
         user_id3 = findViewById(R.id.user_id3);
         user_id4 = findViewById(R.id.user_id4);
-
+///wbcdd
 //      balancetext = findViewById(R.id.balancetext)
 
 //        code = findViewById(R.id.code);

@@ -1106,22 +1106,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     JSONObject key = arr.getJSONObject(i);
 
-                    String Url1 = key.getString("card1");
-                    String Url2 = key.getString("card2");
-                    String Url3 = key.getString("card3");
-                    String Url4 = key.getString("card1");
-                    String Url5 = key.getString("card2");
-                    String Url6 = key.getString("card3");
-                    String Url7 = key.getString("card1");
-                    String Url8 = key.getString("card2");
-                    String Url9 = key.getString("card3");
-                    String Url10 = key.getString("card1");
-                    String Url11 = key.getString("card2");
-                    String Url12 = key.getString("card3");
-                    String Url13 = key.getString("card1");
-                    String Url14 = key.getString("card2");
-                    String Url15 = key.getString("card3");
-
 //
 //                    Log.i("Card","" + card1);
 //                    Log.i("Card","" + card2);
@@ -1132,56 +1116,46 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     {
                         if (i == 0) {
+                            String Url1 = key.getString("card1");
+                            String Url2 = key.getString("card2");
+                            String Url3 = key.getString("card3");
+
                             cardUrl1 = Url1;
                             cardUrl2 = Url2;
                             cardUrl3 = Url3;
-                            cardUrl4 = Url4;
-                            cardUrl5 = Url5;
-                            cardUrl6 = Url6;
-                            cardUrl7 = Url7;
-                            cardUrl8 = Url8;
-                            cardUrl9 = Url9;
-                            cardUrl10 = Url10;
-                            cardUrl11 = Url11;
-                            cardUrl12 = Url12;
-                            cardUrl13 = Url13;
-                            cardUrl14 = Url14;
-                            cardUrl15 = Url15;
+
+                            Log.i("URL 1",  i+" "+Url1);
+                            Log.i("URL 2",  i+" "+Url2);
+                            Log.i("URL 3",  i+" "+Url3);
+
                             nametext1.setText(key.getString("username"));
                         } else if (i == 1) {
-                            cardUrl1 = Url1;
-                            cardUrl2 = Url2;
-                            cardUrl3 = Url3;
+                            String Url4 = key.getString("card1");
+                            String Url5 = key.getString("card2");
+                            String Url6 = key.getString("card3");
+
                             cardUrl4 = Url4;
                             cardUrl5 = Url5;
                             cardUrl6 = Url6;
-                            cardUrl7 = Url7;
-                            cardUrl8 = Url8;
-                            cardUrl9 = Url9;
-                            cardUrl10 = Url10;
-                            cardUrl11 = Url11;
-                            cardUrl12 = Url12;
-                            cardUrl13 = Url13;
-                            cardUrl14 = Url14;
-                            cardUrl15 = Url15;
+
+                            Log.i("URL 4",  i+" "+Url4);
+                            Log.i("URL 5",  i+" "+Url5);
+                            Log.i("URL 6",  i+" "+Url6);
+
                             nametext2.setText(key.getString("username"));
 
                         } else if (i == 2) {
-                            cardUrl1 = Url1;
-                            cardUrl2 = Url2;
-                            cardUrl3 = Url3;
-                            cardUrl4 = Url4;
-                            cardUrl5 = Url5;
-                            cardUrl6 = Url6;
+                            String Url7 = key.getString("card1");
+                            String Url8 = key.getString("card2");
+                            String Url9 = key.getString("card3");
                             cardUrl7 = Url7;
                             cardUrl8 = Url8;
                             cardUrl9 = Url9;
-                            cardUrl10 = Url10;
-                            cardUrl11 = Url11;
-                            cardUrl12 = Url12;
-                            cardUrl13 = Url13;
-                            cardUrl14 = Url14;
-                            cardUrl15 = Url15;
+
+                            Log.i("URL 7",  i+" "+Url7);
+                            Log.i("URL 8",  i+" "+Url8);
+                            Log.i("URL 9",  i+" "+Url9);
+
                             nametext.setText(key.getString("username"));
 
 //                            Glide.with(PrivateActivity.this).load(cardUrl7).into(card3);
@@ -1189,38 +1163,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                            Glide.with(PrivateActivity.this).load(cardUrl9).into(card13);
 //                            card4.setText(key.getString("card1"));
                         } else if (i == 3) {
-                            cardUrl1 = Url1;
-                            cardUrl2 = Url2;
-                            cardUrl3 = Url3;
-                            cardUrl4 = Url4;
-                            cardUrl5 = Url5;
-                            cardUrl6 = Url6;
-                            cardUrl7 = Url7;
-                            cardUrl8 = Url8;
-                            cardUrl9 = Url9;
+                            String Url10 = key.getString("card1");
+                            String Url11 = key.getString("card2");
+                            String Url12 = key.getString("card3");
                             cardUrl10 = Url10;
                             cardUrl11 = Url11;
                             cardUrl12 = Url12;
-                            cardUrl13 = Url13;
-                            cardUrl14 = Url14;
-                            cardUrl15 = Url15;
+
+                            Log.i("URL 10",  i+" "+Url10);
+                            Log.i("URL 11",  i+" "+Url11);
+                            Log.i("URL 12",  i+" "+Url12);
+
                             nametext3.setText(key.getString("username"));
                         } else if (i == 4) {
-                            cardUrl1 = Url1;
-                            cardUrl2 = Url2;
-                            cardUrl3 = Url3;
-                            cardUrl4 = Url4;
-                            cardUrl5 = Url5;
-                            cardUrl6 = Url6;
-                            cardUrl7 = Url7;
-                            cardUrl8 = Url8;
-                            cardUrl9 = Url9;
-                            cardUrl10 = Url10;
-                            cardUrl11 = Url11;
-                            cardUrl12 = Url12;
+                            String Url13 = key.getString("card1");
+                            String Url14 = key.getString("card2");
+                            String Url15 = key.getString("card3");
                             cardUrl13 = Url13;
                             cardUrl14 = Url14;
                             cardUrl15 = Url15;
+
+                            Log.i("URL 13",  i+" "+Url13);
+                            Log.i("URL 14",  i+" "+Url14);
+                            Log.i("URL 15",  i+" "+Url15);
+
                             nametext4.setText(key.getString("username"));
                         }
                     }

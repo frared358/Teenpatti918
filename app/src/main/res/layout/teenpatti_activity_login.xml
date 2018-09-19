@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/loginbg"
     android:gravity="end"
-    tools:context="com.affwl.exchange.teenpatti.LoginActivity">
+    tools:context=".LoginActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -122,14 +122,15 @@
             </LinearLayout>
             <!--Layout for Edit text and login Button-->
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="80dp"
                 android:orientation="horizontal">
 
                 <FrameLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_margin="13dp">
 
                     <ImageView
                         android:id="@+id/selectimage"
@@ -145,15 +146,53 @@
                         android:src="@drawable/avatar1" />
                 </FrameLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
                 <EditText
-                    android:id="@+id/nametext"
-                    android:layout_width="130dp"
-                    android:layout_height="40dp"
+                    android:id="@+id/edittextusername"
+                    android:layout_width="170dp"
+                    android:layout_height="30dp"
                     android:background="@drawable/user_edit"
                     android:textColor="@color/colorWhite"
+                    android:layout_marginStart="30dp"
                     android:textSize="12sp"
                     android:layout_marginTop="10dp"
-                    android:textAlignment="center"/>
+                    android:textAlignment="center"
+                    android:hint="Username"
+                    android:textColorHint="#fff"/>
+
+                <EditText
+                    android:id="@+id/edittextpassword"
+                    android:layout_width="170dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/user_edit"
+                    android:textColor="@color/colorWhite"
+                    android:layout_marginStart="30dp"
+                    android:textSize="12sp"
+                    android:layout_marginTop="10dp"
+                    android:textAlignment="center"
+                    android:hint="Password"
+                    android:textColorHint="#fff"/>
+
+
+                    <!--<CheckBox-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content" />-->
+
+                <TextView
+                    android:id="@+id/playNow"
+                    android:layout_width="100dp"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="70dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/playasguestnew"
+                    android:gravity="center"
+                    android:text="@string/play"
+                    android:textColor="#ffffff" />
+                </LinearLayout>
 
                 <!--<TextView-->
                 <!--android:layout_width="85dp"-->
@@ -168,17 +207,6 @@
                 <!--android:textColor="#ffffff"-->
                 <!--android:paddingLeft="37dp" />-->
 
-                <TextView
-                    android:id="@+id/login"
-                    android:layout_width="150dp"
-                    android:layout_height="40dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/playasguestnew"
-                    android:gravity="center"
-                    android:text="@string/play"
-                    android:textColor="#ffffff" />
             </LinearLayout>
 
             <LinearLayout

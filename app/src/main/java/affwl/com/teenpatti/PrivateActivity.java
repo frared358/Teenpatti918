@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.percent.PercentLayoutHelper;
 import android.support.percent.PercentRelativeLayout;
@@ -22,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +52,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
     ImageView handle_right, backbtn, infobtn, infoclosebtn, profile, profile1, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn;
-    TextView table_change_request, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, show_btn, pack_btn, request_sent;
+    TextView table_change_request, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn, request_sent;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
     Session session;
@@ -69,6 +71,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     String Username;
     Handler handler, handlerLoad;
     int minteger = 0;
+    ProgressBar circularProgressBar;
+
+    TextView displayAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,8 +142,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        user_id3.setText(ID);
 //        user_id4.setText(ID);
 
+        circularProgressBar = findViewById (R.id.circularProgressBar);
+        blind_btn = findViewById(R.id.blind_btn);
+        blind_btn.setOnClickListener(this);
+        chaal_btn = findViewById(R.id.chaal_btn);
+        chaal_btn.setOnClickListener(this);
 
-        blind_btn = findViewById(R.id.blind);
+        CountDownTimer countDownTimer =  new CountDownTimer(20 * 1000, 20) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                //long progress = (61000 - millisUntilFinished) / 1000;
+                long progress = (millisUntilFinished) / 1000;
+                int p = (int)progress;
+
+                //Log.i("COUNT TAG",p+" "+String.valueOf(millisUntilFinished));
+                circularProgressBar.setProgress(p*5);
+            }
+
+            @Override
+            public void onFinish() {
+                //the progressBar will be invisible after 60 000 miliseconds ( 1 minute)
+            }
+        };
+        countDownTimer.start();
+
 //        Animation on blindshow_layout
 //        LinearLayout blindshow_layout=findViewById(R.id.blindshow_layout);
 //        TranslateAnimation animationsb = new TranslateAnimation(0.0f, 0.0f,
@@ -148,98 +175,27 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        blind_btn.startAnimation(animationsb);
 
 //        Implementation of increament amount
-        final TextView displayAmount = findViewById(R.id.start_amount);
-        plus_btn = findViewById(R.id.inc_amount);
-        plus_btn.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                String sub = displayAmount.getText().toString().substring(1);
-                minteger = Integer.parseInt(sub) * 2;
-                displayAmount.setText("₹" + minteger);
-                plus_btn.setEnabled(false);
-                plus_btn.setImageResource(R.drawable.disabled);
-                minus_btn.setImageResource(R.drawable.minus_btn);
-            }
-
-        });
-
-        //Implementation of decreament amount
-        minus_btn = findViewById(R.id.dec_amount);
-        minus_btn.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                plus_btn.setImageResource(R.drawable.plus_btn);
-                plus_btn.setEnabled(true);
-                minus_btn.setEnabled(false);
-                String sub = displayAmount.getText().toString().substring(1);
-                minteger = Integer.parseInt(sub) / 2;
-                displayAmount.setText("₹" + minteger);
-                minus_btn.setImageResource(R.drawable.minus_disabled);
-            }
-        });
+        displayAmount = findViewById(R.id.start_amount);
+        plus_btn = findViewById(R.id.plus_btn);
+        plus_btn.setOnClickListener(this);
+        minus_btn = findViewById(R.id.minus_btn);
+        minus_btn.setOnClickListener(this);
 
 //        Implementation of Blind
-        blind_btn = findViewById(R.id.blind);
-        blind_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                display_myplayer_bind.setText(displayAmount.getText().toString());
-                display_myplayer_bind.bringToFront();
-                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
-                display_myplayer_bind.startAnimation(animations);
-                display_myplayer_bind.setVisibility(View.GONE);
 
-                final Handler handler = new Handler();
-                final Handler handler1 = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        below_layout.setVisibility(View.VISIBLE);
-//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
-////            animation.setDuration(1000);
-//              animation.setFillAfter(true);
-//              below_layout.startAnimation(animation);
-                    }
-                }, 2000);
 
-                handler1.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
-////        animation1.setDuration(1000);
-//          animation1.setFillAfter(true);
-//          rl_bottom_caption.startAnimation(animation1);
-                        rl_bottom_caption.setVisibility(View.GONE);
-                        blind_btn.setEnabled(false);
-
-                    }
-                }, 1000);
-            }
-        });
 
 
 //        Implementation of Pack Button
         inner_player_img = findViewById(R.id.inner_player_img);
-        pack_btn = findViewById(R.id.pack);
-        pack_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                rl_bottom_caption.setVisibility(View.GONE);
-                btn_see_cards.setVisibility(View.GONE);
-                below_layout.setVisibility(View.VISIBLE);
-                card3.setVisibility(View.GONE);
-                card8.setVisibility(View.GONE);
-                card13.setVisibility(View.GONE);
-                inner_player_img.setImageResource(R.drawable.fade_inner_img);
-            }
-        });
+        pack_btn = findViewById(R.id.pack_btn);
+        pack_btn.setOnClickListener(this);
         //shuffling card animation
         animatecard1 = AnimationUtils.loadAnimation(this, R.anim.translate_top_left1);
         animatecard2 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_left1);
         animatecard3 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom1);
         animatecard4 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_right1);
         animatecard5 = AnimationUtils.loadAnimation(this, R.anim.translate_top_right1);
-
 
         animatecard6 = AnimationUtils.loadAnimation(this, R.anim.translate_top_left2);
         animatecard7 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_left2);
@@ -285,7 +241,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
                 btn_see_cards.setVisibility(View.GONE);
                 show_btn.setVisibility(View.VISIBLE);
-                blind_btn.setText("CHAAL");
+                blind_btn.setVisibility(View.GONE);
+                chaal_btn.setVisibility(View.VISIBLE);
 
                 String sub1 = displayAmount.getText().toString().substring(1);
                 minteger = Integer.parseInt(sub1) * 2;
@@ -434,7 +391,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                info6.topMarginPercent = 0.20f;
 //                info6.leftMarginPercent = 0.12f;
 //                params6.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-////                params6.setMargins(-80, 350, 0, 0);
+//               params6.setMargins(-80, 350, 0, 0);
 //                params6.addRule(RelativeLayout.RIGHT_OF, R.id.card1);
                 view6.layout(200, 0, view6.getWidth()+200, view6.getHeight());
                 view6.setRotation(-10.0f);
@@ -946,6 +903,109 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {
+        String sub;
+        Handler handler = new Handler();
+        Handler handler1 = new Handler();
+        switch (v.getId()){
+            case R.id.plus_btn:
+                sub = displayAmount.getText().toString().substring(1);
+                minteger = Integer.parseInt(sub) * 2;
+                displayAmount.setText("₹" + minteger);
+                plus_btn.setEnabled(false);
+                plus_btn.setImageResource(R.drawable.disabled);
+                minus_btn.setImageResource(R.drawable.minus_btn);
+                Log.i("AmtSUb",""+minteger);
+                break;
+
+            case R.id.minus_btn:
+                plus_btn.setImageResource(R.drawable.plus_btn);
+                plus_btn.setEnabled(true);
+                //minus_btn.setEnabled(false);
+                sub = displayAmount.getText().toString().substring(1);
+                Toast.makeText(this, ""+sub, Toast.LENGTH_SHORT).show();
+                minteger = Integer.parseInt(sub) / 2;
+                displayAmount.setText("₹" + minteger);
+                minus_btn.setImageResource(R.drawable.minus_disabled);
+                Log.i("AmtSUb",""+minteger);
+                break;
+
+            case R.id.blind_btn:
+                display_myplayer_bind.setText(displayAmount.getText().toString());
+                display_myplayer_bind.bringToFront();
+                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
+                display_myplayer_bind.startAnimation(animations);
+                display_myplayer_bind.setVisibility(View.GONE);
+
+                handler = new Handler();
+                handler1 = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        below_layout.setVisibility(View.VISIBLE);
+//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
+//              animation.setDuration(1000);
+//              animation.setFillAfter(true);
+//              below_layout.startAnimation(animation);
+                    }
+                }, 2000);
+
+                handler1.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
+//          animation1.setDuration(1000);
+//          animation1.setFillAfter(true);
+//          rl_bottom_caption.startAnimation(animation1);
+                        rl_bottom_caption.setVisibility(View.GONE);
+                        blind_btn.setEnabled(false);
+                    }
+                }, 1000);
+                break;
+
+            case R.id.chaal_btn:
+                display_myplayer_bind.setText(displayAmount.getText().toString());
+                display_myplayer_bind.bringToFront();
+                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
+                display_myplayer_bind.startAnimation(animations);
+                display_myplayer_bind.setVisibility(View.GONE);
+
+                handler = new Handler();
+                handler1 = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        below_layout.setVisibility(View.VISIBLE);
+//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
+//              animation.setDuration(1000);
+//              animation.setFillAfter(true);
+//              below_layout.startAnimation(animation);
+                    }
+                }, 2000);
+
+                handler1.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
+//          animation1.setDuration(1000);
+//          animation1.setFillAfter(true);
+//          rl_bottom_caption.startAnimation(animation1);
+                        rl_bottom_caption.setVisibility(View.GONE);
+                        blind_btn.setEnabled(false);
+                    }
+                }, 1000);
+                break;
+
+            case R.id.pack_btn:
+                rl_bottom_caption.setVisibility(View.GONE);
+                btn_see_cards.setVisibility(View.GONE);
+                below_layout.setVisibility(View.VISIBLE);
+                card3.setVisibility(View.GONE);
+                card8.setVisibility(View.GONE);
+                card13.setVisibility(View.GONE);
+                inner_player_img.setImageResource(R.drawable.fade_inner_img);
+                break;
+        }
+
         return;
     }
 

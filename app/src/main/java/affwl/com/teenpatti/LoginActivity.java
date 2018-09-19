@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         avatar5 = findViewById(R.id.avatar5);
         avatar6 = findViewById(R.id.avatar6);
         avatar7 = findViewById(R.id.avatar7);
-//        avatar8=findViewById(R.id.avatar8);
         camera = findViewById(R.id.camera);
         choosepic = findViewById(R.id.choosepic);
 
@@ -86,7 +85,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         avatar5.setOnClickListener(this);
         avatar6.setOnClickListener(this);
         avatar7.setOnClickListener(this);
-//        avatar8.setOnClickListener(this);
         camera.setOnClickListener(this);
         choosepic.setOnClickListener(this);
         playNow.setOnClickListener(this);
@@ -97,11 +95,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 && ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
                 && ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED)
         {
-            Toast.makeText(this, "permission granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please Provide Permission", Toast.LENGTH_SHORT).show();
         }
         else
         {
-            Toast.makeText(this, "permission not granted", Toast.LENGTH_SHORT).show();
             requestPermission();
         }
         edittextusername.setText("");
@@ -209,39 +206,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             else if(username.equalsIgnoreCase("admin")&& password.equals("admin"))
             {
-//                if(rememberCheckBox.isChecked())
-//                {
-//                    //Toast.makeText(this, ""+username+" "+editPass, Toast.LENGTH_SHORT).show();
-//                    saveLoginDetails(username,password);
-//                }
-//                startActivity(new Intent(this, MainActivity.class));
                 saveLoginDetails(username,password);
-//                finish();
             }
             else {
                 new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authenticate");
-                //Toast.makeText(this, "Please check User name & Password", Toast.LENGTH_SHORT).show();
             }
 
 
-
-            //SQLiteDatabase db=dbHandler.getWritableDatabase();
 
             if (avatarimage.getDrawable() == null) {
                 displayAlertMessage("Teenpatti","Please select a image");
             } else {
                 Bitmap bmp = ((BitmapDrawable) avatarimage.getDrawable()).getBitmap();
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 byte[] b = baos.toByteArray();
                 String encodeimage = Base64.encodeToString(b, Base64.DEFAULT);
                 String setNameHere = edittextusername.getText().toString().trim();
-//                String setPasswordHere = edittextpassword.getText().toString().trim();
                 session.put(encodeimage, setNameHere);
                 long result = loginDatabaseHelper.add(encodeimage, setNameHere);
-                startActivity(intent);
-                finish();
             }
         }
     }
@@ -296,7 +279,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
         Log.e("result",result+"");
-        //Toast.makeText(SelectSymbolActivity.this, ""+result, Toast.LENGTH_SHORT).show();
         return result;
     }
 
@@ -418,7 +400,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(LoginActivity.this, ""+result, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(LoginActivity.this, ""+result, Toast.LENGTH_SHORT).show();
             Log.i("Check",""+result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -427,16 +409,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
                 if(message.equalsIgnoreCase("successfully authenticated")){
-                    Toast.makeText(getApplicationContext(), ""+message, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), ""+message, Toast.LENGTH_SHORT).show();
 //                    if(rememberCheckBox.isChecked())
 //                    {
 //                        saveLoginDetails(username,password);
 //                    }
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     saveLoginDetails(username,password);
-                    finish();
                 }else{
-                    Toast.makeText(LoginActivity.this, "Enter Correct Details", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Enter Correct Details", Toast.LENGTH_SHORT).show();
                 }
 
                 Log.i("result"," Status "+message);

@@ -39,6 +39,7 @@ dependencies {
     implementation project(':libcolorpicker')
     implementation files('libs/signalr-client-sdk.jar')
     implementation files('libs/signalr-client-sdk-android.jar')
+    implementation 'com.hanks.animatecheckbox:library:0.1'
 
     //api
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'

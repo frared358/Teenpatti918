@@ -19,10 +19,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -47,15 +49,17 @@ import static affwl.com.teenpatti.DataHolder.convertInputStreamToString;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ImageView selectimage,avatarimage,avatar1,avatar2,avatar3,avatar4,avatar5,avatar6,avatar7,avatar8,camera,choosepic;
+    ImageView selectimage, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, camera, choosepic;
     Session session;
-    TextView playNow,balancetext;
+    TextView playNow, balancetext;
+    CheckBox rememberMeCheckBox;
     LoginDatabaseHelper loginDatabaseHelper;
     DBHandler dbHandler;
     EditText edittextusername, edittextpassword;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     String username, password;
+    Integer user_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,17 +92,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         camera.setOnClickListener(this);
         choosepic.setOnClickListener(this);
         playNow.setOnClickListener(this);
-        session=new Session(this);
-        loginDatabaseHelper=new LoginDatabaseHelper(this);
-        dbHandler=new DBHandler(this,"UserInfo",null,1);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)== PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this,Manifest.permission.WRITE_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this,Manifest.permission.READ_EXTERNAL_STORAGE)==PackageManager.PERMISSION_GRANTED)
-        {
+        session = new Session(this);
+        loginDatabaseHelper = new LoginDatabaseHelper(this);
+        dbHandler = new DBHandler(this, "UserInfo", null, 1);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(this, "Please Provide Permission", Toast.LENGTH_SHORT).show();
-        }
-        else
-        {
+        } else {
             requestPermission();
         }
         edittextusername.setText("");
@@ -121,7 +122,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-        private void initComponent() {
+    private void initComponent() {
+
+        rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox);
 
         playNow.setOnClickListener(this);
 
@@ -131,7 +134,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         if (sharedPreferences.contains("password")) {
             edittextpassword.setText(sharedPreferences.getString("password", ""));
-
+            rememberMeCheckBox.setChecked(true);
+        }
+        if(sharedPreferences.contains("user_id")){
+            int user_id = sharedPreferences.getInt("userid", -1);
+            Log.i("UserID",""+user_id);
         }
     }
 
@@ -140,82 +147,70 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         ImageView image;
-        int id= v.getId();
+        int id = v.getId();
         Drawable img;
-        if (id==R.id.avatar1)
-        {
-            image=findViewById(R.id.avatar1);
-            img=image.getDrawable();
+        if (id == R.id.avatar1) {
+            image = findViewById(R.id.avatar1);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.avatar2)
-        {
-            image=findViewById(R.id.avatar2);
-            img=image.getDrawable();
+        if (id == R.id.avatar2) {
+            image = findViewById(R.id.avatar2);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.avatar3)
-        {
-            image=findViewById(R.id.avatar3);
-            img=image.getDrawable();
+        if (id == R.id.avatar3) {
+            image = findViewById(R.id.avatar3);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.avatar4)
-        {
-            image=findViewById(R.id.avatar4);
-            img=image.getDrawable();
+        if (id == R.id.avatar4) {
+            image = findViewById(R.id.avatar4);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.avatar5)
-        {
-            image=findViewById(R.id.avatar5);
-            img=image.getDrawable();
+        if (id == R.id.avatar5) {
+            image = findViewById(R.id.avatar5);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.avatar6)
-        {
-            image=findViewById(R.id.avatar6);
-            img=image.getDrawable();
+        if (id == R.id.avatar6) {
+            image = findViewById(R.id.avatar6);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.avatar7)
-        {
-            image=findViewById(R.id.avatar7);
-            img=image.getDrawable();
+        if (id == R.id.avatar7) {
+            image = findViewById(R.id.avatar7);
+            img = image.getDrawable();
             avatarimage.setImageDrawable(img);
         }
-        if (id==R.id.camera)
-        {
+        if (id == R.id.camera) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent,1);
+            startActivityForResult(intent, 1);
         }
-        if (id==R.id.choosepic)
-        {
+        if (id == R.id.choosepic) {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent,6);
+            startActivityForResult(intent, 6);
         }
-        if (id==R.id.playNow) {
+        if (id == R.id.playNow) {
 
             username = edittextusername.getText().toString();
             password = edittextpassword.getText().toString();
-            if(username.equalsIgnoreCase("")||username == null){
+            if (username.equalsIgnoreCase("") || username == null) {
                 edittextusername.setError("Enter User Name");
-            }
-            else if(password.equalsIgnoreCase("")||password == null){
+            } else if (password.equalsIgnoreCase("") || password == null) {
                 edittextpassword.setError("Enter Password");
-            }
-            else if(username.equalsIgnoreCase("admin")&& password.equals("admin"))
-            {
-                saveLoginDetails(username,password);
-            }
-            else {
+            } else if (username.equalsIgnoreCase("admin") && password.equals("admin")) {
+                if(rememberMeCheckBox.isChecked()){
+                    saveLoginDetails(username, password, user_id);
+                }
+            } else {
                 new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authenticate");
             }
 
-
-
+            //Add Avatar
             if (avatarimage.getDrawable() == null) {
-                displayAlertMessage("Teenpatti","Please select a image");
+                displayAlertMessage("Teenpatti", "Please select a image");
             } else {
                 Bitmap bmp = ((BitmapDrawable) avatarimage.getDrawable()).getBitmap();
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -229,16 +224,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    public void saveLoginDetails(String email, String password) {
+    public void saveLoginDetails(String email, String password, int user_id) {
         sharedPreferences = getSharedPreferences("LoginDetails", Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         editor.putString("username", email);
         editor.putString("password", password);
         editor.putLong("ExpiredDate", System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24));
+        editor.putInt("userid", user_id);
         editor.apply();
     }
 
-    public String  loginApi(String url){
+    public String loginApi(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
@@ -248,8 +244,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             String json = "";
             JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("username",username);
-            jsonObject.accumulate("password",password);
+            jsonObject.accumulate("user_name", username);
+            jsonObject.accumulate("password", password);
             //jsonObject.accumulate("balance",balance);
 
             json = jsonObject.toString();
@@ -262,31 +258,28 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             HttpResponse httpResponse = httpclient.execute(httpPost);
             inputStream = httpResponse.getEntity().getContent();
 
-            if(inputStream != null){
+            if (inputStream != null) {
                 try {
                     result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
                 }
-                catch (Exception e){
-                    Log.e("Check",""+e);
-                }
-            }
-            else
+            } else
                 result = "Did not work!";
-            Log.e("Check","how "+result);
+            Log.e("Check", "how " + result);
 
         } catch (Exception e) {
-            Log.d("InputStream", ""+e);
+            Log.d("InputStream", "" + e);
         }
 
-        Log.e("result",result+"");
+        Log.e("result", result + "");
         return result;
     }
 
 
-
     private void displayAlertMessage(String title, String message) {
 
-        TextView tv_alert_ok,tv_alert_title,tv_alert_message,tv_alert_cancel;
+        TextView tv_alert_ok, tv_alert_title, tv_alert_message, tv_alert_cancel;
         ImageView alert_box_close;
 
         final Dialog myAlertDialog = new Dialog(this);
@@ -325,44 +318,40 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     //    Implementation of camera
     @Override
-    protected void onActivityResult(int requestCode,int resultcode,Intent data)
-    {
-        if (requestCode==1)
-        {
-            Bitmap bitmap=(Bitmap) data .getExtras().get("data");
+    protected void onActivityResult(int requestCode, int resultcode, Intent data) {
+        if (requestCode == 1) {
+            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
             avatarimage.setImageBitmap(bitmap);
 
         }
-        if (requestCode==6)
-        {
-//            Implementaion of Gallary
-            Bitmap bitmap= null;
-            if (resultcode==RESULT_OK)
-            {
-                Uri selectedimageuri=data.getData();
-                String selectedimagepath=getPath(selectedimageuri);
+        if (requestCode == 6) {
+            // Implementaion of Gallary
+            Bitmap bitmap = null;
+            if (resultcode == RESULT_OK) {
+                Uri selectedimageuri = data.getData();
+                String selectedimagepath = getPath(selectedimageuri);
                 avatarimage.setImageURI(selectedimageuri);
             }
         }
     }
+
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA};
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
-    public void requestPermission()
-    {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA))
-        {
+
+    public void requestPermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
             new AlertDialog.Builder(this)
                     .setTitle("")
                     .setMessage("This permission is required for camera and gallery")
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(LoginActivity.this,new String[]{Manifest.permission.CAMERA},1);
+                            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
                         }
                     })
                     .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
@@ -372,19 +361,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         }
                     })
                     .create().show();
-        }
-        else
-        {
-            ActivityCompat.requestPermissions(LoginActivity.this,new String[]{Manifest.permission.CAMERA},1);
+        } else {
+            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
         }
     }
+
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
-        BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = "";
         String result = "";
-        while((line = bufferedReader.readLine()) != null){
+        while ((line = bufferedReader.readLine()) != null) {
             result += line;
-            Log.e("Line",result);
+            Log.e("Line", result);
         }
 
         inputStream.close();
@@ -401,26 +389,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected void onPostExecute(String result) {
 //            Toast.makeText(LoginActivity.this, ""+result, Toast.LENGTH_SHORT).show();
-            Log.i("Check",""+result);
+            Log.i("Check", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
-
-
-                if(message.equalsIgnoreCase("successfully authenticated")){
-//                    Toast.makeText(getApplicationContext(), ""+message, Toast.LENGTH_SHORT).show();
-//                    if(rememberCheckBox.isChecked())
-//                    {
-//                        saveLoginDetails(username,password);
-//                    }
+                
+                if (message.equalsIgnoreCase("successfully authenticated")) {
+                    Toast.makeText(getApplicationContext(), "" + message, Toast.LENGTH_SHORT).show();
+                    if(rememberMeCheckBox.isChecked())
+                    {
+                        saveLoginDetails(username,password,user_id);
+                    }
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    saveLoginDetails(username,password);
-                }else{
+                    saveLoginDetails(username, password,user_id);
+                } else {
                     Toast.makeText(getApplicationContext(), "Enter Correct Details", Toast.LENGTH_SHORT).show();
                 }
-
-                Log.i("result"," Status "+message);
+                Log.i("result", " Status " + message);
 
             } catch (JSONException e) {
                 e.printStackTrace();

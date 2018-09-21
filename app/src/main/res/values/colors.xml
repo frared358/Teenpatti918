@@ -35,6 +35,7 @@
     <color name="colorGrey500">#ffffff</color>
     <color name="colorGrey5001">#E0E0E0</color>
     <color name="colorBlueGrey">#ECEFF1</color>
+    <color name="cb_checked">#041D34</color>
 
     <color name="colorYellowDark">#ddaa00</color>
     <color name="colorYellowDarkTransparent">#7dddaa00</color>

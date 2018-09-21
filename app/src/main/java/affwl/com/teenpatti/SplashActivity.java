@@ -1,9 +1,15 @@
 package affwl.com.teenpatti;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 
@@ -12,7 +18,9 @@ public class SplashActivity extends AppCompatActivity {
     View decorView;
     int uiOptions;
     Thread t;
+    String IMEI;
     private static int SPLASH_TIME_OUT = 2000;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,21 +34,21 @@ public class SplashActivity extends AppCompatActivity {
 
         decorView.setSystemUiVisibility(uiOptions);
 
-        t=new Thread(){
+        t = new Thread() {
 
             @Override
-            public void run(){
-                while(!isInterrupted()){
+            public void run() {
+                while (!isInterrupted()) {
                     try {
                         Thread.sleep(4000);  //1000ms = 1 sec
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i("ani","out "+uiOptions);
-                                if (decorView.getSystemUiVisibility() != uiOptions)  {
+                                Log.i("ani", "out " + uiOptions);
+                                if (decorView.getSystemUiVisibility() != uiOptions) {
                                     decorView.setSystemUiVisibility(uiOptions);
-                                    Log.i("ani","in "+uiOptions);
+                                    Log.i("ani", "in " + uiOptions);
                                 }
                             }
                         });
@@ -68,10 +76,15 @@ public class SplashActivity extends AppCompatActivity {
         }, SPLASH_TIME_OUT);
     }
 
-
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        t.interrupt();
-//    }
+    public String getDeviceIMEI() {
+        String deviceUniqueIdentifier = null;
+        TelephonyManager tm = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        if (null != tm) {
+            deviceUniqueIdentifier = tm.getDeviceId();
+        }
+        if (null == deviceUniqueIdentifier || 0 == deviceUniqueIdentifier.length()) {
+            deviceUniqueIdentifier = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+        return deviceUniqueIdentifier;
+    }
 }

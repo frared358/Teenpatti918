@@ -180,6 +180,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         plus_btn.setOnClickListener(this);
         minus_btn = findViewById(R.id.minus_btn);
         minus_btn.setOnClickListener(this);
+        minus_btn.setEnabled(false);
 
 //        Implementation of Blind
 
@@ -231,7 +232,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         //see myplayer card
         btn_see_cards = findViewById(R.id.btn_see_cards);
-        show_btn = findViewById(R.id.show);
+        show_btn = findViewById(R.id.show_btn);
+        show_btn.setOnClickListener(this);
         btn_see_cards.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -914,13 +916,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);
+                minus_btn.setEnabled(true);
                 Log.i("AmtSUb",""+minteger);
                 break;
 
             case R.id.minus_btn:
                 plus_btn.setImageResource(R.drawable.plus_btn);
                 plus_btn.setEnabled(true);
-                //minus_btn.setEnabled(false);
+                minus_btn.setEnabled(false);
                 sub = displayAmount.getText().toString().substring(1);
                 Toast.makeText(this, ""+sub, Toast.LENGTH_SHORT).show();
                 minteger = Integer.parseInt(sub) / 2;
@@ -1003,6 +1006,24 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 card8.setVisibility(View.GONE);
                 card13.setVisibility(View.GONE);
                 inner_player_img.setImageResource(R.drawable.fade_inner_img);
+                break;
+
+            case R.id.show_btn:
+                Glide.with(PrivateActivity.this).load(cardUrl4).into(card1);
+                Glide.with(PrivateActivity.this).load(cardUrl5).into(card6);
+                Glide.with(PrivateActivity.this).load(cardUrl6).into(card11);
+
+                Glide.with(PrivateActivity.this).load(cardUrl1).into(card2);
+                Glide.with(PrivateActivity.this).load(cardUrl2).into(card7);
+                Glide.with(PrivateActivity.this).load(cardUrl3).into(card12);
+
+                Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
+                Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
+                Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
+
+                Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
+                Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
+                Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
                 break;
         }
 
@@ -1218,10 +1239,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                             nametext.setText(key.getString("username"));
 
-//                            Glide.with(PrivateActivity.this).load(cardUrl7).into(card3);
-//                            Glide.with(PrivateActivity.this).load(cardUrl8).into(card8);
-//                            Glide.with(PrivateActivity.this).load(cardUrl9).into(card13);
-//                            card4.setText(key.getString("card1"));
                         } else if (i == 3) {
                             String Url10 = key.getString("card1");
                             String Url11 = key.getString("card2");

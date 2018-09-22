@@ -27,17 +27,8 @@ import microsoft.aspnet.signalr.client.hubs.HubProxy;
 
 
 public class DataHolder {
-    public static int navigationForTab=0;
+
     public static String LOGIN_TOKEN;
-    public static Double STACK_VALUE;
-
-    public static HubConnection _connection;
-    public static HubProxy _hub;
-
-    public static String SPORT_NAME;
-    public static String TOURNAMENT_NAME;
-    public static String MATCH_NAME;
-    public static String MATCH_DATE;
 
     public static ProgressDialog progressDialog;
     public static void showProgress(Context context){
@@ -77,61 +68,49 @@ public class DataHolder {
         return context.getSharedPreferences("PREF_DATA", Context.MODE_PRIVATE);
     }
 
-    public static String getData(Context context,String Key) {
+    public static String getDataString(Context context,String Key) {
         return getPrefData(context).getString(Key, "");
     }
 
+    public static int getDataInt(Context context,String Key) {
+        return getPrefData(context).getInt(Key, 0);
+    }
+
+    public static Long getDataLong(Context context,String Key) {
+        return getPrefData(context).getLong(Key, -1);
+    }
+
+    public static boolean getDataBoolean(Context context,String Key) {
+        return getPrefData(context).getBoolean(Key, false);
+    }
+
+    //String setData
     public static void setData(Context context,String Key, String input) {
         SharedPreferences.Editor editor = getPrefData(context).edit();
         editor.putString(Key, input);
         editor.commit();
     }
-
-    public  static boolean SIGNALR=false;
-
-    public static double increment(double val){
-
-        if(val >=0.00 && val <1.00){
-            val = val+0.02;
-        }
-        else if(val >=1.0 && val <10.0){
-            val = val+0.5;
-        }
-        else if(val >=10.0 && val <100.0) {
-            val = val+5.0;
-        }
-        else if(val >=100.0 && val <1000.0) {
-            val = val+20.0;
-        }
-        else if(val >=1000.0 ) {
-            val = 0;
-        }
-        return val;
+    //Long setData
+    public static void setData(Context context,String Key, Long input) {
+        SharedPreferences.Editor editor = getPrefData(context).edit();
+        editor.putLong(Key, input);
+        editor.commit();
+    }
+//Int setData
+    public static void setData(Context context,String Key, int input) {
+        SharedPreferences.Editor editor = getPrefData(context).edit();
+        editor.putInt(Key, input);
+        editor.commit();
     }
 
-    public static double decrement(double val){
-
-        if(val >0.05 && val <1.00){
-            val = val-0.02;
-        }
-        else if(val >=1.0 && val <10.0){
-            val = val-0.5;
-        }
-        else if(val >=10.0 && val <100.0) {
-            val = val-5.0;
-        }
-        else if(val >=10.0 && val <1000.0) {
-            val = val-5.0;
-        }
-        else if(val <= 0.05) {
-            val = 0;
-        }
-        return val;
+    //Boolean setData
+    public static void setData(Context context,String Key, boolean input) {
+        SharedPreferences.Editor editor = getPrefData(context).edit();
+        editor.putBoolean(Key, input);
+        editor.commit();
     }
 
-    public static double profit(double odd,double stack){
-        return (odd-1)*stack;
-    }
+
 
     public static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
@@ -156,7 +135,7 @@ public class DataHolder {
 
             Httpget.setHeader("Accept", "application/json");
             Httpget.setHeader("Content-type", "application/json");
-            Httpget.setHeader("Token", DataHolder.LOGIN_TOKEN);
+            //Httpget.setHeader("Token", DataHolder.LOGIN_TOKEN);
 
             HttpResponse httpResponse = httpclient.execute(Httpget);
             inputStream = httpResponse.getEntity().getContent();
@@ -241,12 +220,7 @@ public class DataHolder {
         }
     }
 
-    public static ArrayList<String> ArrayListCustomeName = new ArrayList<String>();
-    public static List <Boolean> ListDeleted = new ArrayList<Boolean>();
 
-    public static final String ACTION_SEND_ACTIVE = "com.affwl.exchange.sport.RESPONSE";
-    public static final String ACTION_SEND_FANCY_BOOKMAKING = "com.affwl.exchange.sport.FANCY_BOOKMAKING";
-    public static final String keySIGNALR = "SIGNALR";
-    public static final String keyFANCY_BOOKMAKING = "FANCY_BOOKMAKING";
+    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id;
 
 }

@@ -188,6 +188,7 @@
 
                 <TextView
                     android:id="@+id/nametext4"
+                    android:layout_alignParentRight="true"
                     android:layout_alignTop="@id/inner_player_img2"
                     android:background="@color/colorYellowGolden"
                     android:textAlignment="center"
@@ -294,6 +295,7 @@
 
                 <TextView
                     android:id="@+id/nametext3"
+                    android:layout_alignParentRight="true"
                     android:layout_alignTop="@id/inner_player_img3"
                     android:background="@color/colorYellowGolden"
                     android:textAlignment="center"
@@ -489,44 +491,57 @@
                 app:layout_widthPercent="20%"
                 tools:ignore="NotSibling">
 
-                <ImageView
-                    android:id="@+id/myplayer"
-                    android:src="@drawable/yellow_circle"
-                    app:layout_heightPercent="100%"
-                    app:layout_widthPercent="100%" />
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/inner_player_img"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:src="@drawable/inner_img_profile"
-                    app:layout_heightPercent="88%"
-                    app:layout_widthPercent="88%" />
+                    <ImageView
+                        android:id="@+id/myplayer"
+                        android:src="@drawable/yellow_circle"
+                        app:layout_heightPercent="100%"
+                        app:layout_widthPercent="100%"
+                        android:visibility="visible"/>
 
-                <TextView
-                    android:id="@+id/nametext"
-                    android:layout_alignTop="@id/inner_player_img"
-                    android:background="@color/colorYellowGolden"
-                    android:textAlignment="center"
-                    android:textColor="@color/Black"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="50%" />
 
-                <TextView
-                    android:id="@+id/user_id"
-                    android:layout_alignParentEnd="true"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="20%"
-                    android:layout_alignParentRight="true"/>
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/inner_player_img"
+                        android:layout_centerHorizontal="true"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/inner_img_profile"
+                        app:layout_heightPercent="88%"
+                        app:layout_widthPercent="88%" />
 
-                <TextView
-                    android:id="@+id/balancetext"
-                    android:background="@color/colorYellowGolden"
-                    android:textAlignment="center"
-                    android:textColor="@color/Black"
-                    android:layout_alignParentBottom="true"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="50%"/>
+                    <ProgressBar
+                        android:id="@+id/circularProgressBar"
+                        android:layout_centerInParent="true"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:indeterminate="false"
+                        android:progressDrawable="@drawable/progressbar"
+                        app:layout_heightPercent="100%"
+                        app:layout_widthPercent="100%"/>
+
+                    <TextView
+                        android:id="@+id/nametext"
+                        android:layout_alignTop="@id/inner_player_img"
+                        android:background="@color/colorYellowGolden"
+                        android:textAlignment="center"
+                        android:textColor="@color/Black"
+                        app:layout_heightPercent="20%"
+                        app:layout_widthPercent="50%" />
+
+                    <TextView
+                        android:id="@+id/user_id"
+                        android:layout_alignParentEnd="true"
+                        app:layout_heightPercent="20%"
+                        app:layout_widthPercent="20%"
+                        android:layout_alignParentRight="true"/>
+
+                    <TextView
+                        android:id="@+id/balancetext"
+                        android:background="@color/colorYellowGolden"
+                        android:textAlignment="center"
+                        android:textColor="@color/Black"
+                        android:layout_alignParentBottom="true"
+                        app:layout_heightPercent="20%"
+                        app:layout_widthPercent="50%"/>
+
             </android.support.percent.PercentRelativeLayout>               <!--</RelativeLayout>-->
 
             <!--      <RelativeLayout
@@ -569,7 +584,7 @@
             app:layout_widthPercent="100%">
 
             <TextView
-                android:id="@+id/pack"
+                android:id="@+id/pack_btn"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
                 android:background="@drawable/action_btn"
@@ -582,9 +597,9 @@
                 app:layout_widthPercent="12%" />
 
             <ImageView
-                android:id="@+id/dec_amount"
+                android:id="@+id/minus_btn"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/pack"
+                android:layout_toRightOf="@+id/pack_btn"
                 android:src="@drawable/minus_disabled"
                 app:layout_heightPercent="100%"
                 app:layout_marginLeftPercent="1%"
@@ -593,7 +608,7 @@
             <ImageView
                 android:id="@+id/amount_bg"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/dec_amount"
+                android:layout_toRightOf="@+id/minus_btn"
                 android:src="@drawable/emptybtn"
                 app:layout_heightPercent="100%"
                 app:layout_marginLeftPercent="1%"
@@ -604,7 +619,7 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignTop="@+id/amount_bg"
                 android:layout_centerInParent="true"
-                android:layout_toRightOf="@+id/dec_amount"
+                android:layout_toRightOf="@+id/minus_btn"
                 android:padding="1dp"
                 android:text="₹2"
                 android:textAlignment="center"
@@ -615,7 +630,7 @@
 
 
             <ImageView
-                android:id="@+id/inc_amount"
+                android:id="@+id/plus_btn"
                 android:layout_alignParentBottom="true"
                 android:layout_toRightOf="@+id/start_amount"
                 android:src="@drawable/plus_btn"
@@ -623,23 +638,44 @@
                 app:layout_marginLeftPercent="1%"
                 app:layout_widthPercent="8%" />
 
-            <TextView
-                android:id="@+id/blind"
+            <android.support.percent.PercentRelativeLayout
+                android:id="@+id/rlChaalBlind"
+                android:layout_toRightOf="@+id/plus_btn"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/inc_amount"
-                android:background="@drawable/action_btn"
-                android:text="BLIND"
-                android:textAlignment="center"
-                android:textColor="@color/darkbrown"
-                android:textSize="18sp"
                 app:layout_heightPercent="100%"
                 app:layout_marginLeftPercent="1%"
-                app:layout_widthPercent="12%" />
+                app:layout_widthPercent="12%">
+
+                <TextView
+                    android:id="@+id/chaal_btn"
+                    android:background="@drawable/action_btn"
+                    android:text="CHAAL"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkbrown"
+                    android:textSize="18sp"
+                    android:visibility="gone"
+                    app:layout_heightPercent="100%"
+                    app:layout_widthPercent="100%"/>
+
+
+                <TextView
+                    android:id="@+id/blind_btn"
+                    android:background="@drawable/action_btn"
+                    android:text="BLIND"
+                    android:textAlignment="center"
+                    android:textColor="@color/darkbrown"
+                    android:textSize="18sp"
+                    app:layout_heightPercent="100%"
+                    app:layout_widthPercent="100%"/>
+
+            </android.support.percent.PercentRelativeLayout>
+
+
 
             <TextView
                 android:id="@+id/show"
                 android:layout_alignParentBottom="true"
-                android:layout_toRightOf="@+id/blind"
+                android:layout_toRightOf="@+id/rlChaalBlind"
                 android:background="@drawable/action_btn"
                 android:text="SHOW"
                 android:textAlignment="center"

@@ -245,7 +245,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return result;
     }
 
-
     private void displayAlertMessage(String title, String message) {
 
         TextView tv_alert_ok, tv_alert_title, tv_alert_message, tv_alert_cancel;
@@ -284,7 +283,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    //    Implementation of camera
+    //Implementation of camera
     @Override
     protected void onActivityResult(int requestCode, int resultcode, Intent data) {
         if (requestCode == 1) {

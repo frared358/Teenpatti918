@@ -44,6 +44,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -57,7 +58,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
     Session session;
     LinearLayout below_layout;
-    TextView display_myplayer_bind, balancetext;
+    TextView display_myplayer_bind, txtVBalanceMainPlayer;
     Animation animations;
     CircleImageView inner_player_img;
     ImageView card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15;
@@ -80,7 +81,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
 
-        new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
+        new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id="+DataHolder.getDataString(this,"userid"));
+        //new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
 //        handle_right = findViewById(R.id.handle_right);
 //        handle_right.setOnClickListener(this);
 //
@@ -113,8 +115,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         user_id2 = findViewById(R.id.user_id2);
         user_id3 = findViewById(R.id.user_id3);
         user_id4 = findViewById(R.id.user_id4);
-///wbcdd
-//      balancetext = findViewById(R.id.balancetext)
+
+      txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
 
 //        code = findViewById(R.id.code);
         session = new Session(this);
@@ -1172,7 +1174,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1186,7 +1188,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
-
 //
 //                    Log.i("Card","" + card1);
 //                    Log.i("Card","" + card2);
@@ -1194,7 +1195,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //
 //                    nametext.setText(key.getString("username"));
 //                    user_id.setText(key.getString("users_id"));
-
                     {
                         if (i == 0) {
                             String Url1 = key.getString("card1");
@@ -1289,6 +1289,116 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         user_id4.setText(id.getString("users_id"));
                     }
                 }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    private ArrayList<String> arrayListUserId = new ArrayList<>();
+    private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
+    private boolean sequence = false;
+    private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return getUserApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            Log.i("Check123", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                int len = arr.length();
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this,"userid"))){
+                        sequence = true;
+                    }
+                    if (sequence){
+                        arrayListUserIdSequence.add(userid);
+                    }else {
+                        arrayListUserId.add(userid);
+                    }
+                }
+
+                if (arrayListUserId.size() > 0){
+                    for (int j=0;j<arrayListUserId.size();j++){
+                        arrayListUserIdSequence.add(arrayListUserId.get(j));
+                    }
+                }
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+                    String boot_value = key.getString("boot_value");
+                    String max_no_blinds = key.getString("max_no_blinds");
+                    String pot_limit = key.getString("pot_limit");
+                    String desk_limit = key.getString("desk_limit");
+                    String chaal_limit = key.getString("chaal_limit");
+                    String user_name = key.getString("user_name");
+
+                    Log.i("CHECk",""+arrayListUserIdSequence.get(i));
+
+                    if(userid.equals(arrayListUserIdSequence.get(0))){
+                        nametext.setText(user_name);
+                        user_id.setText(userid);
+                        txtVBalanceMainPlayer.setText(key.getString("balance"));
+
+                    }else if (userid.equals(arrayListUserIdSequence.get(1))){
+                        nametext1.setText(user_name);
+                        user_id1.setText(userid);
+
+                    }else if (userid.equals(arrayListUserIdSequence.get(2))){
+                        nametext2.setText(user_name);
+                        user_id2.setText(userid);
+
+                    }else if (userid.equals(arrayListUserIdSequence.get(3))){
+                        nametext3.setText(user_name);
+                        user_id3.setText(userid);
+
+                    }else if (userid.equals(arrayListUserIdSequence.get(4))){
+                        nametext4.setText(user_name);
+                        user_id4.setText(userid);
+
+                    }
+
+                }
+
+
+
+                /*JSONArray u_arr = new JSONArray(jsonObjMain.getString("data"));
+
+                int u_len = u_arr.length();
+
+                for (int u = 0; u < u_len; u++) {
+
+                    JSONObject id = arr.getJSONObject(u);
+
+                    if (u == 0) {
+                        user_id1.setText(id.getString("users_id"));
+                    } else if (u == 1) {
+                        user_id2.setText(id.getString("users_id"));
+                    } else if (u == 2) {
+                        user_id.setText(id.getString("users_id"));
+                    } else if (u == 3) {
+                        user_id3.setText(id.getString("users_id"));
+                    } else if (u == 4) {
+                        user_id4.setText(id.getString("users_id"));
+                    }
+                }*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }

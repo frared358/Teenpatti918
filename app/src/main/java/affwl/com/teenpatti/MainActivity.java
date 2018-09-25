@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
     PopupWindow RateuspopupWindow, HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
     RelativeLayout RelativeLayoutloader, relativelayout321, relativeLayoutsixpatti, relativeLayout_tourney, yellowchiplayout, orangechipslayout, limechipslayout, darkbluechiplayout, blackchipslayout, cyanchipslayout, ygreenchipslayout;
-    TextView loaderbuychips, joinnowbtn, howtoplay321btn, howtoplaysixpattibtn, joinnowsixpattibtn, join_tourneybtn, create_table_btn, join_variation_btn, main_nametext, code;
+    TextView loaderbuychips, joinnowbtn, howtoplay321btn, howtoplaysixpattibtn, joinnowsixpattibtn, join_tourneybtn, create_table_btn, join_variation_btn, txtVUserNameMain, code;
     Session session;
     LinearLayout jokerlayout_btn, jokerinfo_layout, ak47_layout_btn, ak47info_layout, xboot_layout_btn, xboot_info_layout,
             hukum_layout_btn, hukum_info_layout, muflis_layout_btn, muflis_info_layout, faceoff_layout_btn, faceoff_info_layout,
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        listView.setAdapter(adapter);
 
         profile = findViewById(R.id.profile);
-        main_nametext = findViewById(R.id.main_nametext);
+        txtVUserNameMain = findViewById(R.id.txtVUserNameMain);
 
         final Animation Animchipsright = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_chips_right);
         final Animation Animchipsleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_chips_left);
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             profile.setImageBitmap(bmp);
         }
         String name = session.getName();
-        main_nametext.setText(name);
+        txtVUserNameMain.setText(DataHolder.first_name+" "+DataHolder.last_name);
 
 
 //        yellowchiplayout = findViewById(R.id.yellowchiplayout);
@@ -980,10 +980,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         handler.post(new Runnable() {
             @Override
             public void run() {
-                new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
+                //new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
             }
         });
-        main_nametext.setText(DataHolder.getSTACK(MainActivity.this, "username"));
+        //txtVUserNameMain.setText(DataHolder.getSTACK(MainActivity.this, "username"));
     }
 
     public String setUserApi(String url) {
@@ -996,7 +996,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             String json = "";
             JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("username", main_nametext);
+            jsonObject.accumulate("username", txtVUserNameMain);
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -1052,7 +1052,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 String message = jsonObjMain.getString("message");
                 if (message.equalsIgnoreCase("successfully authenticated")) {
-                    DataHolder.setSTACK(MainActivity.this, "username", main_nametext.getText().toString());
+                    DataHolder.setSTACK(MainActivity.this, "username", txtVUserNameMain.getText().toString());
                 }
 //                Toast.makeText(getApplicationContext(), ""+message, Toast.LENGTH_SHORT).show();
                 Log.i("result", "Status" + message);
@@ -1123,7 +1123,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else if (i == 1) {
 //                        nametext2.setText(key.getString("username"));
                     } else if (i == 2) {
-                        main_nametext.setText(key.getString("username"));
+                        //txtVUserNameMain.setText(key.getString("username"));
                     } else if (i == 3) {
 //                        nametext3.setText(key.getString("username"));
                     } else if (i == 4) {
@@ -1137,7 +1137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //
 //                JSONObject jsonObj = new JSONObject(jsonObjMain.getString("data"));
 //
-//                main_nametext.setText(jsonObj.getString("username"));
+//                txtVUserNameMain.setText(jsonObj.getString("username"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }

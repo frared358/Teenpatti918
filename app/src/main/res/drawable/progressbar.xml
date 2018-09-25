@@ -9,7 +9,7 @@
             android:shape="ring"
             android:useLevel="false"
             android:thicknessRatio="15" >
-            <solid android:color="#ffc400" />
+            <solid android:color="#027900" />
         </shape>
     </item>
 
@@ -23,3 +23,21 @@
     </item>
 
 </layer-list>
+
+    <!--
+    Android Code
+    <ProgressBar
+       android:id="@+id/circularProgressBar"
+       android:layout_centerInParent="true"
+       style="?android:attr/progressBarStyleHorizontal"
+       android:indeterminate="false"
+       app:layout_heightPercent="100%"
+       android:progressDrawable="@drawable/progressbar"
+       app:layout_widthPercent="100%"/>-->
+
+
+<!--JAVA CODE
+ProgressBar circularProgressBar;
+        circularProgressBar = findViewById (R.id.circularProgressBar);
+        circularProgressBar.setProgress(p*5);
+-->

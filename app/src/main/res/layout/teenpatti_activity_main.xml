@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg3"
-    tools:context="com.affwl.exchange.teenpatti.MainActivity">
+    tools:context="affwl.com.teenpatti.MainActivity">
 
     <HorizontalScrollView
         android:id="@+id/horizontalScroll"
@@ -22,135 +22,135 @@
             android:padding="6dp">
 
 
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/yellowchiplayout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content">-->
-                <!--<ImageView-->
-                    <!--android:id="@+id/mainychips"-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_margin="20dp"-->
-                    <!--android:src="@drawable/yellowchips" />-->
-                <!--<ImageView-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_alignLeft="@+id/mainychips"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_alignStart="@+id/mainychips"-->
-                    <!--android:src="@drawable/tpatti" />-->
-            <!--</RelativeLayout>-->
+<!--            <RelativeLayout
+                android:id="@+id/yellowchiplayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/mainychips"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/yellowchips" />
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_alignLeft="@+id/mainychips"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignStart="@+id/mainychips"
+                    android:src="@drawable/tpatti" />
+            </RelativeLayout>
 
 
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/orangechipslayout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_toRightOf="@+id/yellowchiplayout"-->
-                <!--android:layout_toEndOf="@+id/yellowchiplayout">-->
+            <RelativeLayout
+                android:id="@+id/orangechipslayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/yellowchiplayout"
+                android:layout_toEndOf="@+id/yellowchiplayout">
 
-                <!--<ImageView-->
-                    <!--android:id="@+id/mainorgchips"-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_margin="20dp"-->
-                    <!--android:src="@drawable/orangechips1"/>-->
+                <ImageView
+                    android:id="@+id/mainorgchips"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/orangechips1"/>
 
-                <!--<ImageView-->
-                    <!--android:layout_width="140dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:src="@drawable/outerorangechips1"/>-->
-            <!--</RelativeLayout>-->
+                <ImageView
+                    android:layout_width="140dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/outerorangechips1"/>
+            </RelativeLayout>
 
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/limechipslayout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_toRightOf="@+id/orangechipslayout">-->
+            <RelativeLayout
+                android:id="@+id/limechipslayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/orangechipslayout">
 
-                <!--<ImageView-->
-                    <!--android:id="@+id/mainlimegchips"-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_margin="20dp"-->
-                    <!--android:src="@drawable/limegreenchips"-->
-                    <!--/>-->
-                <!--<ImageView-->
-                    <!--android:id="@+id/innerlime"-->
-                    <!--android:layout_width="85dp"-->
-                    <!--android:layout_height="85dp"-->
-                    <!--android:layout_centerInParent="true"-->
-                    <!--android:src="@drawable/limeloadingbtninner"-->
-                    <!--/>-->
+                <ImageView
+                    android:id="@+id/mainlimegchips"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/limegreenchips"
+                    />
+                <ImageView
+                    android:id="@+id/innerlime"
+                    android:layout_width="85dp"
+                    android:layout_height="85dp"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/limeloadingbtninner"
+                    />
 
-                <!--<ImageView-->
-                    <!--android:layout_width="129dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:src="@drawable/variation" />-->
-            <!--</RelativeLayout>-->
+                <ImageView
+                    android:layout_width="129dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/variation" />
+            </RelativeLayout>
 
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/darkbluechiplayout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_toRightOf="@+id/limechipslayout">-->
-                <!--<ImageView-->
-                    <!--android:id="@+id/darkbluechips"-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_margin="20dp"-->
-                    <!--android:src="@drawable/darkbluechips"/>-->
+            <RelativeLayout
+                android:id="@+id/darkbluechiplayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/limechipslayout">
+                <ImageView
+                    android:id="@+id/darkbluechips"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/darkbluechips"/>
 
-                <!--<ImageView-->
-                    <!--android:layout_width="140dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:src="@drawable/sixpatti_outer" />-->
-            <!--</RelativeLayout>-->
+                <ImageView
+                    android:layout_width="140dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/sixpatti_outer" />
+            </RelativeLayout>
 
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/blackchipslayout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_toRightOf="@+id/darkbluechiplayout">-->
-                <!--<ImageView-->
-                    <!--android:id="@+id/blackchips"-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_margin="20dp"-->
-                    <!--android:src="@drawable/blackchips" />-->
-                <!--<ImageView-->
-                    <!--android:layout_width="140dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:src="@drawable/newvariation" />-->
-            <!--</RelativeLayout>-->
+            <RelativeLayout
+                android:id="@+id/blackchipslayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/darkbluechiplayout">
+                <ImageView
+                    android:id="@+id/blackchips"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/blackchips" />
+                <ImageView
+                    android:layout_width="140dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/newvariation" />
+            </RelativeLayout>
 
-            <!--<RelativeLayout-->
-                <!--android:id="@+id/cyanchipslayout"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_toRightOf="@+id/blackchipslayout"-->
-                <!--&gt;-->
-                <!--<ImageView-->
-                    <!--android:id="@+id/cyanchips"-->
-                    <!--android:layout_width="120dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_margin="20dp"-->
-                    <!--android:src="@drawable/cyanchips"/>-->
-                <!--<ImageView-->
-                    <!--android:layout_width="140dp"-->
-                    <!--android:layout_height="120dp"-->
-                    <!--android:layout_alignParentTop="true"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:src="@drawable/tourney" />-->
-            <!--</RelativeLayout>-->
+            <RelativeLayout
+                android:id="@+id/cyanchipslayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/blackchipslayout"
+                >
+                <ImageView
+                    android:id="@+id/cyanchips"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="20dp"
+                    android:src="@drawable/cyanchips"/>
+                <ImageView
+                    android:layout_width="140dp"
+                    android:layout_height="120dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/tourney" />
+            </RelativeLayout>-->
 
             <RelativeLayout
                 android:id="@+id/ygreenchipslayout"
@@ -189,8 +189,8 @@
             android:id="@+id/profile"/>
 
         <TextView
-            android:id="@+id/main_nametext"
-            android:layout_width="70dp"
+            android:id="@+id/txtVUserNameMain"
+            android:layout_width="80dp"
             android:layout_height="30dp"
             android:background="@drawable/chip_balance"
             android:textColor="@color/colorWhite"
@@ -213,13 +213,13 @@
             android:layout_margin="5dp"
             android:orientation="horizontal">
 
-            <!--<ImageView-->
-            <!--android:id="@+id/rateus_btn_loader"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_margin="5dp"-->
-            <!--android:clickable="true"-->
-            <!--android:src="@drawable/loader_rateus" />-->
+            <!--<ImageView
+            android:id="@+id/rateus_btn_loader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:src="@drawable/loader_rateus" />-->
 
             <ImageView
                 android:id="@+id/help_btn_loader"

@@ -221,6 +221,6 @@ public class DataHolder {
     }
 
 
-    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id;
+    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id,user_name;
 
 }

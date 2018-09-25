@@ -28,6 +28,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 
 import org.apache.http.HttpResponse;
@@ -52,13 +53,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 @SuppressLint("WrongViewCast")
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView handle_right, backbtn, infobtn, infoclosebtn, profile, profile1, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn;
-    TextView table_change_request, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn, request_sent;
+    ImageView handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn;
+    TextView closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
+    TextView txtVBootValue,txtVPotlimit,txtVMaxBlind,txtVChaalLimit;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
     Session session;
     LinearLayout below_layout;
-    TextView display_myplayer_bind, txtVBalanceMainPlayer;
+    TextView display_myplayer_bind, txtVBalanceMainPlayer,txtVTableAmt;
     Animation animations;
     CircleImageView inner_player_img;
     ImageView card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15;
@@ -72,10 +74,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     String Username;
     Handler handler, handlerLoad;
     int minteger = 0;
-    ProgressBar circularProgressBar;
+
 
     TextView displayAmount;
-
+    RoundCornerProgressBar progressChaalTimer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,10 +98,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        navigationView.setNavigationItemSelectedListener(this);
         //private List<UserData> UserDataList = new ArrayList<>();
 
+        progressChaalTimer = findViewById(R.id.progressChaalTimer);
+
+        progressChaalTimer.setMax(100);
+
         display_myplayer_bind = findViewById(R.id.display_myplayer_bind);
         rl_bottom_caption = findViewById(R.id.rl_bottom_caption);
         below_layout = findViewById(R.id.below_layout);
         relativeLayout = findViewById(R.id.privaterecycler);
+        txtVTableAmt = findViewById(R.id.txtVTableAmt);
 
         //        implemention of user profile pic
         profile = findViewById(R.id.inner_player_img);
@@ -144,7 +151,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        user_id3.setText(ID);
 //        user_id4.setText(ID);
 
-        circularProgressBar = findViewById (R.id.circularProgressBar);
         blind_btn = findViewById(R.id.blind_btn);
         blind_btn.setOnClickListener(this);
         chaal_btn = findViewById(R.id.chaal_btn);
@@ -158,7 +164,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 int p = (int)progress;
 
                 //Log.i("COUNT TAG",p+" "+String.valueOf(millisUntilFinished));
-                circularProgressBar.setProgress(p*5);
+
+                progressChaalTimer.setProgress(p*5);
             }
 
             @Override
@@ -248,9 +255,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 blind_btn.setVisibility(View.GONE);
                 chaal_btn.setVisibility(View.VISIBLE);
 
-                String sub1 = displayAmount.getText().toString().substring(1);
+                String sub1 = displayAmount.getText().toString();
                 minteger = Integer.parseInt(sub1) * 2;
-                displayAmount.setText("₹" + minteger);
+                displayAmount.setText(String.valueOf(minteger));
             }
         });
 
@@ -311,13 +318,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             public void onAnimationEnd(Animation animation) {
                 // Pass the Intent to switch to other Activity
 
-    /*            RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) card1.getLayoutParams();
-                params1.height=getResources().getDimensionPixelSize(R.dimen.card_height);
-                params1.width=getResources().getDimensionPixelSize(R.dimen.card_width);
-                                params1.setMargins(-100, 350, 0, 0);
-
-                card1.setLayoutParams(params1);
-                card1.setRotation(-30.0f);*/
+//                RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) card1.getLayoutParams();
+//                params1.height=getResources().getDimensionPixelSize(R.dimen.card_height);
+//                params1.width=getResources().getDimensionPixelSize(R.dimen.card_width);
+//                                params1.setMargins(-100, 350, 0, 0);
+//
+//                card1.setLayoutParams(params1);
+//                card1.setRotation(-30.0f);
 
                 View view1 = findViewById(R.id.card1);
                 PercentRelativeLayout.LayoutParams params1 = (PercentRelativeLayout.LayoutParams) view1.getLayoutParams();
@@ -469,11 +476,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info11 = params11.getPercentLayoutInfo();
                 info11.widthPercent = 0.15f;
                 info11.heightPercent = 0.15f;
-//                info11.topMarginPercent = 0.20f;
-//                info11.leftMarginPercent = 0.14f;
-//                params11.addRule(RelativeLayout.RIGHT_OF, R.id.card6);
-//                params11.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                params11.setMargins(-60, 350, 0, 0);
+////                info11.topMarginPercent = 0.20f;
+////                info11.leftMarginPercent = 0.14f;
+////                params11.addRule(RelativeLayout.RIGHT_OF, R.id.card6);
+////                params11.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+////                params11.setMargins(-60, 350, 0, 0);
                 view11.layout(100, 0, view11.getWidth()+100, view11.getHeight());
                 view11.setRotation(10.0f);
                 view11.requestLayout();
@@ -526,16 +533,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 view14.requestLayout();
 
 
-              /*  PercentLayoutHelper.PercentLayoutParams params15 = (PercentLayoutHelper.PercentLayoutParams) card15.getLayoutParams();
-                PercentLayoutHelper.PercentLayoutInfo info15 = params15.getPercentLayoutInfo();
-                info15.widthPercent = 0.15f;
-                info15.heightPercent=0.15f;
-                info15.topMarginPercent=0.20f;
-                info15.endMarginPercent=0.55f;
-//                params15.addRule(RelativeLayout.RIGHT_OF,R.id.card10);
-//                params15.setMargins(-60, 350, 0, 0);
-                card15.setLayoutParams((ViewGroup.LayoutParams) params15);
-                card15.setRotation(10.0f);*/
+//                PercentLayoutHelper.PercentLayoutParams params15 = (PercentLayoutHelper.PercentLayoutParams) card15.getLayoutParams();
+//                PercentLayoutHelper.PercentLayoutInfo info15 = params15.getPercentLayoutInfo();
+//                info15.widthPercent = 0.15f;
+//                info15.heightPercent=0.15f;
+//                info15.topMarginPercent=0.20f;
+//                info15.endMarginPercent=0.55f;
+////                params15.addRule(RelativeLayout.RIGHT_OF,R.id.card10);
+////                params15.setMargins(-60, 350, 0, 0);
+//                card15.setLayoutParams((ViewGroup.LayoutParams) params15);
+//                card15.setRotation(10.0f);
 
                 View view15 = findViewById(R.id.card15);
                 PercentRelativeLayout.LayoutParams params15 = (PercentRelativeLayout.LayoutParams) view15.getLayoutParams();
@@ -602,45 +609,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         //////////////// Popup for InfoButton ///////////////////
 
-        infobtn = findViewById(R.id.info);
+        imgVInfo = findViewById(R.id.imgVInfo);
+        imgVInfo.setOnClickListener(this);
         privatetble = findViewById(R.id.privatetble);
-
-        infobtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //instantiate the popup.xml layout file
-                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View customView = layoutInflater.inflate(R.layout.private_gameinfo_popup, null);
-
-                request_sent = customView.findViewById(R.id.request_sent);
-                table_change_request = customView.findViewById(R.id.table_change_request);
-
-                table_change_request.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        table_change_request.setVisibility(View.GONE);
-                        request_sent.setVisibility(View.VISIBLE);
-                    }
-                });
-
-                infoclosebtn = customView.findViewById(R.id.infoclose);
-
-                //instantiate popup window
-                infopopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
-                //display the popup window
-                infopopupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-
-                //close the popup window on button click
-                infoclosebtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        infopopupWindow.dismiss();
-                    }
-                });
-            }
-        });
-
 
         //////////////// Popup for Userstatus ///////////////////
 
@@ -909,12 +880,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         String sub;
         Handler handler = new Handler();
-        Handler handler1 = new Handler();
+
         switch (v.getId()){
             case R.id.plus_btn:
-                sub = displayAmount.getText().toString().substring(1);
+                sub = displayAmount.getText().toString();
                 minteger = Integer.parseInt(sub) * 2;
-                displayAmount.setText("₹" + minteger);
+                displayAmount.setText(String.valueOf(minteger));
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);
@@ -926,78 +897,59 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 plus_btn.setImageResource(R.drawable.plus_btn);
                 plus_btn.setEnabled(true);
                 minus_btn.setEnabled(false);
-                sub = displayAmount.getText().toString().substring(1);
+                sub = displayAmount.getText().toString();
                 Toast.makeText(this, ""+sub, Toast.LENGTH_SHORT).show();
                 minteger = Integer.parseInt(sub) / 2;
-                displayAmount.setText("₹" + minteger);
+                displayAmount.setText(String.valueOf(minteger));
                 minus_btn.setImageResource(R.drawable.minus_disabled);
                 Log.i("AmtSUb",""+minteger);
                 break;
 
             case R.id.blind_btn:
-                display_myplayer_bind.setText(displayAmount.getText().toString());
-                display_myplayer_bind.bringToFront();
-                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
-                display_myplayer_bind.startAnimation(animations);
-                display_myplayer_bind.setVisibility(View.GONE);
-
-                handler = new Handler();
-                handler1 = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        below_layout.setVisibility(View.VISIBLE);
-//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
-//              animation.setDuration(1000);
-//              animation.setFillAfter(true);
-//              below_layout.startAnimation(animation);
-                    }
-                }, 2000);
-
-                handler1.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
-//          animation1.setDuration(1000);
-//          animation1.setFillAfter(true);
-//          rl_bottom_caption.startAnimation(animation1);
-                        rl_bottom_caption.setVisibility(View.GONE);
-                        blind_btn.setEnabled(false);
-                    }
-                }, 1000);
+//                display_myplayer_bind.setText(displayAmount.getText().toString());
+//                display_myplayer_bind.bringToFront();
+//                int DisplayAmt = Integer.parseInt(displayAmount.getText().toString().replaceAll("₹","").replace(" ",""));
+//                int TablelayAmt = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹","").replace(" ",""));
+//                int AMOUNT = DisplayAmt+TablelayAmt;
+//                txtVTableAmt.setText(String.valueOf(AMOUNT));
+//
+//                if (AMOUNT >= PotLimitInt){
+//                    Toast.makeText(this, "Pot Limit Exceeded", Toast.LENGTH_SHORT).show();
+//                }
+//                txtVTableAmt.setText(String.valueOf(DisplayAmt+TablelayAmt));
+//                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
+//                display_myplayer_bind.startAnimation(animations);
+//                display_myplayer_bind.setVisibility(View.GONE);
+//
+//                handler = new Handler();
+//                handler1 = new Handler();
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        below_layout.setVisibility(View.VISIBLE);
+////              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
+////              animation.setDuration(1000);
+////              animation.setFillAfter(true);
+////              below_layout.startAnimation(animation);
+//                    }
+//                }, 2000);
+//
+//                handler1.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+////          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
+////          animation1.setDuration(1000);
+////          animation1.setFillAfter(true);
+////          rl_bottom_caption.startAnimation(animation1);
+//                        rl_bottom_caption.setVisibility(View.GONE);
+//                        blind_btn.setEnabled(false);
+//                    }
+//                }, 1000);
+                chaalBlind();
                 break;
 
             case R.id.chaal_btn:
-                display_myplayer_bind.setText(displayAmount.getText().toString());
-                display_myplayer_bind.bringToFront();
-                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
-                display_myplayer_bind.startAnimation(animations);
-                display_myplayer_bind.setVisibility(View.GONE);
-
-                handler = new Handler();
-                handler1 = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        below_layout.setVisibility(View.VISIBLE);
-//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
-//              animation.setDuration(1000);
-//              animation.setFillAfter(true);
-//              below_layout.startAnimation(animation);
-                    }
-                }, 2000);
-
-                handler1.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
-//          animation1.setDuration(1000);
-//          animation1.setFillAfter(true);
-//          rl_bottom_caption.startAnimation(animation1);
-                        rl_bottom_caption.setVisibility(View.GONE);
-                        blind_btn.setEnabled(false);
-                    }
-                }, 1000);
+                chaalBlind();
                 break;
 
             case R.id.pack_btn:
@@ -1027,10 +979,91 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
                 Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
                 break;
+
+            case R.id.imgVInfo:
+                popupLimitedData(BootValue,PotLimit,MaxBlind,chaalLimit);
+                break;
         }
 
         return;
     }
+
+    //INFO POPUP DATA
+    public void popupLimitedData(String BootValue,String PotLimit,String MaxBlind,String chaalLimit){
+
+        LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View customView = layoutInflater.inflate(R.layout.private_gameinfo_popup, null);
+
+        txtVBootValue = customView.findViewById(R.id.txtVBootValue);
+        txtVPotlimit = customView.findViewById(R.id.txtVPotlimit);
+        txtVMaxBlind = customView.findViewById(R.id.txtVMaxBlind);
+        txtVChaalLimit = customView.findViewById(R.id.txtVChaalLimit);
+
+        txtVBootValue.setText(BootValue);
+        txtVPotlimit.setText(PotLimit);
+        txtVMaxBlind.setText(MaxBlind);
+        txtVChaalLimit.setText(chaalLimit);
+
+        infoclosebtn = customView.findViewById(R.id.infoclose);
+
+        //instantiate popup window
+        infopopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
+
+        //display the popup window
+        infopopupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
+
+        //close the popup window on button click
+        infoclosebtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infopopupWindow.dismiss();
+            }
+        });
+    }
+
+    //CHAAl & BLIND
+    public void chaalBlind(){
+        Handler handler1 = new Handler();
+        display_myplayer_bind.setText(displayAmount.getText().toString());
+        display_myplayer_bind.bringToFront();
+        int DisplayAmtc = Integer.parseInt(displayAmount.getText().toString().replaceAll("₹","").replace(" ",""));
+        int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹","").replace(" ",""));
+        int AMOUNT = DisplayAmtc+TablelayAmtc;
+        txtVTableAmt.setText(String.valueOf(AMOUNT));
+
+        if (AMOUNT >= PotLimitInt){
+            Toast.makeText(this, "Pot Limit Exceeded", Toast.LENGTH_SHORT).show();
+        }
+        animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
+        display_myplayer_bind.startAnimation(animations);
+        display_myplayer_bind.setVisibility(View.GONE);
+
+        handler = new Handler();
+        handler1 = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                below_layout.setVisibility(View.VISIBLE);
+//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
+//              animation.setDuration(1000);
+//              animation.setFillAfter(true);
+//              below_layout.startAnimation(animation);
+            }
+        }, 2000);
+
+        handler1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
+//          animation1.setDuration(1000);
+//          animation1.setFillAfter(true);
+//          rl_bottom_caption.startAnimation(animation1);
+                rl_bottom_caption.setVisibility(View.GONE);
+                blind_btn.setEnabled(false);
+            }
+        }, 1000);
+    }
+
 
     public String setUserApi(String url) {
         InputStream inputStream = null;
@@ -1300,6 +1333,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
     private boolean sequence = false;
+    public static String BootValue,PotLimit,MaxBlind,chaalLimit;
+    int PotLimitInt;
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1313,6 +1348,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("Check123", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                BootValue = jsonObjMain.getString("boot_value");
+                MaxBlind = jsonObjMain.getString("max_no_blinds");
+                PotLimit = jsonObjMain.getString("pot_limit");
+                PotLimitInt = Integer.parseInt(PotLimit);
+                chaalLimit = jsonObjMain.getString("chaal_limit");
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
@@ -1343,11 +1384,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
-                    String boot_value = key.getString("boot_value");
-                    String max_no_blinds = key.getString("max_no_blinds");
-                    String pot_limit = key.getString("pot_limit");
-                    String desk_limit = key.getString("desk_limit");
-                    String chaal_limit = key.getString("chaal_limit");
                     String user_name = key.getString("user_name");
 
                     Log.i("CHECk",""+arrayListUserIdSequence.get(i));
@@ -1376,29 +1412,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     }
 
                 }
-
-
-
-                /*JSONArray u_arr = new JSONArray(jsonObjMain.getString("data"));
-
-                int u_len = u_arr.length();
-
-                for (int u = 0; u < u_len; u++) {
-
-                    JSONObject id = arr.getJSONObject(u);
-
-                    if (u == 0) {
-                        user_id1.setText(id.getString("users_id"));
-                    } else if (u == 1) {
-                        user_id2.setText(id.getString("users_id"));
-                    } else if (u == 2) {
-                        user_id.setText(id.getString("users_id"));
-                    } else if (u == 3) {
-                        user_id3.setText(id.getString("users_id"));
-                    } else if (u == 4) {
-                        user_id4.setText(id.getString("users_id"));
-                    }
-                }*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }

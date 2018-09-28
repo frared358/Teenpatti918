@@ -63,7 +63,8 @@
                 android:id="@+id/table"
                 android:layout_width="410dp"
                 android:layout_height="match_parent"
-                android:layout_centerInParent="true"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:src="@drawable/teenpattitableimage"
                 app:layout_widthPercent="70%" />
@@ -73,17 +74,17 @@
                 app:layout_heightPercent="25%"
                 app:layout_widthPercent="30%">
 
-                <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-                    android:id="@+id/progressChaalTimer"
-                    android:layout_centerHorizontal="true"
-                    android:layout_above="@+id/txtVTableAmt"
-                    app:rcRadius="5dp"
-                    app:rcBackgroundPadding="2dp"
-                    app:rcReverse="true"
-                    app:rcProgressColor="@color/Black"
-                    app:rcBackgroundColor="@color/colorYellow"
-                    app:layout_heightPercent="8%"
-                    app:layout_widthPercent="70%"/>
+                <!--<com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar-->
+                    <!--android:id="@+id/progressChaalTimer"-->
+                    <!--android:layout_centerHorizontal="true"-->
+                    <!--android:layout_above="@+id/txtVTableAmt"-->
+                    <!--app:rcRadius="5dp"-->
+                    <!--app:rcBackgroundPadding="2dp"-->
+                    <!--app:rcReverse="true"-->
+                    <!--app:rcProgressColor="@color/Black"-->
+                    <!--app:rcBackgroundColor="@color/colorYellow"-->
+                    <!--app:layout_heightPercent="8%"-->
+                    <!--app:layout_widthPercent="70%"/>-->
 
 
                 <TextView
@@ -445,13 +446,13 @@
                 tools:ignore="NotSibling">
 
 
+
                 <ImageView
                     android:id="@+id/myplayer"
                     android:src="@drawable/yellow_circle"
                     app:layout_heightPercent="100%"
                     app:layout_widthPercent="100%"
                     android:visibility="visible"/>
-
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/inner_player_img"
@@ -460,6 +461,34 @@
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
+
+                <com.dinuscxj.progressbar.CircleProgressBar
+                    android:id="@+id/custom_progress2"
+                    app:style="solid"
+                    android:layout_marginStart="7.5dp"
+                    android:layout_marginTop="6.5dp"
+                    app:progress_shader="radial"
+                    app:progress_stroke_width="1dp"
+                    app:progress_background_color="#0162ff00"
+                    app:progress_start_color="#9662ff00"
+                    app:layout_heightPercent="89%"
+                    app:layout_widthPercent="89%"  />
+
+
+                <ImageView
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/stars"
+                    android:id="@+id/winnerblinker1"
+                    android:visibility="invisible"/>
+
+                <!--<ImageView-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:src="@drawable/stars2"-->
+                    <!--android:id="@+id/winnerblinker2"-->
+                    <!--android:visibility="invisible"/>-->
+
 
                 <TextView
                     android:id="@+id/nametext"

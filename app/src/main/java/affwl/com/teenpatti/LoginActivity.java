@@ -48,8 +48,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
-import static affwl.com.teenpatti.DataHolder.convertInputStreamToString;
-
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageView selectimage, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, camera, choosepic;
@@ -377,11 +375,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     DataHolder.setData(LoginActivity.this,"userid",DataHolder.user_id);
 
-                    if(rememberMeCheckBox.isChecked())
-                    {
-                        saveLoginDetails(username,password);
-                    }
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                        if (rememberMeCheckBox.isChecked()) {
+                            saveLoginDetails(username, password);
+                        }
+                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Enter Correct Details", Toast.LENGTH_SHORT).show();

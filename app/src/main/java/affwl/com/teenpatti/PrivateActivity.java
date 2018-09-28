@@ -1,5 +1,6 @@
 package affwl.com.teenpatti;
 
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Message;
 import android.support.percent.PercentLayoutHelper;
 import android.support.percent.PercentRelativeLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -17,9 +19,12 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -30,6 +35,7 @@ import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
+import com.dinuscxj.progressbar.CircleProgressBar;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -55,18 +61,18 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
     ImageView handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn;
     TextView closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
-    TextView txtVBootValue,txtVPotlimit,txtVMaxBlind,txtVChaalLimit;
+    TextView txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
     Session session;
     LinearLayout below_layout;
-    TextView display_myplayer_bind, txtVBalanceMainPlayer,txtVTableAmt;
+    TextView display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt;
     Animation animations;
     CircleImageView inner_player_img;
-    ImageView card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15;
+    ImageView card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1;
 
     Animation animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8,
-            animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15;
+            animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
 
     TextView btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4;
     PercentRelativeLayout rl_bottom_caption;
@@ -74,16 +80,18 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     String Username;
     Handler handler, handlerLoad;
     int minteger = 0;
-
-
     TextView displayAmount;
+    private CircleProgressBar mCustomProgressBar2;
+
     RoundCornerProgressBar progressChaalTimer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
 
-        new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id="+DataHolder.getDataString(this,"userid"));
+        new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
+
         //new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
 //        handle_right = findViewById(R.id.handle_right);
 //        handle_right.setOnClickListener(this);
@@ -98,15 +106,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        navigationView.setNavigationItemSelectedListener(this);
         //private List<UserData> UserDataList = new ArrayList<>();
 
-        progressChaalTimer = findViewById(R.id.progressChaalTimer);
+//        progressChaalTimer = findViewById(R.id.progressChaalTimer);
 
-        progressChaalTimer.setMax(100);
+//        progressChaalTimer.setMax(100);
 
         display_myplayer_bind = findViewById(R.id.display_myplayer_bind);
         rl_bottom_caption = findViewById(R.id.rl_bottom_caption);
         below_layout = findViewById(R.id.below_layout);
         relativeLayout = findViewById(R.id.privaterecycler);
         txtVTableAmt = findViewById(R.id.txtVTableAmt);
+        mCustomProgressBar2 = (CircleProgressBar) findViewById(R.id.custom_progress2);
 
         //        implemention of user profile pic
         profile = findViewById(R.id.inner_player_img);
@@ -123,7 +132,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         user_id3 = findViewById(R.id.user_id3);
         user_id4 = findViewById(R.id.user_id4);
 
-      txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
+        txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
 
 //        code = findViewById(R.id.code);
         session = new Session(this);
@@ -156,24 +165,24 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         chaal_btn = findViewById(R.id.chaal_btn);
         chaal_btn.setOnClickListener(this);
 
-        CountDownTimer countDownTimer =  new CountDownTimer(20 * 1000, 20) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                //long progress = (61000 - millisUntilFinished) / 1000;
-                long progress = (millisUntilFinished) / 1000;
-                int p = (int)progress;
-
-                //Log.i("COUNT TAG",p+" "+String.valueOf(millisUntilFinished));
-
-                progressChaalTimer.setProgress(p*5);
-            }
-
-            @Override
-            public void onFinish() {
-                //the progressBar will be invisible after 60 000 miliseconds ( 1 minute)
-            }
-        };
-        countDownTimer.start();
+//        CountDownTimer countDownTimer =  new CountDownTimer(20 * 1000, 20) {
+//            @Override
+//            public void onTick(long millisUntilFinished) {
+//                //long progress = (61000 - millisUntilFinished) / 1000;
+//                long progress = (millisUntilFinished) / 1000;
+//                int p = (int)progress;
+//
+//                //Log.i("COUNT TAG",p+" "+String.valueOf(millisUntilFinished));
+//
+//                progressChaalTimer.setProgress(p*5);
+//            }
+//
+//            @Override
+//            public void onFinish() {
+//                //the progressBar will be invisible after 60 000 miliseconds ( 1 minute)
+//            }
+//        };
+//        countDownTimer.start();
 
 //        Animation on blindshow_layout
 //        LinearLayout blindshow_layout=findViewById(R.id.blindshow_layout);
@@ -194,8 +203,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        Implementation of Blind
 
 
-
-
 //        Implementation of Pack Button
         inner_player_img = findViewById(R.id.inner_player_img);
         pack_btn = findViewById(R.id.pack_btn);
@@ -211,7 +218,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         animatecard7 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_left2);
         animatecard8 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom2);
         animatecard9 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_right2);
-        animatecard10 = AnimationUtils.loadAnimation(this,R.anim.translate_top_right2);
+        animatecard10 = AnimationUtils.loadAnimation(this, R.anim.translate_top_right2);
 
         animatecard11 = AnimationUtils.loadAnimation(this, R.anim.translate_top_left3);
         animatecard12 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_left3);
@@ -236,7 +243,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card13 = findViewById(R.id.card13);
         card14 = findViewById(R.id.card14);
         card15 = findViewById(R.id.card15);
-
 
 
         //see myplayer card
@@ -316,6 +322,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             @Override
             public void onAnimationEnd(Animation animation) {
+
                 // Pass the Intent to switch to other Activity
 
 //                RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) card1.getLayoutParams();
@@ -337,7 +344,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params1.addRule(RelativeLayout.RIGHT_OF, R.id.rl_playerbg1);
 //                params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 view1.requestLayout();
-                view1.layout(300, 0, view1.getWidth()+300, view1.getHeight());
+                view1.layout(300, 0, view1.getWidth() + 300, view1.getHeight());
                 view1.setRotation(-30.0f);
 
                 View view2 = findViewById(R.id.card2);
@@ -350,7 +357,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 //                params2.addRule(RelativeLayout.BELOW, R.id.rl_playerbg1);
 //                params2.addRule(RelativeLayout.RIGHT_OF, R.id.rl_playerbg2);
-                view2.layout(300, 0, view2.getWidth()+300, view2.getHeight());
+                view2.layout(300, 0, view2.getWidth() + 300, view2.getHeight());
                 view2.setRotation(-30.0f);
                 view2.requestLayout();
 
@@ -363,7 +370,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                info3.leftMarginPercent = 0.52f;
 //                params3.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 //                params3.addRule(RelativeLayout.RIGHT_OF, R.id.rl_myplayer);
-                view3.layout(300, 0, view3.getWidth()+300, view3.getHeight());
+                view3.layout(300, 0, view3.getWidth() + 300, view3.getHeight());
                 view3.setRotation(-30.0f);
                 view3.requestLayout();
 
@@ -377,7 +384,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params4.addRule(RelativeLayout.BELOW, R.id.rl_playerbg3);
 //                params4.addRule(RelativeLayout.ALIGN_PARENT_END);
 //                params4.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                view4.layout(300, 0, view4.getWidth()+300, view4.getHeight());
+                view4.layout(300, 0, view4.getWidth() + 300, view4.getHeight());
                 view4.setRotation(-30.0f);
                 view4.requestLayout();
 
@@ -390,7 +397,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                info5.rightMarginPercent = 0.14f;
 //                params5.addRule(RelativeLayout.ALIGN_PARENT_END);
 //                params5.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-                view5.layout(300, 0, view5.getWidth()+300, view5.getHeight());
+                view5.layout(300, 0, view5.getWidth() + 300, view5.getHeight());
                 view5.setRotation(-30.0f);
                 view5.requestLayout();
 
@@ -404,7 +411,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params6.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 //               params6.setMargins(-80, 350, 0, 0);
 //                params6.addRule(RelativeLayout.RIGHT_OF, R.id.card1);
-                view6.layout(200, 0, view6.getWidth()+200, view6.getHeight());
+                view6.layout(200, 0, view6.getWidth() + 200, view6.getHeight());
                 view6.setRotation(-10.0f);
                 view6.requestLayout();
 
@@ -418,7 +425,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params7.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 //                params7.addRule(RelativeLayout.RIGHT_OF, R.id.card2);
 //                params7.setMargins(-80, 350, 0, 0);
-                view7.layout(200, 0, view7.getWidth()+200, view7.getHeight());
+                view7.layout(200, 0, view7.getWidth() + 200, view7.getHeight());
                 view7.setRotation(-10.0f);
                 view7.requestLayout();
 
@@ -436,7 +443,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params8.addRule(RelativeLayout.RIGHT_OF,R.id.card3);
 //                params8.addRule(RelativeLayout.RIGHT_OF, R.id.rl_myplayer);
 //                params8.setMargins(-95, 350, 0, 0);
-                view8.layout(200, 0, view8.getWidth()+200, view8.getHeight());
+                view8.layout(200, 0, view8.getWidth() + 200, view8.getHeight());
                 view8.setRotation(-10.0f);
                 view8.requestLayout();
 
@@ -452,7 +459,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params9.addRule(RelativeLayout.BELOW, R.id.rl_playerbg3);
 //                params9.addRule(RelativeLayout.RIGHT_OF,R.id.card4);
 //                params9.setMargins(-80, 350, 0, 0);
-                view9.layout(200, 0, view9.getWidth()+200, view9.getHeight());
+                view9.layout(200, 0, view9.getWidth() + 200, view9.getHeight());
                 view9.setRotation(-10.0f);
                 view9.requestLayout();
 
@@ -467,7 +474,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params10.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 //                params10.setMargins(-80, 350, 0, 0);
 //                params10.addRule(RelativeLayout.RIGHT_OF,R.id.card5);
-                view10.layout(200, 0, view10.getWidth()+200, view10.getHeight());
+                view10.layout(200, 0, view10.getWidth() + 200, view10.getHeight());
                 view10.setRotation(-10.0f);
                 view10.requestLayout();
 
@@ -481,7 +488,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 ////                params11.addRule(RelativeLayout.RIGHT_OF, R.id.card6);
 ////                params11.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 ////                params11.setMargins(-60, 350, 0, 0);
-                view11.layout(100, 0, view11.getWidth()+100, view11.getHeight());
+                view11.layout(100, 0, view11.getWidth() + 100, view11.getHeight());
                 view11.setRotation(10.0f);
                 view11.requestLayout();
 
@@ -495,7 +502,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params12.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 //                params12.addRule(RelativeLayout.RIGHT_OF, R.id.card7);
 //                params12.setMargins(-60, 350, 0, 0);
-                view12.layout(100, 0, view12.getWidth()+100, view12.getHeight());
+                view12.layout(100, 0, view12.getWidth() + 100, view12.getHeight());
                 view12.setRotation(10.0f);
                 view12.requestLayout();
 
@@ -512,7 +519,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params13.addRule(RelativeLayout.CENTER_HORIZONTAL);
 //                params13.addRule(RelativeLayout.RIGHT_OF,R.id.card8);
 //                params13.setMargins(-90, 350, 0, 0);
-                view13.layout(100, 0, view13.getWidth()+100, view13.getHeight());
+                view13.layout(100, 0, view13.getWidth() + 100, view13.getHeight());
                 view13.setRotation(10.0f);
                 view13.requestLayout();
 
@@ -527,7 +534,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params14.addRule(RelativeLayout.ALIGN_PARENT_END);
 //                params14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 //                params14.addRule(RelativeLayout.BELOW, R.id.rl_playerbg3);
-                view14.layout(100, 0, view14.getWidth()+100, view14.getHeight());
+                view14.layout(100, 0, view14.getWidth() + 100, view14.getHeight());
 //                params14.setMargins(-60, 350, 0, 0);
                 view14.setRotation(10.0f);
                 view14.requestLayout();
@@ -554,7 +561,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params15.addRule(RelativeLayout.ALIGN_PARENT_END);
 //                params15.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 //                params15.addRule(RelativeLayout.RIGHT_OF,R.id.card10);
-                view15.layout(100, 0, view15.getWidth()+100, view15.getHeight());
+                view15.layout(100, 0, view15.getWidth() + 100, view15.getHeight());
                 view15.setRotation(10.0f);
                 view15.requestLayout();
 
@@ -835,6 +842,81 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        chal_limit.setText(DataHolder.getSTACK(PrivateActivity.this, "chal_limit"));
 //        chance.setText(DataHolder.getSTACK(PrivateActivity.this, "chance"));
 //        cards.setText(DataHolder.getSTACK(PrivateActivity.this, "cards"));
+
+
+        //User Turn indicator
+
+        player1 = findViewById(R.id.player1);
+        player1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                player1.startAnimation(animBlink);
+            }
+        });
+
+
+        //Winner Animation
+
+        winnerblinker1 = (ImageView) findViewById(R.id.winnerblinker1);
+//        winnerblinker2 = (ImageView) findViewById(R.id.winnerblinker2);
+        myplayer = (ImageView) findViewById(R.id.myplayer);
+
+        // load the animation
+        animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
+
+        // set animation listener
+        animBlink.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (animation == animBlink) {
+                }
+            }
+
+        });
+//        myplayer.setOnClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                winnerblinker1.setVisibility(View.VISIBLE);
+//                winnerblinker2.setVisibility(View.VISIBLE);
+//
+//                // start the animation
+//                winnerblinker1.startAnimation(animBlink);
+//                winnerblinker2.startAnimation(animBlink);
+//                Toast.makeText(PrivateActivity.this, "Click barabar hai!", Toast.LENGTH_LONG).show();
+//            }
+//        });
+
+        winnerblinker1.setVisibility(View.INVISIBLE);
+        winnerblinker1.postDelayed(new Runnable() {
+            public void run() {
+                winnerblinker1.setVisibility(View.VISIBLE);
+                myplayer.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        winnerblinker1.setVisibility(View.VISIBLE);
+//                        winnerblinker2.setVisibility(View.VISIBLE);
+
+                        // start the animation
+                        winnerblinker1.startAnimation(animBlink);
+//                        winnerblinker2.startAnimation(animBlink);
+                    }
+                });
+                winnerblinker1.clearAnimation();
+                winnerblinker1.setVisibility(View.GONE);
+            }
+        }, 6000);
     }
 
 
@@ -881,7 +963,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         String sub;
         Handler handler = new Handler();
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.plus_btn:
                 sub = displayAmount.getText().toString();
                 minteger = Integer.parseInt(sub) * 2;
@@ -890,7 +972,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);
                 minus_btn.setEnabled(true);
-                Log.i("AmtSUb",""+minteger);
+                Log.i("AmtSUb", "" + minteger);
                 break;
 
             case R.id.minus_btn:
@@ -898,11 +980,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 plus_btn.setEnabled(true);
                 minus_btn.setEnabled(false);
                 sub = displayAmount.getText().toString();
-                Toast.makeText(this, ""+sub, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "" + sub, Toast.LENGTH_SHORT).show();
                 minteger = Integer.parseInt(sub) / 2;
                 displayAmount.setText(String.valueOf(minteger));
                 minus_btn.setImageResource(R.drawable.minus_disabled);
-                Log.i("AmtSUb",""+minteger);
+                Log.i("AmtSUb", "" + minteger);
                 break;
 
             case R.id.blind_btn:
@@ -981,7 +1063,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.imgVInfo:
-                popupLimitedData(BootValue,PotLimit,MaxBlind,chaalLimit);
+                popupLimitedData(BootValue, PotLimit, MaxBlind, chaalLimit);
                 break;
         }
 
@@ -989,7 +1071,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //INFO POPUP DATA
-    public void popupLimitedData(String BootValue,String PotLimit,String MaxBlind,String chaalLimit){
+    public void popupLimitedData(String BootValue, String PotLimit, String MaxBlind, String chaalLimit) {
 
         LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View customView = layoutInflater.inflate(R.layout.private_gameinfo_popup, null);
@@ -1022,16 +1104,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //CHAAl & BLIND
-    public void chaalBlind(){
+    public void chaalBlind() {
         Handler handler1 = new Handler();
         display_myplayer_bind.setText(displayAmount.getText().toString());
         display_myplayer_bind.bringToFront();
-        int DisplayAmtc = Integer.parseInt(displayAmount.getText().toString().replaceAll("₹","").replace(" ",""));
-        int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹","").replace(" ",""));
-        int AMOUNT = DisplayAmtc+TablelayAmtc;
+        int DisplayAmtc = Integer.parseInt(displayAmount.getText().toString().replaceAll("₹", "").replace(" ", ""));
+        int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹", "").replace(" ", ""));
+        int AMOUNT = DisplayAmtc + TablelayAmtc;
         txtVTableAmt.setText(String.valueOf(AMOUNT));
 
-        if (AMOUNT >= PotLimitInt){
+        if (AMOUNT >= PotLimitInt) {
             Toast.makeText(this, "Pot Limit Exceeded", Toast.LENGTH_SHORT).show();
         }
         animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
@@ -1197,7 +1279,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    String cardUrl1,cardUrl2,cardUrl3,cardUrl4,cardUrl5,cardUrl6,cardUrl7,cardUrl8,cardUrl9,cardUrl10,cardUrl11,cardUrl12,cardUrl13,cardUrl14,cardUrl15;
+    String cardUrl1, cardUrl2, cardUrl3, cardUrl4, cardUrl5, cardUrl6, cardUrl7, cardUrl8, cardUrl9, cardUrl10, cardUrl11, cardUrl12, cardUrl13, cardUrl14, cardUrl15;
+
     private class getUserDataAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1238,9 +1321,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             cardUrl2 = Url2;
                             cardUrl3 = Url3;
 
-                            Log.i("URL 1",  i+" "+Url1);
-                            Log.i("URL 2",  i+" "+Url2);
-                            Log.i("URL 3",  i+" "+Url3);
+                            Log.i("URL 1", i + " " + Url1);
+                            Log.i("URL 2", i + " " + Url2);
+                            Log.i("URL 3", i + " " + Url3);
 
                             nametext1.setText(key.getString("username"));
                         } else if (i == 1) {
@@ -1252,9 +1335,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             cardUrl5 = Url5;
                             cardUrl6 = Url6;
 
-                            Log.i("URL 4",  i+" "+Url4);
-                            Log.i("URL 5",  i+" "+Url5);
-                            Log.i("URL 6",  i+" "+Url6);
+                            Log.i("URL 4", i + " " + Url4);
+                            Log.i("URL 5", i + " " + Url5);
+                            Log.i("URL 6", i + " " + Url6);
 
                             nametext2.setText(key.getString("username"));
 
@@ -1266,9 +1349,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             cardUrl8 = Url8;
                             cardUrl9 = Url9;
 
-                            Log.i("URL 7",  i+" "+Url7);
-                            Log.i("URL 8",  i+" "+Url8);
-                            Log.i("URL 9",  i+" "+Url9);
+                            Log.i("URL 7", i + " " + Url7);
+                            Log.i("URL 8", i + " " + Url8);
+                            Log.i("URL 9", i + " " + Url9);
 
                             nametext.setText(key.getString("username"));
 
@@ -1280,9 +1363,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             cardUrl11 = Url11;
                             cardUrl12 = Url12;
 
-                            Log.i("URL 10",  i+" "+Url10);
-                            Log.i("URL 11",  i+" "+Url11);
-                            Log.i("URL 12",  i+" "+Url12);
+                            Log.i("URL 10", i + " " + Url10);
+                            Log.i("URL 11", i + " " + Url11);
+                            Log.i("URL 12", i + " " + Url12);
 
                             nametext3.setText(key.getString("username"));
                         } else if (i == 4) {
@@ -1293,9 +1376,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             cardUrl14 = Url14;
                             cardUrl15 = Url15;
 
-                            Log.i("URL 13",  i+" "+Url13);
-                            Log.i("URL 14",  i+" "+Url14);
-                            Log.i("URL 15",  i+" "+Url15);
+                            Log.i("URL 13", i + " " + Url13);
+                            Log.i("URL 14", i + " " + Url14);
+                            Log.i("URL 15", i + " " + Url15);
 
                             nametext4.setText(key.getString("username"));
                         }
@@ -1329,12 +1412,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
     private boolean sequence = false;
-    public static String BootValue,PotLimit,MaxBlind,chaalLimit;
+    public static String BootValue, PotLimit, MaxBlind, chaalLimit;
     int PotLimitInt;
+
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1364,18 +1447,18 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
 
-                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this,"userid"))){
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
                         sequence = true;
                     }
-                    if (sequence){
+                    if (sequence) {
                         arrayListUserIdSequence.add(userid);
-                    }else {
+                    } else {
                         arrayListUserId.add(userid);
                     }
                 }
 
-                if (arrayListUserId.size() > 0){
-                    for (int j=0;j<arrayListUserId.size();j++){
+                if (arrayListUserId.size() > 0) {
+                    for (int j = 0; j < arrayListUserId.size(); j++) {
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
                 }
@@ -1386,26 +1469,26 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     String userid = key.getString("user_id");
                     String user_name = key.getString("user_name");
 
-                    Log.i("CHECk",""+arrayListUserIdSequence.get(i));
+                    Log.i("CHECk", "" + arrayListUserIdSequence.get(i));
 
-                    if(userid.equals(arrayListUserIdSequence.get(0))){
+                    if (userid.equals(arrayListUserIdSequence.get(0))) {
                         nametext.setText(user_name);
                         user_id.setText(userid);
                         txtVBalanceMainPlayer.setText(key.getString("balance"));
 
-                    }else if (userid.equals(arrayListUserIdSequence.get(1))){
+                    } else if (userid.equals(arrayListUserIdSequence.get(1))) {
                         nametext1.setText(user_name);
                         user_id1.setText(userid);
 
-                    }else if (userid.equals(arrayListUserIdSequence.get(2))){
+                    } else if (userid.equals(arrayListUserIdSequence.get(2))) {
                         nametext2.setText(user_name);
                         user_id2.setText(userid);
 
-                    }else if (userid.equals(arrayListUserIdSequence.get(3))){
+                    } else if (userid.equals(arrayListUserIdSequence.get(3))) {
                         nametext3.setText(user_name);
                         user_id3.setText(userid);
 
-                    }else if (userid.equals(arrayListUserIdSequence.get(4))){
+                    } else if (userid.equals(arrayListUserIdSequence.get(4))) {
                         nametext4.setText(user_name);
                         user_id4.setText(userid);
 
@@ -1416,5 +1499,29 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
         }
+    }
+
+
+    //User Play Time
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        simulateProgress();
+    }
+
+    private void simulateProgress() {
+        ValueAnimator animator = ValueAnimator.ofInt(0, 100);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                int progress = (int) animation.getAnimatedValue();
+                mCustomProgressBar2.setProgress(progress);
+            }
+        });
+        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setDuration(10000);
+        animator.start();
     }
 }

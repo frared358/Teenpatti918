@@ -584,6 +584,7 @@
                 android:layout_toRightOf="@+id/minus_btn"
                 android:padding="1dp"
                 android:text="2"
+                android:background="@drawable/empty_btn"
                 android:textAlignment="center"
                 android:textColor="@color/white"
                 app:layout_heightPercent="100%"

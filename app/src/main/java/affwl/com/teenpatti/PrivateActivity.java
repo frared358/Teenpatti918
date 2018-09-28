@@ -781,6 +781,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         String sub = displayInteger.getText().toString().substring(1);
                         minteger = Integer.parseInt(sub) * 2;
                         displayInteger.setText("₹" + minteger);
+                        displayInteger.setBackgroundResource(R.drawable.empty_btn);
 
                     }
 
@@ -794,6 +795,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         String sub = displayInteger.getText().toString().substring(1);
                         minteger = Integer.parseInt(sub) / 2;
                         displayInteger.setText("₹" + minteger);
+                        displayInteger.setBackgroundResource(R.drawable.empty_btn);
                     }
                 });
                 dealerclsbtn = customView.findViewById(R.id.dealerclose);
@@ -968,6 +970,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 sub = displayAmount.getText().toString();
                 minteger = Integer.parseInt(sub) * 2;
                 displayAmount.setText(String.valueOf(minteger));
+//                displayAmount.setBackgroundResource(R.drawable.empty_btn);
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);

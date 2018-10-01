@@ -158,7 +158,9 @@ public class DataHolder {
         return result;
     }
 
-    public static String  setApi(String url){
+    Context context;
+
+    public static String  setApiToken(String url,Context context){
 
         InputStream inputStream = null;
 
@@ -171,7 +173,8 @@ public class DataHolder {
 
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Token", DataHolder.LOGIN_TOKEN);
+            Toast.makeText(context, ""+getDataString(context,"token"), Toast.LENGTH_SHORT).show();
+            httpPost.setHeader("Authorization", getDataString(context,"token"));
             Log.e("Check","rtuyty");
 
             HttpResponse httpResponse = httpclient.execute(httpPost);

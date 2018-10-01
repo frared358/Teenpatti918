@@ -36,6 +36,7 @@ import android.widget.Toast;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.google.gson.JsonObject;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -92,7 +93,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
 
-        //new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
+        new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=43&round_number=1");
 //        handle_right = findViewById(R.id.handle_right);
 //        handle_right.setOnClickListener(this);
 //
@@ -1261,6 +1262,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             Httpget.setHeader("Accept", "application/json");
             Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
 
             HttpResponse httpResponse = httpclient.execute(Httpget);
             inputStream = httpResponse.getEntity().getContent();
@@ -1414,7 +1416,220 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    private class getCardDataAsyncTask extends AsyncTask<String, Void, String> {
 
+        @Override
+        protected String doInBackground(String... urls) {
+            return getUserApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+
+            Log.i("Check", "" + result);
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                String message = jsonObjMain.getString("message");
+                Log.i("TAG", "" + message);
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+                int len = arr.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject key = arr.getJSONObject(i);
+                    /* TODO "cardsallocatedusers_id": "20189210004",
+                       TODO "first_name": "Ravi",
+                       TODO "cardone": "http://213.136.81.137/Cards/2_Hearts.png",
+                       TODO "cardtwo": "http://213.136.81.137/Cards/2_Spades.png",
+                       TODO "cardthree": "http://213.136.81.137/Cards/7_Spades.png",
+                       TODO "given_cards": "3,4,24",
+                       TODO "cardseen": "seen",
+                       TODO "round_number": "1",
+                       TODO "winner_type": "Pair",
+                       TODO "winner_rank": ""*/
+
+                    if (i == 0) {
+                        String Url1 = key.getString("cardone");
+                        String Url2 = key.getString("cardtwo");
+                        String Url3 = key.getString("cardthree");
+                        cardUrl1 = Url1;
+                        cardUrl2 = Url2;
+                        cardUrl3 = Url3;
+                        Log.i("URL 1", i + " " + Url1);
+                        Log.i("URL 2", i + " " + Url2);
+                        Log.i("URL 3", i + " " + Url3);
+                        nametext1.setText(key.getString("first_name"));
+                    } else if (i == 1) {
+                        String Url4 = key.getString("cardone");
+                        String Url5 = key.getString("cardtwo");
+                        String Url6 = key.getString("cardthree");
+                        cardUrl4 = Url4;
+                        cardUrl5 = Url5;
+                        cardUrl6 = Url6;
+                        Log.i("URL 4", i + " " + Url4);
+                        Log.i("URL 5", i + " " + Url5);
+                        Log.i("URL 6", i + " " + Url6);
+                        nametext2.setText(key.getString("first_name"));
+                    } else if (i == 2) {
+                        String Url7 = key.getString("cardone");
+                        String Url8 = key.getString("cardtwo");
+                        String Url9 = key.getString("cardthree");
+                        cardUrl7 = Url7;
+                        cardUrl8 = Url8;
+                        cardUrl9 = Url9;
+                        Log.i("URL 7", i + " " + Url7);
+                        Log.i("URL 8", i + " " + Url8);
+                        Log.i("URL 9", i + " " + Url9);
+                        nametext.setText(key.getString("first_name"));
+                    } else if (i == 3) {
+                        String Url10 = key.getString("cardone");
+                        String Url11 = key.getString("cardtwo");
+                        String Url12 = key.getString("cardthree");
+                        cardUrl10 = Url10;
+                        cardUrl11 = Url11;
+                        cardUrl12 = Url12;
+                        Log.i("URL 10", i + " " + Url10);
+                        Log.i("URL 11", i + " " + Url11);
+                        Log.i("URL 12", i + " " + Url12);
+                        nametext3.setText(key.getString("first_name"));
+                    } else if (i == 4) {
+                        String Url13 = key.getString("cardone");
+                        String Url14 = key.getString("cardtwo");
+                        String Url15 = key.getString("cardthree");
+                        cardUrl13 = Url13;
+                        cardUrl14 = Url14;
+                        cardUrl15 = Url15;
+                        Log.i("URL 13", i + " " + Url13);
+                        Log.i("URL 14", i + " " + Url14);
+                        Log.i("URL 15", i + " " + Url15);
+                        nametext4.setText(key.getString("first_name"));
+                    }
+
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+//            try {
+//                JSONObject jsonObjMain = new JSONObject(result.toString());
+//                String message = jsonObjMain.getString("message");
+//                Log.i("TAG", "" + message);
+//
+//                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+//
+//                int len = arr.length();
+//
+//                for (int i = 0; i < len; i++) {
+//
+//                    JSONObject key = arr.getJSONObject(i);
+////
+////                    Log.i("Card","" + card1);
+////                    Log.i("Card","" + card2);
+////                    Log.i("Card","" + card3);
+////
+////                    nametext.setText(key.getString("username"));
+////                    user_id.setText(key.getString("users_id"));
+//                    {
+//                        if (i == 0) {
+//                            String Url1 = key.getString("card1");
+//                            String Url2 = key.getString("card2");
+//                            String Url3 = key.getString("card3");
+//
+//                            cardUrl1 = Url1;
+//                            cardUrl2 = Url2;
+//                            cardUrl3 = Url3;
+//
+//                            Log.i("URL 1", i + " " + Url1);
+//                            Log.i("URL 2", i + " " + Url2);
+//                            Log.i("URL 3", i + " " + Url3);
+//
+//                            nametext1.setText(key.getString("username"));
+//                        } else if (i == 1) {
+//                            String Url4 = key.getString("card1");
+//                            String Url5 = key.getString("card2");
+//                            String Url6 = key.getString("card3");
+//
+//                            cardUrl4 = Url4;
+//                            cardUrl5 = Url5;
+//                            cardUrl6 = Url6;
+//
+//                            Log.i("URL 4", i + " " + Url4);
+//                            Log.i("URL 5", i + " " + Url5);
+//                            Log.i("URL 6", i + " " + Url6);
+//
+//                            nametext2.setText(key.getString("username"));
+//
+//                        } else if (i == 2) {
+//                            String Url7 = key.getString("card1");
+//                            String Url8 = key.getString("card2");
+//                            String Url9 = key.getString("card3");
+//                            cardUrl7 = Url7;
+//                            cardUrl8 = Url8;
+//                            cardUrl9 = Url9;
+//
+//                            Log.i("URL 7", i + " " + Url7);
+//                            Log.i("URL 8", i + " " + Url8);
+//                            Log.i("URL 9", i + " " + Url9);
+//
+//                            nametext.setText(key.getString("username"));
+//
+//                        } else if (i == 3) {
+//                            String Url10 = key.getString("card1");
+//                            String Url11 = key.getString("card2");
+//                            String Url12 = key.getString("card3");
+//                            cardUrl10 = Url10;
+//                            cardUrl11 = Url11;
+//                            cardUrl12 = Url12;
+//
+//                            Log.i("URL 10", i + " " + Url10);
+//                            Log.i("URL 11", i + " " + Url11);
+//                            Log.i("URL 12", i + " " + Url12);
+//
+//                            nametext3.setText(key.getString("username"));
+//                        } else if (i == 4) {
+//                            String Url13 = key.getString("card1");
+//                            String Url14 = key.getString("card2");
+//                            String Url15 = key.getString("card3");
+//                            cardUrl13 = Url13;
+//                            cardUrl14 = Url14;
+//                            cardUrl15 = Url15;
+//
+//                            Log.i("URL 13", i + " " + Url13);
+//                            Log.i("URL 14", i + " " + Url14);
+//                            Log.i("URL 15", i + " " + Url15);
+//
+//                            nametext4.setText(key.getString("username"));
+//                        }
+//                    }
+//                }
+//
+//                JSONArray u_arr = new JSONArray(jsonObjMain.getString("data"));
+//
+//                int u_len = u_arr.length();
+//
+//                for (int u = 0; u < u_len; u++) {
+//
+//                    JSONObject id = arr.getJSONObject(u);
+//
+//                    if (u == 0) {
+//                        user_id1.setText(id.getString("users_id"));
+//                    } else if (u == 1) {
+//                        user_id2.setText(id.getString("users_id"));
+//                    } else if (u == 2) {
+//                        user_id.setText(id.getString("users_id"));
+//                    } else if (u == 3) {
+//                        user_id3.setText(id.getString("users_id"));
+//                    } else if (u == 4) {
+//                        user_id4.setText(id.getString("users_id"));
+//                    }
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+        }
+    }
+    //setApiToken
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
     private boolean sequence = false;

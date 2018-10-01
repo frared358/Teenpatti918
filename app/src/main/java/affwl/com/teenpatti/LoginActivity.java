@@ -13,8 +13,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -48,6 +51,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.concurrent.TimeUnit;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.READ_PHONE_STATE;
+
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageView selectimage, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, camera, choosepic;
@@ -57,8 +65,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     LoginDatabaseHelper loginDatabaseHelper;
     DBHandler dbHandler;
     EditText edittextusername, edittextpassword;
-
     String username, password;
+
+    private static final int PERMISSION_REQUEST_CODE = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,13 +105,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         session = new Session(this);
         loginDatabaseHelper = new LoginDatabaseHelper(this);
         dbHandler = new DBHandler(this, "UserInfo", null, 1);
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "Please Provide Permission", Toast.LENGTH_SHORT).show();
-        } else {
-            requestPermission();
-        }
 
         if(DataHolder.getDataBoolean(this,"remember_me") && DataHolder.getDataLong(this,"ExpiredDate") > System.currentTimeMillis()){
 
@@ -111,6 +113,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             edittextpassword.setText(DataHolder.getDataString(this,"password"));
 
         }
+
+        checkPermission();
+        requestPermission();
 
     }
 
@@ -188,6 +193,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 session.put(encodeimage, setNameHere);
                 long result = loginDatabaseHelper.add(encodeimage, setNameHere);
             }
+
+
         }
         else if (v.getId()== R.id.rememberMeCheckBox){
             if (rememberMeCheckBox.isChecked()){
@@ -308,27 +315,66 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return cursor.getString(column_index);
     }
 
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_COARSE_LOCATION);
+        int result2 = ContextCompat.checkSelfPermission(getApplicationContext(), CAMERA);
+        int result3 = ContextCompat.checkSelfPermission(getApplicationContext(), READ_PHONE_STATE);
+
+        return result == PackageManager.PERMISSION_GRANTED &&
+                result1 == PackageManager.PERMISSION_GRANTED &&
+                result2 ==PackageManager.PERMISSION_GRANTED &&
+                result3 == PackageManager.PERMISSION_GRANTED;
+    }
+
     public void requestPermission() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-            new AlertDialog.Builder(this)
-                    .setTitle("")
-                    .setMessage("This permission is required for camera and gallery")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
+
+        ActivityCompat.requestPermissions(this, new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, CAMERA, READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0) {
+
+                    boolean locationAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean cameraAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean coarselocationAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    boolean readphonestate = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+
+                    if (locationAccepted && cameraAccepted && coarselocationAccepted && readphonestate)
+                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+                    else {
+                        Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+                                showMessageOKCancel("You need to allow access to the permissions",
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    requestPermissions(new String[]{ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, CAMERA, READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+                                                }
+                                            }
+                                        });
+                                return;
+                            }
                         }
-                    })
-                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .create().show();
-        } else {
-            ActivityCompat.requestPermissions(LoginActivity.this, new String[]{Manifest.permission.CAMERA}, 1);
+                    }
+                }
+                break;
         }
+    }
+
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(LoginActivity.this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {

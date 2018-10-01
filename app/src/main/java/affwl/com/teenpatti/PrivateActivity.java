@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -971,7 +972,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 sub = displayAmount.getText().toString();
                 minteger = Integer.parseInt(sub) * 2;
                 displayAmount.setText(String.valueOf(minteger));
-//                displayAmount.setBackgroundResource(R.drawable.empty_btn);
+                displayAmount.setBackgroundResource(R.drawable.emptybtn);
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);
@@ -987,6 +988,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 Toast.makeText(this, "" + sub, Toast.LENGTH_SHORT).show();
                 minteger = Integer.parseInt(sub) / 2;
                 displayAmount.setText(String.valueOf(minteger));
+                displayAmount.setBackgroundResource(R.drawable.emptybtn);
                 minus_btn.setImageResource(R.drawable.minus_disabled);
                 Log.i("AmtSUb", "" + minteger);
                 break;

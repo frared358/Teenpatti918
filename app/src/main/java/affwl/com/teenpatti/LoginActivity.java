@@ -281,7 +281,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    //Implementation of camera
+    //Camera Implementation
     @Override
     protected void onActivityResult(int requestCode, int resultcode, Intent data) {
         if (requestCode == 1) {

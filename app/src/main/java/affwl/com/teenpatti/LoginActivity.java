@@ -404,6 +404,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
+                DataHolder.setData(LoginActivity.this,"token",jsonObjMain.getString("token").toString());
+
 
                 if (message.equalsIgnoreCase("successfully authenticated")) {
 

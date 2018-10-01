@@ -1429,6 +1429,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         protected void onPostExecute(String result) {
 
             Log.i("Check", "" + result);
+            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataString(PrivateActivity.this,"token"), Toast.LENGTH_SHORT).show();
 
             try {
                 JSONObject jsonObjMain = new JSONObject(result);

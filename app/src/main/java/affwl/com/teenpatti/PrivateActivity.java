@@ -92,9 +92,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
 
-        new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
+        //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
 
         new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=43&round_number=1");
+        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
+        new GetChanceAsyncTask().execute("http://213.136.81.137:8081/api/getchancedetail?desk_id=43&round=1&turn=1");
 //        handle_right = findViewById(R.id.handle_right);
 //        handle_right.setOnClickListener(this);
 //
@@ -1438,6 +1440,28 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                 int len = arr.length();
+
+                for (int j = 0; j < len; j++) {
+
+                    JSONObject key = arr.getJSONObject(j);
+                    String userid = key.getString("cardsallocatedusers_id");
+
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
+                        sequence = true;
+                    }
+                    if (sequence) {
+                        arrayListUserIdSequence.add(userid);
+                    } else {
+                        arrayListUserId.add(userid);
+                    }
+                }
+
+                if (arrayListUserId.size() > 0) {
+                    for (int j = 0; j < arrayListUserId.size(); j++) {
+                        arrayListUserIdSequence.add(arrayListUserId.get(j));
+                    }
+                }
+
                 for (int i = 0; i < len; i++) {
                     JSONObject key = arr.getJSONObject(i);
                     /* TODO "cardsallocatedusers_id": "20189210004",
@@ -1450,8 +1474,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                        TODO "round_number": "1",
                        TODO "winner_type": "Pair",
                        TODO "winner_rank": ""*/
-
-                    if (i == 0) {
+                    String userid = key.getString("cardsallocatedusers_id");
+                    Log.i("CHECk", "" + arrayListUserIdSequence.get(i));
+                    if (userid.equals(arrayListUserIdSequence.get(0))) {
                         String Url1 = key.getString("cardone");
                         String Url2 = key.getString("cardtwo");
                         String Url3 = key.getString("cardthree");
@@ -1462,7 +1487,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         Log.i("URL 2", i + " " + Url2);
                         Log.i("URL 3", i + " " + Url3);
                         nametext1.setText(key.getString("first_name"));
-                    } else if (i == 1) {
+                    } else if (userid.equals(arrayListUserIdSequence.get(1))) {
                         String Url4 = key.getString("cardone");
                         String Url5 = key.getString("cardtwo");
                         String Url6 = key.getString("cardthree");
@@ -1473,7 +1498,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         Log.i("URL 5", i + " " + Url5);
                         Log.i("URL 6", i + " " + Url6);
                         nametext2.setText(key.getString("first_name"));
-                    } else if (i == 2) {
+                    } else if (userid.equals(arrayListUserIdSequence.get(2))) {
                         String Url7 = key.getString("cardone");
                         String Url8 = key.getString("cardtwo");
                         String Url9 = key.getString("cardthree");
@@ -1484,7 +1509,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         Log.i("URL 8", i + " " + Url8);
                         Log.i("URL 9", i + " " + Url9);
                         nametext.setText(key.getString("first_name"));
-                    } else if (i == 3) {
+                    } else if (userid.equals(arrayListUserIdSequence.get(3))) {
                         String Url10 = key.getString("cardone");
                         String Url11 = key.getString("cardtwo");
                         String Url12 = key.getString("cardthree");
@@ -1495,7 +1520,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         Log.i("URL 11", i + " " + Url11);
                         Log.i("URL 12", i + " " + Url12);
                         nametext3.setText(key.getString("first_name"));
-                    } else if (i == 4) {
+                    } else if (userid.equals(arrayListUserIdSequence.get(4))) {
                         String Url13 = key.getString("cardone");
                         String Url14 = key.getString("cardtwo");
                         String Url15 = key.getString("cardthree");
@@ -1513,123 +1538,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-//            try {
-//                JSONObject jsonObjMain = new JSONObject(result.toString());
-//                String message = jsonObjMain.getString("message");
-//                Log.i("TAG", "" + message);
-//
-//                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-//
-//                int len = arr.length();
-//
-//                for (int i = 0; i < len; i++) {
-//
-//                    JSONObject key = arr.getJSONObject(i);
-////
-////                    Log.i("Card","" + card1);
-////                    Log.i("Card","" + card2);
-////                    Log.i("Card","" + card3);
-////
-////                    nametext.setText(key.getString("username"));
-////                    user_id.setText(key.getString("users_id"));
-//                    {
-//                        if (i == 0) {
-//                            String Url1 = key.getString("card1");
-//                            String Url2 = key.getString("card2");
-//                            String Url3 = key.getString("card3");
-//
-//                            cardUrl1 = Url1;
-//                            cardUrl2 = Url2;
-//                            cardUrl3 = Url3;
-//
-//                            Log.i("URL 1", i + " " + Url1);
-//                            Log.i("URL 2", i + " " + Url2);
-//                            Log.i("URL 3", i + " " + Url3);
-//
-//                            nametext1.setText(key.getString("username"));
-//                        } else if (i == 1) {
-//                            String Url4 = key.getString("card1");
-//                            String Url5 = key.getString("card2");
-//                            String Url6 = key.getString("card3");
-//
-//                            cardUrl4 = Url4;
-//                            cardUrl5 = Url5;
-//                            cardUrl6 = Url6;
-//
-//                            Log.i("URL 4", i + " " + Url4);
-//                            Log.i("URL 5", i + " " + Url5);
-//                            Log.i("URL 6", i + " " + Url6);
-//
-//                            nametext2.setText(key.getString("username"));
-//
-//                        } else if (i == 2) {
-//                            String Url7 = key.getString("card1");
-//                            String Url8 = key.getString("card2");
-//                            String Url9 = key.getString("card3");
-//                            cardUrl7 = Url7;
-//                            cardUrl8 = Url8;
-//                            cardUrl9 = Url9;
-//
-//                            Log.i("URL 7", i + " " + Url7);
-//                            Log.i("URL 8", i + " " + Url8);
-//                            Log.i("URL 9", i + " " + Url9);
-//
-//                            nametext.setText(key.getString("username"));
-//
-//                        } else if (i == 3) {
-//                            String Url10 = key.getString("card1");
-//                            String Url11 = key.getString("card2");
-//                            String Url12 = key.getString("card3");
-//                            cardUrl10 = Url10;
-//                            cardUrl11 = Url11;
-//                            cardUrl12 = Url12;
-//
-//                            Log.i("URL 10", i + " " + Url10);
-//                            Log.i("URL 11", i + " " + Url11);
-//                            Log.i("URL 12", i + " " + Url12);
-//
-//                            nametext3.setText(key.getString("username"));
-//                        } else if (i == 4) {
-//                            String Url13 = key.getString("card1");
-//                            String Url14 = key.getString("card2");
-//                            String Url15 = key.getString("card3");
-//                            cardUrl13 = Url13;
-//                            cardUrl14 = Url14;
-//                            cardUrl15 = Url15;
-//
-//                            Log.i("URL 13", i + " " + Url13);
-//                            Log.i("URL 14", i + " " + Url14);
-//                            Log.i("URL 15", i + " " + Url15);
-//
-//                            nametext4.setText(key.getString("username"));
-//                        }
-//                    }
-//                }
-//
-//                JSONArray u_arr = new JSONArray(jsonObjMain.getString("data"));
-//
-//                int u_len = u_arr.length();
-//
-//                for (int u = 0; u < u_len; u++) {
-//
-//                    JSONObject id = arr.getJSONObject(u);
-//
-//                    if (u == 0) {
-//                        user_id1.setText(id.getString("users_id"));
-//                    } else if (u == 1) {
-//                        user_id2.setText(id.getString("users_id"));
-//                    } else if (u == 2) {
-//                        user_id.setText(id.getString("users_id"));
-//                    } else if (u == 3) {
-//                        user_id3.setText(id.getString("users_id"));
-//                    } else if (u == 4) {
-//                        user_id4.setText(id.getString("users_id"));
-//                    }
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
         }
     }
     //setApiToken
@@ -1663,7 +1571,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 int len = arr.length();
 
-                for (int i = 0; i < len; i++) {
+                /*for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
@@ -1682,9 +1590,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     for (int j = 0; j < arrayListUserId.size(); j++) {
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
-                }
+                }*/
 
-                for (int i = 0; i < len; i++) {
+                /*for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
@@ -1715,7 +1623,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     }
 
-                }
+                }*/
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1744,5 +1652,128 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setDuration(10000);
         animator.start();
+    }
+
+
+    public String chanceApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("deskid", 43);
+            jsonObject.accumulate("userid", "20189210009");
+            jsonObject.accumulate("chaalamount", "4");
+            jsonObject.accumulate("chance_status", "online");
+            jsonObject.accumulate("potvalue", "5000");
+            jsonObject.accumulate("balance", "100000");
+            jsonObject.accumulate("round", "1");
+            jsonObject.accumulate("show", "1");
+            jsonObject.accumulate("seen_blind", "seen");
+            jsonObject.accumulate("dealer_id", 1);
+            jsonObject.accumulate("tip", "10");
+            jsonObject.accumulate("gamestatus", "active");
+            jsonObject.accumulate("turn", "1");
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    private class ChanceAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return chanceApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            Log.i("Check123", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class GetChanceAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return getUserApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            Log.i("Check123", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                int len = arr.length();
+
+                for (int i=0;i<len;i++){
+                    JSONObject key = arr.getJSONObject(i);
+
+                    String chanceid = key.getString("chanceid");
+                    String desk_id = key.getString("desk_id");
+                    String chaal_amount = key.getString("chaal_amount");
+                    String user_id = key.getString("user_id");
+                    String chance_status = key.getString("chance_status");
+                    String pot_value = key.getString("pot_value");
+                    String balance = key.getString("balance");
+                    String round = key.getString("round");
+                    String show = key.getString("show");
+                    String seen_blind = key.getString("seen_blind");
+                    String dealer_id = key.getString("dealer_id");
+                    String tip = key.getString("tip");
+                    String turn = key.getString("turn");
+                    String game_status = key.getString("game_status");
+                    String win_lose = key.getString("win_lose");
+                    String datetime = key.getString("datetime");
+
+                    Log.i("CHANCESID",""+chanceid);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

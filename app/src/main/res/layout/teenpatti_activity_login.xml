@@ -190,6 +190,7 @@
                             android:textColor="#ffffff"
                             android:textSize="12sp" />
                     </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
@@ -200,45 +201,64 @@
                 android:layout_marginLeft="80dp"
                 android:layout_marginTop="30dp"
                 android:background="@color/colorLanguageBg"
-                android:visibility="gone"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:visibility="gone">
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_select_language"
-                    android:gravity="center"
-                    android:text="@string/language_english"
-                    android:textColor="@color/colorWhite" />
+                    android:id="@+id/user_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="andorid_id" />
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_deselect_language"
-                    android:gravity="center"
-                    android:text="@string/language_hindi"
-                    android:textColor="@color/colorWhite" />
+                    android:id="@+id/android_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="andorid_id" />
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_deselect_language"
-                    android:gravity="center"
-                    android:text="@string/language_gujarati"
-                    android:textColor="@color/colorWhite" />
+                    android:id="@+id/imei"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="imei" />
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_deselect_language"
-                    android:gravity="center"
-                    android:text="@string/language_marathi"
-                    android:textColor="@color/colorWhite" />
+                    android:id="@+id/imsi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="imsi" />
+
+                <TextView
+                    android:id="@+id/uuid"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="uuid" />
+
+                <TextView
+                    android:id="@+id/device_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="device_name"/>
+
+                <TextView
+                    android:id="@+id/sim_operator"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="sim_operator"/>
+
+                <TextView
+                    android:id="@+id/network_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="network_type"/>
+
+                <TextView
+                    android:id="@+id/software_version"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="software_version"/>
             </LinearLayout>
+
         </LinearLayout>
 
 

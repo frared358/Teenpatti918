@@ -11,13 +11,14 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -45,11 +46,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
@@ -65,9 +73,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     LoginDatabaseHelper loginDatabaseHelper;
     DBHandler dbHandler;
     EditText edittextusername, edittextpassword;
-    String username, password;
+    String username, password, userid, deviceid, devicename, softwareversion, operatorname, networktype, imei, imsi, uuid;
+
+    private TextView user_id;
+    private TextView android_id;
+    private TextView imei_number;
+    private TextView imsi_number;
+    private TextView uuid_number;
+    private TextView device_name;
+    private TextView sim_operator;
+    private TextView network_type;
+    private TextView software_version;
+    private static final String TAG = "loginactivity";
 
     private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,11 +126,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginDatabaseHelper = new LoginDatabaseHelper(this);
         dbHandler = new DBHandler(this, "UserInfo", null, 1);
 
-        if(DataHolder.getDataBoolean(this,"remember_me") && DataHolder.getDataLong(this,"ExpiredDate") > System.currentTimeMillis()){
+        if (DataHolder.getDataBoolean(this, "remember_me") && DataHolder.getDataLong(this, "ExpiredDate") > System.currentTimeMillis()) {
 
             rememberMeCheckBox.setChecked(true);
-            edittextusername.setText(DataHolder.getDataString(this,"username"));
-            edittextpassword.setText(DataHolder.getDataString(this,"password"));
+            edittextusername.setText(DataHolder.getDataString(this, "username"));
+            edittextpassword.setText(DataHolder.getDataString(this, "password"));
 
         }
 
@@ -129,47 +149,39 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             image = findViewById(R.id.avatar1);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.avatar2) {
+        } else if (id == R.id.avatar2) {
             image = findViewById(R.id.avatar2);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.avatar3) {
+        } else if (id == R.id.avatar3) {
             image = findViewById(R.id.avatar3);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.avatar4) {
+        } else if (id == R.id.avatar4) {
             image = findViewById(R.id.avatar4);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.avatar5) {
+        } else if (id == R.id.avatar5) {
             image = findViewById(R.id.avatar5);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.avatar6) {
+        } else if (id == R.id.avatar6) {
             image = findViewById(R.id.avatar6);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.avatar7) {
+        } else if (id == R.id.avatar7) {
             image = findViewById(R.id.avatar7);
             img = image.getDrawable();
             avatarimage.setImageDrawable(img);
-        }
-        else if (id == R.id.camera) {
+        } else if (id == R.id.camera) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent, 1);
-        }
-        else if (id == R.id.choosepic) {
+        } else if (id == R.id.choosepic) {
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 6);
-        }
-        else if (id == R.id.playNow) {
+        } else if (id == R.id.playNow) {
 
+            //get USERNAME and PASSWORD
             username = edittextusername.getText().toString();
             password = edittextpassword.getText().toString();
             if (username.equals("") || username == null) {
@@ -194,60 +206,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 long result = loginDatabaseHelper.add(encodeimage, setNameHere);
             }
 
-
-        }
-        else if (v.getId()== R.id.rememberMeCheckBox){
-            if (rememberMeCheckBox.isChecked()){
-                DataHolder.setData(this,"remember_me",true);
-            }else {
-                DataHolder.setData(this,"remember_me",false);
+        } else if (v.getId() == R.id.rememberMeCheckBox) {
+            if (rememberMeCheckBox.isChecked()) {
+                DataHolder.setData(this, "remember_me", true);
+            } else {
+                DataHolder.setData(this, "remember_me", false);
             }
         }
     }
 
     public void saveLoginDetails(String username, String password) {
-        DataHolder.setData(this,"username",username);
-        DataHolder.setData(this,"password",password);
-        DataHolder.setData(this,"ExpiredDate",System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24));
-    }
-
-    public String loginApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
-
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("user_name", username);
-            jsonObject.accumulate("password", password);
-
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
-
-            httpPost.setEntity(new StringEntity(json));
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-
-        return result;
+        DataHolder.setData(this, "username", username);
+        DataHolder.setData(this, "password", password);
+        DataHolder.setData(this, "ExpiredDate", System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24));
     }
 
     private void displayAlertMessage(String title, String message) {
@@ -323,7 +294,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         return result == PackageManager.PERMISSION_GRANTED &&
                 result1 == PackageManager.PERMISSION_GRANTED &&
-                result2 ==PackageManager.PERMISSION_GRANTED &&
+                result2 == PackageManager.PERMISSION_GRANTED &&
                 result3 == PackageManager.PERMISSION_GRANTED;
     }
 
@@ -390,6 +361,45 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return result;
     }
 
+    public String loginApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.accumulate("user_name", username);
+            jsonObject.accumulate("password", password);
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
     private class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -399,7 +409,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(String result) {
-            Log.i("Check", "" + result);
+            Log.i("CheckLogin", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
@@ -410,8 +420,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 if (message.equalsIgnoreCase("successfully authenticated")) {
 
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
-                    for(int i=0;i<array.length();i++)
-                    {
+                    for (int i = 0; i < array.length(); i++) {
                         JSONObject key = array.getJSONObject(i);
                         DataHolder.user_id = key.getString("userid");
                         DataHolder.first_name = key.getString("first_name");
@@ -419,14 +428,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.mobile_no = key.getString("mobile_no");
                         DataHolder.balance = key.getString("balance");
                         DataHolder.emailaddress = key.getString("emailaddress");
-                        Log.i("TAGTAGTAG",DataHolder.user_id+" "+DataHolder.first_name+" "+DataHolder.last_name+" "+DataHolder.mobile_no+" "+DataHolder.balance+" "+DataHolder.emailaddress);
+                        Log.i("TAGTAGTAG", DataHolder.user_id + " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }
-                    DataHolder.setData(LoginActivity.this,"userid",DataHolder.user_id);
+                    DataHolder.setData(LoginActivity.this, "userid", DataHolder.user_id);
 
-                        if (rememberMeCheckBox.isChecked()) {
-                            saveLoginDetails(username, password);
-                        }
-                        startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    if (rememberMeCheckBox.isChecked()) {
+                        saveLoginDetails(username, password);
+                    }
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                 } else {
                     Toast.makeText(getApplicationContext(), "Enter Correct Details", Toast.LENGTH_SHORT).show();
@@ -438,4 +447,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
+
+//    public boolean checkNetworkConnection() {
+//        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+//        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+//        boolean isConnected = false;
+//        if (networkInfo != null && (isConnected = networkInfo.isConnected())) {
+//            Toast.makeText(this, "Net Connected", Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(this, "Net Not Connected", Toast.LENGTH_SHORT).show();
+//        }
+//        return isConnected;
+//    }
+
+
+
 }

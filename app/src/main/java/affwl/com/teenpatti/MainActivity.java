@@ -1,14 +1,21 @@
 package affwl.com.teenpatti;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -37,26 +44,42 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.UUID;
+
+import static android.provider.Settings.Secure.ANDROID_ID;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
 
     ImageView showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
     PopupWindow RateuspopupWindow, HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
     RelativeLayout RelativeLayoutloader, relativelayout321, relativeLayoutsixpatti, relativeLayout_tourney, yellowchiplayout, orangechipslayout, limechipslayout, darkbluechiplayout, blackchipslayout, cyanchipslayout, ygreenchipslayout;
-    TextView loaderbuychips, joinnowbtn, howtoplay321btn, howtoplaysixpattibtn, joinnowsixpattibtn, join_tourneybtn, create_table_btn, join_variation_btn, txtVUserNameMain, code;
+    TextView txtVUserNameMain, code;
     Session session;
-    LinearLayout jokerlayout_btn, jokerinfo_layout, ak47_layout_btn, ak47info_layout, xboot_layout_btn, xboot_info_layout,
-            hukum_layout_btn, hukum_info_layout, muflis_layout_btn, muflis_info_layout, faceoff_layout_btn, faceoff_info_layout,
-            ljoker_layout_btn, ljoker_info_layout, nnnine_layout_btn, nnnine_info_layout;
 
-    ImageView joker_img, ak_img, xboot_img, hukum_img, muflis_img, faceoff_img, ljoker_img, nnnine_img;
-    ImageView mainychips, mainlimegchips, blackchips;
-    Animation animatechips1, animatechips2, animatechips3, animatechips4, animatechips5, animatechips6, animatechips7;
-    Handler handler, handlerLoad;
+
+
+    private TextView user_id;
+    private TextView deviceid;
+    private TextView imei_number;
+    private TextView imsi_number;
+    private TextView uuid_number;
+    private TextView device_name;
+    private TextView sim_operator;
+    private TextView network_type;
+    private TextView software_version;
+    private static final String TAG = "mainactivity";
+
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
 
 
     int value = 0;
@@ -75,22 +98,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.teenpatti_activity_main);
 
 
-//        ListView listView = (ListView) findViewById(R.id.ll);
-//        listView.setAdapter(adapter);
+        user_id = findViewById(R.id.user_id);
+        deviceid = findViewById(R.id.android_id);
+        imei_number = findViewById(R.id.imei);
+        imsi_number = findViewById(R.id.imsi);
+        uuid_number = findViewById(R.id.uuid);
+        network_type = findViewById(R.id.network_type);
+        sim_operator = findViewById(R.id.sim_operator);
+        device_name = findViewById(R.id.device_name);
+        software_version = findViewById(R.id.software_version);
 
         profile = findViewById(R.id.profile);
         txtVUserNameMain = findViewById(R.id.txtVUserNameMain);
 
-        final Animation Animchipsright = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_chips_right);
-        final Animation Animchipsleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_chips_left);
-//        final Animation Animttoleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_tto_left);
-
-//        mainychips = findViewById(R.id.mainychips);
-
-//        mainlimegchips = findViewById(R.id.mainlimegchips);
-//        mainlimegchips.setOnClickListener(this);
-
-//        blackchips = findViewById(R.id.blackchips);
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
 
         code = findViewById(R.id.code);
@@ -104,13 +124,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String name = session.getName();
         txtVUserNameMain.setText(DataHolder.first_name+" "+DataHolder.last_name);
 
-
-//        yellowchiplayout = findViewById(R.id.yellowchiplayout);
-//        orangechipslayout = findViewById(R.id.orangechipslayout);
-//        limechipslayout = findViewById(R.id.limechipslayout);
-//        blackchipslayout = findViewById(R.id.blackchipslayout);
-//        cyanchipslayout = findViewById(R.id.cyanchipslayout);
-//        darkbluechiplayout = findViewById(R.id.darkbluechiplayout);
         ygreenchipslayout = findViewById(R.id.ygreenchipslayout);
 
 
@@ -304,639 +317,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-
-//        ygreenchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_private.class);
-//                startActivity(intent);
-//            }
-//        });
-
-
-        //////////////// Popup for Variation ////////////////
-//        mainlimegchipsbtn = findViewById(R.id.mainlimegchips);
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
 
-//        mainlimegchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//                //instantiate the popup.xml layout file
-//                LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View customView = layoutInflater.inflate(R.layout.variation_join_table, null);
-//
-//                variation_closebtn = customView.findViewById(R.id.close_var_popup);
-//
-//                jokerlayout_btn = customView.findViewById(R.id.joker_layout);
-//                jokerinfo_layout = customView.findViewById(R.id.jokerinfo);
-//                joker_img = customView.findViewById(R.id.joker_img);
-//
-//                ak47_layout_btn = customView.findViewById(R.id.ak47_layout);
-//                ak47info_layout = customView.findViewById(R.id.ak47info);
-//                ak_img = customView.findViewById(R.id.ak_img);
-//
-//                xboot_layout_btn = customView.findViewById(R.id.xboot_layout);
-//                xboot_info_layout = customView.findViewById(R.id.xboot_info);
-//                xboot_img = customView.findViewById(R.id.xboot_img);
-//
-//                hukum_layout_btn = customView.findViewById(R.id.hukum_layout);
-//                hukum_info_layout = customView.findViewById(R.id.hukum_info);
-//                hukum_img = customView.findViewById(R.id.hukum_img);
-//
-//                muflis_layout_btn = customView.findViewById(R.id.muflis_layout);
-//                muflis_info_layout = customView.findViewById(R.id.muflis_info);
-//                muflis_img = customView.findViewById(R.id.muflis_img);
-//
-//                faceoff_layout_btn = customView.findViewById(R.id.faceoff_layout);
-//                faceoff_info_layout = customView.findViewById(R.id.faceoff_info);
-//                faceoff_img = customView.findViewById(R.id.faceoff_img);
-//
-//                ljoker_layout_btn = customView.findViewById(R.id.ljoker_layout);
-//                ljoker_info_layout = customView.findViewById(R.id.ljoker_info);
-//                ljoker_img = customView.findViewById(R.id.ljoker_img);
-//
-//                nnnine_layout_btn = customView.findViewById(R.id.nnnine_layout);
-//                nnnine_info_layout = customView.findViewById(R.id.nnnine_info);
-//                nnnine_img = customView.findViewById(R.id.nnnine_img);
-//
-//
-//                final Animation Animleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.left_translate);
-//                final Animation Animright = AnimationUtils.loadAnimation(MainActivity.this, R.anim.right_translate);
-//
-//
-//                //instantiate popup window
-//                join_table_popupwindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//                //display the popup window
-//                join_table_popupwindow.showAtLocation(RelativeLayoutloader, Gravity.CENTER, 0, 0);
-//
-//                variation_closebtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        join_table_popupwindow.dismiss();
-//                    }
-//                });
-//
-//
-//                // joker variation on click
-//
-//                jokerlayout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value == 0) {
-//                            ak47info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-////                           ak_img.setVisibility(View.VISIBLE);
-//                            jokerinfo_layout.setVisibility(View.VISIBLE);
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//                            Toast.makeText(MainActivity.this, "joker out", Toast.LENGTH_SHORT).show();
-//                            jokerinfo_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value = 1;
-//                            value1 = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        } else if (value == 1) {
-//                            ak47info_layout.clearAnimation();
-//                            jokerinfo_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            Toast.makeText(MainActivity.this, "joker in", Toast.LENGTH_SHORT).show();
-//
-//                            jokerinfo_layout.startAnimation(Animright);
-//                            Animright.setFillAfter(true);
-//                            value = 0;
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//                // AK47 variation on click
-//
-//                ak47_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value1 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-////                            xboot_info_layout.clearAnimation();
-////                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            ak47info_layout.setVisibility(View.VISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ak out", Toast.LENGTH_SHORT).show();
-//
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//                            ak47info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value1 = 1;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        } else if (value1 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ak in", Toast.LENGTH_SHORT).show();
-//
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            ak47info_layout.startAnimation(Animright);
-//                            Animright.setFillAfter(true);
-//                            value1 = 0;
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                // 4X boot variation on click
-//
-//                xboot_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value2 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.VISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "xboot out", Toast.LENGTH_SHORT).show();
-//
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            xboot_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value2 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value2 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "xboot in", Toast.LENGTH_SHORT).show();
-//
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.startAnimation(Animright);
-//                            value2 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//                // hukum variation on click
-//
-//                hukum_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value3 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "hukum out", Toast.LENGTH_SHORT).show();
-//
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            hukum_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value3 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value3 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "hukum in", Toast.LENGTH_SHORT).show();
-//
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            hukum_info_layout.startAnimation(Animright);
-//                            value3 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                // muflis variation on click
-//
-//                muflis_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value4 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "muflis out", Toast.LENGTH_SHORT).show();
-//
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            muflis_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value4 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value4 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "muflis in", Toast.LENGTH_SHORT).show();
-//
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            muflis_info_layout.startAnimation(Animright);
-//                            value4 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                //  faceoff variation on click
-//
-//                faceoff_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value5 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "faceoff out", Toast.LENGTH_SHORT).show();
-//
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            faceoff_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value5 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value5 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "faceoff in", Toast.LENGTH_SHORT).show();
-//
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            faceoff_info_layout.startAnimation(Animright);
-//                            value5 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                //  ljoker variation on click
-//
-//                ljoker_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value6 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            nnnine_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ljoker out", Toast.LENGTH_SHORT).show();
-//
-//                            ljoker_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            ljoker_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value6 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value6 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//                            ljoker_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ljoker in", Toast.LENGTH_SHORT).show();
-//
-//                            ljoker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            ljoker_info_layout.startAnimation(Animright);
-//                            value6 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                //  nnnine variation on click
-//
-//                nnnine_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value7 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//                            ljoker_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ljoker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.INVISIBLE);
-//                            nnnine_info_layout.setVisibility(View.VISIBLE);
-//
-//
-//                            Toast.makeText(MainActivity.this, "nnnine out", Toast.LENGTH_SHORT).show();
-//
-//                            nnnine_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            nnnine_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value7 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//
-//                            return;
-//                        }
-//                        if (value7 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//                            ljoker_info_layout.clearAnimation();
-//                            nnnine_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.INVISIBLE);
-//                            nnnine_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "nnnine in", Toast.LENGTH_SHORT).show();
-//
-//                            nnnine_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            nnnine_info_layout.startAnimation(Animright);
-//                            value7 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//                //join now the popup window on button click
-//                join_variation_btn = customView.findViewById(R.id.variation_jointble);
-//
-//                join_variation_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent intent = new Intent(MainActivity.this, LoadingScreen_variation.class);
-//                        startActivity(intent);
-//                    }
-//                });
-//            }
-//        });
-
-
-        // Animation of chips on main page
-
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate);
-//        findViewById(R.id.mainychips).startAnimation(animation);
-//        findViewById(R.id.mainlimegchips).startAnimation(animation);
-//        findViewById(R.id.mainorgchips).startAnimation(animation);
-//        findViewById(R.id.darkbluechips).startAnimation(animation);
-//        findViewById(R.id.cyanchips).startAnimation(animation);
-//        findViewById(R.id.blackchips).startAnimation(animation);
+
         findViewById(R.id.ygreenchips).startAnimation(animation);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -974,55 +358,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        handler = new Handler();
-        //DataHolder.showProgress(getApplicationContext());
-        handlerLoad = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                //new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
-            }
-        });
-        //txtVUserNameMain.setText(DataHolder.getSTACK(MainActivity.this, "username"));
-    }
+        getUUID();
+        getAndroidId();
+        getDeviceName();
+        getNetworkType();
+        getSimOperator();
+        getSoftwareVersion();
+        getImei();
+        getImsi();
+        new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
 
-    public String setUserApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost Httppost = new HttpPost(url);
-
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("username", txtVUserNameMain);
-
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
-
-            Httppost.setEntity(new StringEntity(json));
-            Httppost.setHeader("Accept", "application/json");
-            Httppost.setHeader("Content-type", "application/json");
-
-            HttpResponse httpResponse = httpclient.execute(Httppost);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Does Not Work";
-            Log.e("Check", "HOW" + result);
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-        Log.d("Check", result + "");
-        return result;
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -1036,116 +381,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         inputStream.close();
         return result;
     }
-
-    private class setUserDataAsyncTask extends AsyncTask<String, Void , String> {
-
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return setUserApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("Check", "" + result);
-            try{
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                if (message.equalsIgnoreCase("successfully authenticated")) {
-                    DataHolder.setSTACK(MainActivity.this, "username", txtVUserNameMain.getText().toString());
-                }
-//                Toast.makeText(getApplicationContext(), ""+message, Toast.LENGTH_SHORT).show();
-                Log.i("result", "Status" + message);
-            }catch (JSONException e){
-                e.printStackTrace();
-                DataHolder.unAuthorized(MainActivity.this, result);
-            }
-            DataHolder.cancelProgress();
-        }
-    }
-
-    public String getUserApi(String url){
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet Httpget = new HttpGet(url);
-
-            Httpget.setHeader("Accept", "application/json");
-            Httpget.setHeader("Content-type", "application/json");
-
-            HttpResponse httpResponse = httpclient.execute(Httpget);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-            Log.e("Check", "how " + result);
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-        return result;
-    }
-
-    private class getUserDataAsyncTask extends AsyncTask<String, Void, String>{
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return getUserApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-//            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
-            Log.i("Check", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                Log.i("TAG", "" + message);
-
-                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
-                int len = arr.length();
-
-                for (int i = 0; i < len; i++) {
-
-                    JSONObject key = arr.getJSONObject(i);
-
-                    if (i == 0) {
-//                        nametext1.setText(key.getString("username"));
-                    } else if (i == 1) {
-//                        nametext2.setText(key.getString("username"));
-                    } else if (i == 2) {
-                        //txtVUserNameMain.setText(key.getString("username"));
-                    } else if (i == 3) {
-//                        nametext3.setText(key.getString("username"));
-                    } else if (i == 4) {
-//                        nametext4.setText(key.getString("username"));
-                    }
-                }
-//                JSONObject jsonObjMain = new JSONObject(result.toString());
-//                String message = jsonObjMain.getString("message");
-//                Log.i("TAG", "" + message);
-//
-//
-//                JSONObject jsonObj = new JSONObject(jsonObjMain.getString("data"));
-//
-//                txtVUserNameMain.setText(jsonObj.getString("username"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-
 
 
     //////////// Onclick method for teenpatti table /////////////
@@ -1199,9 +434,196 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+
+//    Get Information About User Device
+
+    private String getUUID() {
+        // TODO Auto-generated method stub
+        final TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+        final String tmDevice, tmSerial, androidId;
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+        } else {
+            //TODO
+        }
+        tmDevice = "" + telephonyManager.getDeviceId();
+        tmSerial = "" + telephonyManager.getSimSerialNumber();
+        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), ANDROID_ID);
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        uuid_number.setText(deviceUuid.toString());
+        return deviceUuid.toString();
+    }
+
+    private String getImsi() {
+        // TODO Auto-generated method stub
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+        } else {
+            //TODO
+        }
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        imsi_number.setText(telephonyManager.getSubscriberId());
+        return telephonyManager.getSubscriberId();
+    }
+
+    private String getImei() {
+        // TODO Auto-generated method stub
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+        } else {
+            //TODO
+        }
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        imei_number.setText(telephonyManager.getDeviceId());
+        return telephonyManager.getDeviceId();
+    }
+
+    private String getAndroidId() {
+        // TODO Auto-generated method stub
+        deviceid.setText(Settings.Secure.getString(getContentResolver(),ANDROID_ID));
+        return Settings.Secure.getString(getContentResolver(), ANDROID_ID);
+    }
+
+    private String getDeviceName() {
+        String str = android.os.Build.MODEL;
+        device_name.setText(str);
+        return str;
+    }
+
+    private String getSimOperator() {
+        OperatorHolder operatorholder = new OperatorHolder(this);
+        sim_operator.setText(operatorholder.getOperatorName());
+        Log.i(TAG, operatorholder.getOperatorName());
+        return operatorholder.getOperatorName();
+    }
+
+    private String getNetworkType() {
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = telephonyManager.getNetworkType();
+        switch (networkType) {
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+                return "1xRTT";
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+                return "CDMA";
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+                return "EDGE";
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+                return "eHRPD";
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                return "EVDO rev. 0";
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                return "EVDO rev. A";
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                return "EVDO rev. B";
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+                return "GPRS";
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+                return "HSDPA";
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+                return "HSPA";
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return "HSPA+";
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+                return "HSUPA";
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return "iDen";
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return "LTE";
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+                return "UMTS";
+            case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                return "Unknown";
+        }
+        network_type.setText(getNetworkType());
+        throw new RuntimeException("New type of network");
+    }
+
+    private String getSoftwareVersion() {
+        String versionRelease = Build.VERSION.RELEASE;
+        software_version.setText(versionRelease);
+        return versionRelease;
+    }
+
+    public String DeviceApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("user_id", DataHolder.getDataString(MainActivity.this,"userid"));
+            jsonObject.accumulate("deviceid", getAndroidId());
+            jsonObject.accumulate("IMEI", getImei());
+            jsonObject.accumulate("IMSI", getImsi());
+            jsonObject.accumulate("UUID", getUUID());
+            jsonObject.accumulate("network_type", getNetworkType());
+            jsonObject.accumulate("operator_name", getSimOperator());
+            jsonObject.accumulate("device_name", getDeviceName());
+            jsonObject.accumulate("softwareversion", getSoftwareVersion());
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    private class DevicePost extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return DeviceApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("CheckDevice", ""+result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

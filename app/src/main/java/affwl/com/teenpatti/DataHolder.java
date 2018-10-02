@@ -222,6 +222,6 @@ public class DataHolder {
     }
 
 
-    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id,user_name, deviceid, device_name, softwareversion, operator_name, network_type, IMEI, IMSI, UUID;
+    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id;
 
 }

@@ -56,8 +56,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -336,8 +334,8 @@ public class MainActivity extends AppCompatActivity {
         ygreenchipslayout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
-//                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+//                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
             }

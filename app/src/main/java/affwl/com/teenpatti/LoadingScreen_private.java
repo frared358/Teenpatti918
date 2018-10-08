@@ -36,23 +36,23 @@ public class LoadingScreen_private extends AppCompatActivity {
             }
         });
 
-        Animation myani;
-        myani = AnimationUtils.loadAnimation(this, R.anim.inner_load);
-        findViewById(R.id.loadinginner).startAnimation(myani);
-        myani.setAnimationListener(new Animation.AnimationListener() {
+        Animation myAnimation;
+        myAnimation = AnimationUtils.loadAnimation(this, R.anim.inner_load);
+        findViewById(R.id.loadinginner).startAnimation(myAnimation);
+        myAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation myanim) {
+            public void onAnimationStart(Animation myAnimation) {
 
             }
 
             @Override
-            public void onAnimationEnd(Animation myanim) {
+            public void onAnimationEnd(Animation myAnimation) {
                 finish();
                 startActivity(new Intent(LoadingScreen_private.this, PrivateActivity.class));
             }
 
             @Override
-            public void onAnimationRepeat(Animation myanim) {
+            public void onAnimationRepeat(Animation myAnimation) {
 
             }
         });

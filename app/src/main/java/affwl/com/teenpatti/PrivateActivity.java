@@ -2,10 +2,10 @@ package affwl.com.teenpatti;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.percent.PercentLayoutHelper;
 import android.support.percent.PercentRelativeLayout;
@@ -74,20 +75,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 @SuppressLint("WrongViewCast")
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;;
-    TextView display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, player_balance, player_name, other_player_name, other_player_balance, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4;
+    ImageView card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player_blink_circle1,player_blink_circle2,player_blink_circle3,player_blink_circle4, oplayer_status_circle, player_status_circle, profile2, profile3, profile4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn;
+    TextView txtVTableAmt, display_myplayer_bind, txtVBalanceMainPlayer, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, player_balance, player_name, other_player_name, other_player_balance, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble, playerlayout;
     Session session;
     LinearLayout below_layout;
     CircleImageView inner_player_img;
-    Animation animations,animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
+    Animation animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
-    SharedPreferences sharedPreferences;
-    String Username;
-    Handler handler, handlerLoad;
+    View  viewBlinkCircle;
+    Handler handler;
     int minteger = 0;
     TextView displayAmount;
+    private CircleProgressBar progressBarChances;
     private CircleProgressBar mCustomProgressBar2;
     ScheduledExecutorService scheduleTaskExecutor;
     MediaPlayer mediaPlayer;
@@ -150,16 +151,18 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        navigationView.setNavigationItemSelectedListener(this);
         //private List<UserData> UserDataList = new ArrayList<>();
 
-//        progressChaalTimer = findViewById(R.id.progressChaalTimer);
+        //new GetChanceAsyncTask().execute("");
 
-//        progressChaalTimer.setMax(100);
+
+        //  new GetChanceAsyncTask().execute("http://213.136.81.137:8081/api/getchancedetail?desk_id="+DeskId+"&round=1&turn=1");
 
         display_myplayer_bind = findViewById(R.id.display_myplayer_bind);
         rl_bottom_caption = findViewById(R.id.rl_bottom_caption);
         below_layout = findViewById(R.id.below_layout);
         relativeLayout = findViewById(R.id.privaterecycler);
         txtVTableAmt = findViewById(R.id.txtVTableAmt);
-        mCustomProgressBar2 = (CircleProgressBar) findViewById(R.id.custom_progress2);
+        progressBarChances = findViewById(R.id.progressBarChances);
+        viewBlinkCircle = new View(PrivateActivity.this);
 
         //        implemention of user profile pic
 
@@ -196,51 +199,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         String Image = session.getImage();
 
 
-//        nametext.setText(name);
-//        nametext1.setText(name);
-//        nametext2.setText(name);
-//        nametext3.setText(name);
-//        nametext4.setText(name);
-
-//        user_id.setText(ID);
-//        user_id1.setText(ID);
-//        user_id2.setText(ID);
-//        user_id3.setText(ID);
-//        user_id4.setText(ID);
-
         blind_btn = findViewById(R.id.blind_btn);
         blind_btn.setOnClickListener(this);
         chaal_btn = findViewById(R.id.chaal_btn);
         chaal_btn.setOnClickListener(this);
 
-//        CountDownTimer countDownTimer =  new CountDownTimer(20 * 1000, 20) {
-//            @Override
-//            public void onTick(long millisUntilFinished) {
-//                //long progress = (61000 - millisUntilFinished) / 1000;
-//                long progress = (millisUntilFinished) / 1000;
-//                int p = (int)progress;
-//
-//                //Log.i("COUNT TAG",p+" "+String.valueOf(millisUntilFinished));
-//
-//                progressChaalTimer.setProgress(p*5);
-//            }
-//
-//            @Override
-//            public void onFinish() {
-//                //the progressBar will be invisible after 60 000 miliseconds ( 1 minute)
-//            }
-//        };
-//        countDownTimer.start();
-
-//        Animation on blindshow_layout
-//        LinearLayout blindshow_layout=findViewById(R.id.blindshow_layout);
-//        TranslateAnimation animationsb = new TranslateAnimation(0.0f, 0.0f,
-//                0.0f, 0.0f);          //  new TranslateAnimation(xFrom,xTo, yFrom,yTo)
-//        animationsb.setDuration(1000);  // animation duration
-//        animationsb.setFillAfter(true);
-//        blind_btn.startAnimation(animationsb);
-
-//        Implementation of increament amount
         displayAmount = findViewById(R.id.start_amount);
         plus_btn = findViewById(R.id.plus_btn);
         plus_btn.setOnClickListener(this);
@@ -248,7 +211,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         minus_btn.setOnClickListener(this);
         minus_btn.setEnabled(false);
 
-//        Implementation of Blind
+        //Blink Circle Active User
+        player_blink_circle1 = findViewById(R.id.player_blink_circle1);
+        player_blink_circle2 = findViewById(R.id.player_blink_circle2);
+        player_blink_circle3 = findViewById(R.id.player_blink_circle3);
+        player_blink_circle4 = findViewById(R.id.player_blink_circle4);
 
 
 //        Implementation of Pack Button
@@ -356,24 +323,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 // Pass the Intent to switch to other Activity
 
-//                RelativeLayout.LayoutParams params1 = (RelativeLayout.LayoutParams) card1.getLayoutParams();
-//                params1.height=getResources().getDimensionPixelSize(R.dimen.card_height);
-//                params1.width=getResources().getDimensionPixelSize(R.dimen.card_width);
-//                                params1.setMargins(-100, 350, 0, 0);
-//
-//                card1.setLayoutParams(params1);
-//                card1.setRotation(-30.0f);
-
                 View view1 = findViewById(R.id.card1);
                 PercentRelativeLayout.LayoutParams params1 = (PercentRelativeLayout.LayoutParams) view1.getLayoutParams();
                 PercentLayoutHelper.PercentLayoutInfo info1 = params1.getPercentLayoutInfo();
                 info1.widthPercent = 0.15f;
                 info1.heightPercent = 0.15f;
-//                info1.topMarginPercent = 0.20f;
-//                info1.leftMarginPercent = 0.10f;
-//                view1.setRotation(-30.0f);
-//                params1.addRule(RelativeLayout.RIGHT_OF, R.id.rl_playerbg1);
-//                params1.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                 view1.requestLayout();
                 view1.layout(300, 0, view1.getWidth() + 300, view1.getHeight());
                 view1.setRotation(-30.0f);
@@ -383,11 +337,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info2 = params2.getPercentLayoutInfo();
                 info2.widthPercent = 0.15f;
                 info2.heightPercent = 0.15f;
-//                info2.topMarginPercent = 0.60f;
-//                info2.leftMarginPercent = 0.10f;
-//                params2.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                params2.addRule(RelativeLayout.BELOW, R.id.rl_playerbg1);
-//                params2.addRule(RelativeLayout.RIGHT_OF, R.id.rl_playerbg2);
                 view2.layout(300, 0, view2.getWidth() + 300, view2.getHeight());
                 view2.setRotation(-30.0f);
                 view2.requestLayout();
@@ -395,12 +344,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 View view3 = findViewById(R.id.card3);
                 PercentRelativeLayout.LayoutParams params3 = (PercentRelativeLayout.LayoutParams) view3.getLayoutParams();
                 PercentLayoutHelper.PercentLayoutInfo info3 = params3.getPercentLayoutInfo();
-//                info3.topMarginPercent = 0.65f;
+
                 info3.widthPercent = 0.18f;
                 info3.heightPercent = 0.18f;
-//                info3.leftMarginPercent = 0.52f;
-//                params3.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                params3.addRule(RelativeLayout.RIGHT_OF, R.id.rl_myplayer);
                 view3.layout(300, 0, view3.getWidth() + 300, view3.getHeight());
                 view3.setRotation(-30.0f);
                 view3.requestLayout();
@@ -410,11 +356,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info4 = params4.getPercentLayoutInfo();
                 info4.widthPercent = 0.15f;
                 info4.heightPercent = 0.15f;
-//                info4.topMarginPercent = 0.25f;
-//                info4.rightMarginPercent = 0.44f;
-//                params4.addRule(RelativeLayout.BELOW, R.id.rl_playerbg3);
-//                params4.addRule(RelativeLayout.ALIGN_PARENT_END);
-//                params4.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 view4.layout(300, 0, view4.getWidth() + 300, view4.getHeight());
                 view4.setRotation(-30.0f);
                 view4.requestLayout();
@@ -424,10 +365,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info5 = params5.getPercentLayoutInfo();
                 info5.widthPercent = 0.15f;
                 info5.heightPercent = 0.15f;
-//                info5.topMarginPercent = 0.20f;
-//                info5.rightMarginPercent = 0.14f;
-//                params5.addRule(RelativeLayout.ALIGN_PARENT_END);
-//                params5.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                 view5.layout(300, 0, view5.getWidth() + 300, view5.getHeight());
                 view5.setRotation(-30.0f);
                 view5.requestLayout();
@@ -437,11 +374,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info6 = params6.getPercentLayoutInfo();
                 info6.widthPercent = 0.15f;
                 info6.heightPercent = 0.15f;
-//                info6.topMarginPercent = 0.20f;
-//                info6.leftMarginPercent = 0.12f;
-//                params6.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//               params6.setMargins(-80, 350, 0, 0);
-//                params6.addRule(RelativeLayout.RIGHT_OF, R.id.card1);
                 view6.layout(200, 0, view6.getWidth() + 200, view6.getHeight());
                 view6.setRotation(-10.0f);
                 view6.requestLayout();
@@ -451,11 +383,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info7 = params7.getPercentLayoutInfo();
                 info7.widthPercent = 0.15f;
                 info7.heightPercent = 0.15f;
-//                info7.topMarginPercent = 0.60f;
-//                info7.leftMarginPercent = 0.12f;
-//                params7.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                params7.addRule(RelativeLayout.RIGHT_OF, R.id.card2);
-//                params7.setMargins(-80, 350, 0, 0);
                 view7.layout(200, 0, view7.getWidth() + 200, view7.getHeight());
                 view7.setRotation(-10.0f);
                 view7.requestLayout();
@@ -465,15 +392,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info8 = params8.getPercentLayoutInfo();
                 info8.widthPercent = 0.18f;
                 info8.heightPercent = 0.18f;
-//                info8.topMarginPercent = 0.65f;
-//                info8.leftMarginPercent = 0.54f;
-//                params8.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                params8.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//                info8.rightMarginPercent=0.70f;
-//                params8.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//                params8.addRule(RelativeLayout.RIGHT_OF,R.id.card3);
-//                params8.addRule(RelativeLayout.RIGHT_OF, R.id.rl_myplayer);
-//                params8.setMargins(-95, 350, 0, 0);
                 view8.layout(200, 0, view8.getWidth() + 200, view8.getHeight());
                 view8.setRotation(-10.0f);
                 view8.requestLayout();
@@ -483,13 +401,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info9 = params9.getPercentLayoutInfo();
                 info9.widthPercent = 0.15f;
                 info9.heightPercent = 0.15f;
-//                info9.topMarginPercent = 0.25f;
-//                info9.rightMarginPercent = 0.42f;
-//                params9.addRule(RelativeLayout.ALIGN_PARENT_END);
-//                params9.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//                params9.addRule(RelativeLayout.BELOW, R.id.rl_playerbg3);
-//                params9.addRule(RelativeLayout.RIGHT_OF,R.id.card4);
-//                params9.setMargins(-80, 350, 0, 0);
                 view9.layout(200, 0, view9.getWidth() + 200, view9.getHeight());
                 view9.setRotation(-10.0f);
                 view9.requestLayout();
@@ -499,12 +410,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info10 = params10.getPercentLayoutInfo();
                 info10.widthPercent = 0.15f;
                 info10.heightPercent = 0.15f;
-//                info10.topMarginPercent = 0.20f;
-//                info10.rightMarginPercent = 0.12f;
-//                params10.addRule(RelativeLayout.ALIGN_PARENT_END);
-//                params10.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//                params10.setMargins(-80, 350, 0, 0);
-//                params10.addRule(RelativeLayout.RIGHT_OF,R.id.card5);
                 view10.layout(200, 0, view10.getWidth() + 200, view10.getHeight());
                 view10.setRotation(-10.0f);
                 view10.requestLayout();
@@ -514,11 +419,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info11 = params11.getPercentLayoutInfo();
                 info11.widthPercent = 0.15f;
                 info11.heightPercent = 0.15f;
-////                info11.topMarginPercent = 0.20f;
-////                info11.leftMarginPercent = 0.14f;
-////                params11.addRule(RelativeLayout.RIGHT_OF, R.id.card6);
-////                params11.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-////                params11.setMargins(-60, 350, 0, 0);
                 view11.layout(100, 0, view11.getWidth() + 100, view11.getHeight());
                 view11.setRotation(10.0f);
                 view11.requestLayout();
@@ -528,11 +428,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info12 = params12.getPercentLayoutInfo();
                 info12.widthPercent = 0.15f;
                 info12.heightPercent = 0.15f;
-//                info12.topMarginPercent = 0.60f;
-//                info12.leftMarginPercent = 0.14f;
-//                params12.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-//                params12.addRule(RelativeLayout.RIGHT_OF, R.id.card7);
-//                params12.setMargins(-60, 350, 0, 0);
                 view12.layout(100, 0, view12.getWidth() + 100, view12.getHeight());
                 view12.setRotation(10.0f);
                 view12.requestLayout();
@@ -543,13 +438,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info13 = params13.getPercentLayoutInfo();
                 info13.widthPercent = 0.18f;
                 info13.heightPercent = 0.18f;
-//                info13.topMarginPercent = 0.65f;
-//                info13.leftMarginPercent = 0.56f;
-//                params13.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
-
-//                params13.addRule(RelativeLayout.CENTER_HORIZONTAL);
-//                params13.addRule(RelativeLayout.RIGHT_OF,R.id.card8);
-//                params13.setMargins(-90, 350, 0, 0);
                 view13.layout(100, 0, view13.getWidth() + 100, view13.getHeight());
                 view13.setRotation(10.0f);
                 view13.requestLayout();
@@ -560,47 +448,23 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PercentLayoutHelper.PercentLayoutInfo info14 = params14.getPercentLayoutInfo();
                 info14.widthPercent = 0.15f;
                 info14.heightPercent = 0.15f;
-//                info14.topMarginPercent = 0.25f;
-//                info14.rightMarginPercent = 0.40f;
-//                params14.addRule(RelativeLayout.ALIGN_PARENT_END);
-//                params14.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//                params14.addRule(RelativeLayout.BELOW, R.id.rl_playerbg3);
                 view14.layout(100, 0, view14.getWidth() + 100, view14.getHeight());
 //                params14.setMargins(-60, 350, 0, 0);
                 view14.setRotation(10.0f);
                 view14.requestLayout();
-
-
-//                PercentLayoutHelper.PercentLayoutParams params15 = (PercentLayoutHelper.PercentLayoutParams) card15.getLayoutParams();
-//                PercentLayoutHelper.PercentLayoutInfo info15 = params15.getPercentLayoutInfo();
-//                info15.widthPercent = 0.15f;
-//                info15.heightPercent=0.15f;
-//                info15.topMarginPercent=0.20f;
-//                info15.endMarginPercent=0.55f;
-////                params15.addRule(RelativeLayout.RIGHT_OF,R.id.card10);
-////                params15.setMargins(-60, 350, 0, 0);
-//                card15.setLayoutParams((ViewGroup.LayoutParams) params15);
-//                card15.setRotation(10.0f);
 
                 View view15 = findViewById(R.id.card15);
                 PercentRelativeLayout.LayoutParams params15 = (PercentRelativeLayout.LayoutParams) view15.getLayoutParams();
                 PercentLayoutHelper.PercentLayoutInfo info15 = params15.getPercentLayoutInfo();
                 info15.widthPercent = 0.15f;
                 info15.heightPercent = 0.15f;
-//                info15.topMarginPercent = 0.20f;
-//                info15.rightMarginPercent = 0.10f;
-//                params15.addRule(RelativeLayout.ALIGN_PARENT_END);
-//                params15.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//                params15.addRule(RelativeLayout.RIGHT_OF,R.id.card10);
                 view15.layout(100, 0, view15.getWidth() + 100, view15.getHeight());
                 view15.setRotation(10.0f);
                 view15.requestLayout();
 
-//                new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
-
                 btn_see_cards.bringToFront();
                 btn_see_cards.setVisibility(View.VISIBLE);
-                rl_bottom_caption.setVisibility(View.VISIBLE);
+//                rl_bottom_caption.setVisibility(View.VISIBLE);
                 below_layout.setVisibility(View.GONE);
             }
         });
@@ -846,6 +710,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
 
+        //Winner Animation
+
         user_id.setText(DataHolder.getSTACK(PrivateActivity.this, "users_id"));
         user_id1.setText(DataHolder.getSTACK(PrivateActivity.this, "users_id"));
         user_id2.setText(DataHolder.getSTACK(PrivateActivity.this, "users_id"));
@@ -866,8 +732,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        chal_limit.setText(DataHolder.getSTACK(PrivateActivity.this, "chal_limit"));
 //        chance.setText(DataHolder.getSTACK(PrivateActivity.this, "chance"));
 //        cards.setText(DataHolder.getSTACK(PrivateActivity.this, "cards"));
-
-
         winnerblinker1 = (ImageView) findViewById(R.id.winnerblinker1);
         //load the animation
         animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
@@ -891,6 +755,29 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         });
+
+
+
+        winnerblinker1.setVisibility(View.INVISIBLE);
+        winnerblinker1.postDelayed(new Runnable() {
+            public void run() {
+                winnerblinker1.setVisibility(View.VISIBLE);
+                myplayer.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        winnerblinker1.setVisibility(View.VISIBLE);
+//                        winnerblinker2.setVisibility(View.VISIBLE);
+
+                        // start the animation
+                        winnerblinker1.startAnimation(animBlink);
+//                        winnerblinker2.startAnimation(animBlink);
+                    }
+                });
+                winnerblinker1.clearAnimation();
+                winnerblinker1.setVisibility(View.GONE);
+            }
+        }, 6000);
 
 //        getWifiLevel();
     }
@@ -921,6 +808,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(View v) {
                 Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
                 startActivity(intent);
+                try {
+                    if (broadcastReceiver != null) {
+                        unregisterReceiver(broadcastReceiver);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 finish();
             }
         });
@@ -930,7 +824,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     /////////// Onclick for Backtolobby /////////////
-
     public void backtolobby(View view) {
         Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
         startActivity(intent);
@@ -952,70 +845,26 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         switch (v.getId()) {
             case R.id.plus_btn:
-                sub = displayAmount.getText().toString();
-                minteger = Integer.parseInt(sub) * 2;
-                displayAmount.setText(String.valueOf(minteger));
+                ChaalAmount = ChaalAmount * 2;
+                displayAmount.setText(String.valueOf(ChaalAmount));
                 displayAmount.setBackgroundResource(R.drawable.emptybtn);
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);
                 minus_btn.setEnabled(true);
-                Log.i("AmtSUb", "" + minteger);
                 break;
 
             case R.id.minus_btn:
                 plus_btn.setImageResource(R.drawable.plus_btn);
                 plus_btn.setEnabled(true);
                 minus_btn.setEnabled(false);
-                sub = displayAmount.getText().toString();
-                Toast.makeText(this, "" + sub, Toast.LENGTH_SHORT).show();
-                minteger = Integer.parseInt(sub) / 2;
-                displayAmount.setText(String.valueOf(minteger));
+                ChaalAmount = ChaalAmount / 2;
+                displayAmount.setText(String.valueOf(ChaalAmount));
                 displayAmount.setBackgroundResource(R.drawable.emptybtn);
                 minus_btn.setImageResource(R.drawable.minus_disabled);
-                Log.i("AmtSUb", "" + minteger);
                 break;
 
             case R.id.blind_btn:
-//                display_myplayer_bind.setText(displayAmount.getText().toString());
-//                display_myplayer_bind.bringToFront();
-//                int DisplayAmt = Integer.parseInt(displayAmount.getText().toString().replaceAll("₹","").replace(" ",""));
-//                int TablelayAmt = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹","").replace(" ",""));
-//                int AMOUNT = DisplayAmt+TablelayAmt;
-//                txtVTableAmt.setText(String.valueOf(AMOUNT));
-//
-//                if (AMOUNT >= PotLimitInt){
-//                    Toast.makeText(this, "Pot Limit Exceeded", Toast.LENGTH_SHORT).show();
-//                }
-//                txtVTableAmt.setText(String.valueOf(DisplayAmt+TablelayAmt));
-//                animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
-//                display_myplayer_bind.startAnimation(animations);
-//                display_myplayer_bind.setVisibility(View.GONE);
-//
-//                handler = new Handler();
-//                handler1 = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        below_layout.setVisibility(View.VISIBLE);
-////              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
-////              animation.setDuration(1000);
-////              animation.setFillAfter(true);
-////              below_layout.startAnimation(animation);
-//                    }
-//                }, 2000);
-//
-//                handler1.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-////          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
-////          animation1.setDuration(1000);
-////          animation1.setFillAfter(true);
-////          rl_bottom_caption.startAnimation(animation1);
-//                        rl_bottom_caption.setVisibility(View.GONE);
-//                        blind_btn.setEnabled(false);
-//                    }
-//                }, 1000);
                 chaalBlind();
                 break;
 
@@ -1024,31 +873,32 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.pack_btn:
-                rl_bottom_caption.setVisibility(View.GONE);
-                btn_see_cards.setVisibility(View.GONE);
-                below_layout.setVisibility(View.VISIBLE);
-                card3.setVisibility(View.GONE);
-                card8.setVisibility(View.GONE);
-                card13.setVisibility(View.GONE);
-                inner_player_img.setImageResource(R.drawable.fade_inner_img);
+                packOperation();
                 break;
 
             case R.id.show_btn:
-                Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
-                Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
-                Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
+                Handler handlerDisp = new Handler();
+                Show_Status = "1";
+                handlerDisp.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
+                        Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
+                        Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
 
-                Glide.with(PrivateActivity.this).load(cardUrl4).into(card2);
-                Glide.with(PrivateActivity.this).load(cardUrl5).into(card7);
-                Glide.with(PrivateActivity.this).load(cardUrl6).into(card12);
+                        Glide.with(PrivateActivity.this).load(cardUrl4).into(card2);
+                        Glide.with(PrivateActivity.this).load(cardUrl5).into(card7);
+                        Glide.with(PrivateActivity.this).load(cardUrl6).into(card12);
 
-                Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
-                Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
-                Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
+                        Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
+                        Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
+                        Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
 
-                Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
-                Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
-                Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
+                        Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
+                        Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
+                        Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
+                    }
+                });
                 break;
 
             case R.id.imgVInfo:
@@ -1178,21 +1028,41 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         return;
     }
 
+
+    //PACK USER
+    public void packOperation(){
+        rl_bottom_caption.setVisibility(View.GONE);
+        btn_see_cards.setVisibility(View.GONE);
+        below_layout.setVisibility(View.VISIBLE);
+        card3.setVisibility(View.GONE);
+        card8.setVisibility(View.GONE);
+        card13.setVisibility(View.GONE);
+        inner_player_img.setImageResource(R.drawable.fade_inner_img);
+        chance_Status = "packed";
+        CHECK_TIME_OUT = true;
+        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
+    }
+
     //Seen Card Operation
-    public void seeCardOperation() {
-        Glide.with(PrivateActivity.this).load(cardUrl1).into(card3);
-        Glide.with(PrivateActivity.this).load(cardUrl2).into(card8);
-        Glide.with(PrivateActivity.this).load(cardUrl3).into(card13);
-//                new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
+    public void seeCardOperation(){
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(PrivateActivity.this).load(cardUrl1).into(card3);
+                Glide.with(PrivateActivity.this).load(cardUrl2).into(card8);
+                Glide.with(PrivateActivity.this).load(cardUrl3).into(card13);
+            }
+        });
+
         btn_see_cards.setVisibility(View.GONE);
         show_btn.setVisibility(View.VISIBLE);
         blind_btn.setVisibility(View.GONE);
         chaal_btn.setVisibility(View.VISIBLE);
         Seen_Blind = "seen";
 
-        String sub1 = displayAmount.getText().toString();
-        minteger = Integer.parseInt(sub1) * 2;
-        displayAmount.setText(String.valueOf(minteger));
+        ChaalAmount = ChaalAmount * 2;
+        displayAmount.setText(String.valueOf(ChaalAmount));
     }
 
     //INFO POPUP DATA
@@ -1231,11 +1101,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     //CHAAl & BLIND
     public void chaalBlind() {
         Handler handler1 = new Handler();
-        display_myplayer_bind.setText(displayAmount.getText().toString());
+        display_myplayer_bind.setText(String.valueOf(ChaalAmount));
         display_myplayer_bind.bringToFront();
-        int DisplayAmtc = Integer.parseInt(displayAmount.getText().toString().replaceAll("₹", "").replace(" ", ""));
         int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹", "").replace(" ", ""));
-        int AMOUNT = DisplayAmtc + TablelayAmtc;
+        int AMOUNT = ChaalAmount + TablelayAmtc;
         txtVTableAmt.setText(String.valueOf(AMOUNT));
 
         if (AMOUNT >= PotLimitInt) {
@@ -1250,79 +1119,20 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                below_layout.setVisibility(View.VISIBLE);
-//              Animation animation = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_up_below_layout);
-//              animation.setDuration(1000);
-//              animation.setFillAfter(true);
-//              below_layout.startAnimation(animation);
+                //below_layout.setVisibility(View.VISIBLE);
+
             }
         }, 2000);
 
         handler1.postDelayed(new Runnable() {
             @Override
             public void run() {
-//          Animation animation1 =  AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_blind_chaal);
-//          animation1.setDuration(1000);
-//          animation1.setFillAfter(true);
-//          rl_bottom_caption.startAnimation(animation1);
                 rl_bottom_caption.setVisibility(View.GONE);
                 blind_btn.setEnabled(false);
             }
         }, 1000);
-
+        CHECK_TIME_OUT = true;
         new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
-    }
-
-
-    public String setUserApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost Httppost = new HttpPost(url);
-
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("users_id", user_id);
-            jsonObject.accumulate("users_id", user_id1);
-            jsonObject.accumulate("users_id", user_id2);
-            jsonObject.accumulate("users_id", user_id3);
-            jsonObject.accumulate("users_id", user_id4);
-
-            jsonObject.accumulate("username", nametext);
-            jsonObject.accumulate("username", nametext1);
-            jsonObject.accumulate("username", nametext2);
-            jsonObject.accumulate("username", nametext3);
-            jsonObject.accumulate("username", nametext4);
-
-
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
-
-            Httppost.setEntity(new StringEntity(json));
-            Httppost.setHeader("Accept", "application/json");
-            Httppost.setHeader("Content-type", "application/json");
-
-            HttpResponse httpResponse = httpclient.execute(Httppost);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-            Log.e("Check", "how " + result);
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-        Log.e("result", result + "");
-        return result;
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -1335,44 +1145,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
         inputStream.close();
         return result;
-    }
-
-    private class setUserDataAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return setUserApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("Check", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                if (message.equalsIgnoreCase("successfully authenticated")) {
-                    DataHolder.setSTACK(PrivateActivity.this, "users_id", user_id.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "users_id", user_id1.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "users_id", user_id2.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "users_id", user_id3.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "users_id", user_id4.getText().toString());
-
-
-                    DataHolder.setSTACK(PrivateActivity.this, "username", nametext.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "username", nametext1.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "username", nametext2.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "username", nametext3.getText().toString());
-                    DataHolder.setSTACK(PrivateActivity.this, "username", nametext4.getText().toString());
-                }
-//                Toast.makeText(getApplicationContext(), "" + message, Toast.LENGTH_SHORT).show();
-
-                Log.i("result", " Status " + message);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                DataHolder.unAuthorized(PrivateActivity.this, result);
-            }
-            DataHolder.cancelProgress();
-        }
     }
 
     public String getUserApi(String url) {
@@ -1409,136 +1181,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     String cardUrl1, cardUrl2, cardUrl3, cardUrl4, cardUrl5, cardUrl6, cardUrl7, cardUrl8, cardUrl9, cardUrl10, cardUrl11, cardUrl12, cardUrl13, cardUrl14, cardUrl15;
 
-    private class getUserDataAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return getUserApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
-            Log.i("Check", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                Log.i("TAG", "" + message);
-
-                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
-                int len = arr.length();
-
-                for (int i = 0; i < len; i++) {
-
-                    JSONObject key = arr.getJSONObject(i);
-//
-//                    Log.i("Card","" + card1);
-//                    Log.i("Card","" + card2);
-//                    Log.i("Card","" + card3);
-//
-//                    nametext.setText(key.getString("username"));
-//                    user_id.setText(key.getString("users_id"));
-                    {
-                        if (i == 0) {
-                            String Url1 = key.getString("card1");
-                            String Url2 = key.getString("card2");
-                            String Url3 = key.getString("card3");
-
-                            cardUrl1 = Url1;
-                            cardUrl2 = Url2;
-                            cardUrl3 = Url3;
-
-                            Log.i("URL 1", i + " " + Url1);
-                            Log.i("URL 2", i + " " + Url2);
-                            Log.i("URL 3", i + " " + Url3);
-
-                            nametext1.setText(key.getString("username"));
-                        } else if (i == 1) {
-                            String Url4 = key.getString("card1");
-                            String Url5 = key.getString("card2");
-                            String Url6 = key.getString("card3");
-
-                            cardUrl4 = Url4;
-                            cardUrl5 = Url5;
-                            cardUrl6 = Url6;
-
-                            Log.i("URL 4", i + " " + Url4);
-                            Log.i("URL 5", i + " " + Url5);
-                            Log.i("URL 6", i + " " + Url6);
-
-                            nametext2.setText(key.getString("username"));
-
-                        } else if (i == 2) {
-                            String Url7 = key.getString("card1");
-                            String Url8 = key.getString("card2");
-                            String Url9 = key.getString("card3");
-                            cardUrl7 = Url7;
-                            cardUrl8 = Url8;
-                            cardUrl9 = Url9;
-
-                            Log.i("URL 7", i + " " + Url7);
-                            Log.i("URL 8", i + " " + Url8);
-                            Log.i("URL 9", i + " " + Url9);
-
-                            nametext.setText(key.getString("username"));
-
-                        } else if (i == 3) {
-                            String Url10 = key.getString("card1");
-                            String Url11 = key.getString("card2");
-                            String Url12 = key.getString("card3");
-                            cardUrl10 = Url10;
-                            cardUrl11 = Url11;
-                            cardUrl12 = Url12;
-
-                            Log.i("URL 10", i + " " + Url10);
-                            Log.i("URL 11", i + " " + Url11);
-                            Log.i("URL 12", i + " " + Url12);
-
-                            nametext3.setText(key.getString("username"));
-                        } else if (i == 4) {
-                            String Url13 = key.getString("card1");
-                            String Url14 = key.getString("card2");
-                            String Url15 = key.getString("card3");
-                            cardUrl13 = Url13;
-                            cardUrl14 = Url14;
-                            cardUrl15 = Url15;
-
-                            Log.i("URL 13", i + " " + Url13);
-                            Log.i("URL 14", i + " " + Url14);
-                            Log.i("URL 15", i + " " + Url15);
-
-                            nametext4.setText(key.getString("username"));
-                        }
-                    }
-                }
-
-                JSONArray u_arr = new JSONArray(jsonObjMain.getString("data"));
-
-                int u_len = u_arr.length();
-
-                for (int u = 0; u < u_len; u++) {
-
-                    JSONObject id = arr.getJSONObject(u);
-
-                    if (u == 0) {
-                        user_id1.setText(id.getString("users_id"));
-                    } else if (u == 1) {
-                        user_id2.setText(id.getString("users_id"));
-                    } else if (u == 2) {
-                        user_id.setText(id.getString("users_id"));
-                    } else if (u == 3) {
-                        user_id3.setText(id.getString("users_id"));
-                    } else if (u == 4) {
-                        user_id4.setText(id.getString("users_id"));
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private class getCardDataAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1560,26 +1202,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                 int len = arr.length();
 
-                /*for (int j = 0; j < len; j++) {
 
-                    JSONObject key = arr.getJSONObject(j);
-                    String userid = key.getString("cardsallocatedusers_id");
-
-                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
-                        sequence = true;
-                    }
-                    if (sequence) {
-                        arrayListUserIdSequence.add(userid);
-                    } else {
-                        arrayListUserId.add(userid);
-                    }
-                }*/
-
-                if (arrayListUserId.size() > 0) {
-                    for (int j = 0; j < arrayListUserId.size(); j++) {
-                        arrayListUserIdSequence.add(arrayListUserId.get(j));
-                    }
-                }
 
                 for (int i = 0; i < len; i++) {
                     JSONObject key = arr.getJSONObject(i);
@@ -1658,13 +1281,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
-
-    //setApiToken
+ //setApiToken
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
     private boolean sequence = false;
-    public static String BootValue, PotLimit, MaxBlind, chaalLimit, DeskId;
-    int PotLimitInt;
+    public static String BootValue, PotLimit, MaxBlind, chaalLimit,DeskId;
+    int PotLimitInt,ChaalAmount;
 
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -1685,6 +1307,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
                 chaalLimit = jsonObjMain.getString("chaal_limit");
+                ChaalAmount = Integer.parseInt(jsonObjMain.getString("desk_limit"));//Start Chaal
+                displayAmount.setText(String.valueOf(ChaalAmount));
                 DeskId = jsonObjMain.getString("desk_id");
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
@@ -1733,6 +1357,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         BALANCE1 = key.getString("balance");
                         nametext1.setText(user_name);
                         user_id1.setText(userid);
+                        Next_User = userid;
 
                     } else if (userid.equals(arrayListUserIdSequence.get(2))) {
                         USER_NAME2 = user_name;
@@ -1763,32 +1388,61 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 
-    //User Play Time
+            //LAST CHANCES DATA
+            Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
+            startService(intentService);
 
+            //BroadcastReceiver LAST DATA
+            broadcastReceiver = new BroadcastReceiverDATA();
+            IntentFilter intentFilter = new IntentFilter(DataHolder.ACTION_USER_LAST_DATA);
+            intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+            registerReceiver(broadcastReceiver, intentFilter);
+
+            new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id="+DeskId);
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        simulateProgress();
     }
 
+    private boolean CHECK_TIME_OUT = false;
+    ValueAnimator animator;
     private void simulateProgress() {
-        ValueAnimator animator = ValueAnimator.ofInt(0, 100);
+        progressBarChances.setVisibility(View.VISIBLE);
+        animator = ValueAnimator.ofInt(0, 100);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int progress = (int) animation.getAnimatedValue();
-                mCustomProgressBar2.setProgress(progress);
+                progressBarChances.setProgress(progress+1);
+                Log.i("TAGTAGA","hi "+progress);
+                if (CHECK_TIME_OUT){
+                    animator.cancel();
+                    animator.end();
+                    CHECK_TIME_OUT = false;
+                    progressBarChances.setVisibility(View.GONE);
+                }
+
+                if (99==progress){
+                    animator.cancel();
+                    packOperation();
+                    progressBarChances.setVisibility(View.GONE);
+                }
+
             }
         });
+        Log.i("TAGTAGA1","hello");
         animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setDuration(10000);
+        animator.setDuration(15000);
         animator.start();
     }
 
-    String Seen_Blind = "blind";
+    String Seen_Blind="blind",chance_Status="active",Show_Status="0",Next_User;
 
-    public String chanceApi(String url) {
+    public String chanceApi(String url,String mSeen_Blind,String mchance_Status,String mShow_Status,String mNext_User) {
+
         InputStream inputStream = null;
         String result = "";
         try {
@@ -1800,18 +1454,19 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             JSONObject jsonObject = new JSONObject();
 
             jsonObject.accumulate("deskid", DeskId);
-            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
-            jsonObject.accumulate("chaalamount", displayAmount.getText().toString());
-            jsonObject.accumulate("chance_status", "online");
-            jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());
+
+            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
+            jsonObject.accumulate("chaalamount", ChaalAmount);//pev
+            jsonObject.accumulate("chance_status", mchance_Status);
+            jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());//pev
             jsonObject.accumulate("balance", txtVBalanceMainPlayer.getText().toString());
-            jsonObject.accumulate("round", "1");
-            jsonObject.accumulate("show", "1");
-            jsonObject.accumulate("seen_blind", Seen_Blind);
+            jsonObject.accumulate("show", mShow_Status);//user count
+            jsonObject.accumulate("seen_blind", mSeen_Blind);
+            jsonObject.accumulate("next_user", mNext_User);
             jsonObject.accumulate("dealer_id", 1);
+//            jsonObject.accumulate("round", "1");
 //            jsonObject.accumulate("tip", "10");
-            jsonObject.accumulate("gamestatus", "active");
-            jsonObject.accumulate("turn", "1");
+//            jsonObject.accumulate("turn", TurnCount++);
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -1845,7 +1500,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return chanceApi(urls[0]);
+            return chanceApi(urls[0],Seen_Blind,chance_Status,Show_Status,Next_User);
         }
 
         @Override
@@ -1907,4 +1562,97 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
+    String lastChanceid,lastDesk_id,lastChaal_amount,lastUser_id,lastChance_status,lastPot_value,lastBalance,
+            lastShow,lastSeen_blind,lastDealer_id,lastTip,lastTurn,lastNext_user,lastWin_lose,lastDatetime;
+
+    String storeNextValue="";
+    private void getLastChanceData(String result){
+        try {
+            JSONObject jsonObjMain = new JSONObject(result);
+
+            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+            int len = arr.length();
+
+                for (int i=0;i<len;i++){
+                    JSONObject key = arr.getJSONObject(i);
+
+                    lastChanceid = key.getString("chanceid");
+                    lastDesk_id = key.getString("desk_id");
+                    lastChaal_amount = key.getString("chaal_amount");
+                    lastUser_id = key.getString("user_id");
+                    lastChance_status = key.getString("chance_status");
+                    lastPot_value = key.getString("pot_value");
+                    lastBalance = key.getString("balance");
+                    lastShow = key.getString("show");
+                    lastSeen_blind = key.getString("seen_blind");
+                    lastDealer_id = key.getString("dealer_id");
+                    lastTip = key.getString("tip");
+                    lastTurn = key.getString("turn");
+                    lastNext_user = key.getString("next_user");
+                    lastWin_lose = key.getString("win_lose");
+                    lastDatetime = key.getString("datetime");
+
+//                    Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
+                    Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
+                    Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
+                    if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
+                        try {
+                            viewBlinkCircle.clearAnimation();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN0","-"+lastNext_user);
+                        ChaalAmount = Integer.parseInt(lastChaal_amount);
+                        simulateProgress();
+                        Log.i("CHKIL1",ChaalAmount+"");
+                        rl_bottom_caption.setVisibility(View.VISIBLE);
+                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN1","-"+lastNext_user);
+                            viewBlinkCircle = player_blink_circle1;
+                            player_blink_circle1.startAnimation(animBlink);
+
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN2","-"+lastNext_user);
+                            viewBlinkCircle = player_blink_circle2;
+                            player_blink_circle2.startAnimation(animBlink);
+
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN3","-"+lastNext_user);
+                            viewBlinkCircle = player_blink_circle3;
+                            player_blink_circle3.startAnimation(animBlink);
+
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN4","-"+lastNext_user);
+                            viewBlinkCircle = player_blink_circle4;
+                            player_blink_circle4.startAnimation(animBlink);
+                    }
+
+                    Log.i("CHANCESID",""+lastChanceid);
+                }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        storeNextValue = lastNext_user;
+    }
+
+    BroadcastReceiverDATA broadcastReceiver;
+    public class BroadcastReceiverDATA extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context,final Intent intent) {
+            String action = intent.getAction();
+
+            if (action.equalsIgnoreCase(DataHolder.ACTION_USER_LAST_DATA)) {
+                String result = intent.getStringExtra(DataHolder.KEY_USER_LAST_DATA);
+                getLastChanceData(result);
+                Log.i("TAG124 result",result);
+            }
+        }
+    }
+
 }

@@ -11,9 +11,11 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,7 +57,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
@@ -74,6 +80,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     DBHandler dbHandler;
     EditText edittextusername, edittextpassword;
     String username, password, userid, deviceid, devicename, softwareversion, operatorname, networktype, imei, imsi, uuid;
+    MediaPlayer mediaPlayer;
 
     private TextView user_id;
     private TextView android_id;
@@ -85,6 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView network_type;
     private TextView software_version;
     private static final String TAG = "loginactivity";
+    private ScheduledExecutorService scheduleTaskExecutor;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
@@ -137,6 +145,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         checkPermission();
         requestPermission();
 
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level" + level);
+                if (level <= 2) {
+                    Toast.makeText(LoginActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, 0, 1, TimeUnit.MINUTES);
     }
 
     //selecting avatar
@@ -148,35 +171,51 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if (id == R.id.avatar1) {
             image = findViewById(R.id.avatar1);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.avatar2) {
             image = findViewById(R.id.avatar2);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.avatar3) {
             image = findViewById(R.id.avatar3);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.avatar4) {
             image = findViewById(R.id.avatar4);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.avatar5) {
             image = findViewById(R.id.avatar5);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.avatar6) {
             image = findViewById(R.id.avatar6);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.avatar7) {
             image = findViewById(R.id.avatar7);
             img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             avatarimage.setImageDrawable(img);
         } else if (id == R.id.camera) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent, 1);
         } else if (id == R.id.choosepic) {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 6);
         } else if (id == R.id.playNow) {
@@ -206,7 +245,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 long result = loginDatabaseHelper.add(encodeimage, setNameHere);
             }
 
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
+
         } else if (v.getId() == R.id.rememberMeCheckBox) {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             if (rememberMeCheckBox.isChecked()) {
                 DataHolder.setData(this, "remember_me", true);
             } else {
@@ -314,9 +358,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     boolean coarselocationAccepted = grantResults[2] == PackageManager.PERMISSION_GRANTED;
                     boolean readphonestate = grantResults[3] == PackageManager.PERMISSION_GRANTED;
 
-                    if (locationAccepted && cameraAccepted && coarselocationAccepted && readphonestate)
-                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
-                    else {
+                    if (locationAccepted && cameraAccepted && coarselocationAccepted && readphonestate) {
+                        Log.i("TAG", "Permission Granted");
+                    } else {
                         Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -414,7 +458,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
-                DataHolder.setData(LoginActivity.this,"token",jsonObjMain.getString("token").toString());
+                Toast.makeText(LoginActivity.this, "" + message, Toast.LENGTH_SHORT).show();
+                DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token").toString());
 
 
                 if (message.equalsIgnoreCase("successfully authenticated")) {
@@ -448,6 +493,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mp.start();
+        finish();
+    }
+
 //    public boolean checkNetworkConnection() {
 //        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 //        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
@@ -459,7 +512,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        }
 //        return isConnected;
 //    }
-
-
-
 }

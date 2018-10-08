@@ -123,17 +123,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         //  new GetChanceAsyncTask().execute("http://213.136.81.137:8081/api/getchancedetail?desk_id="+DeskId+"&round=1&turn=1");
 
 
-//        ImageView myplayer = findViewById(R.id.myplayer);
-//        myplayer.setOnClickListener(this);
-//        ImageView player1 = findViewById(R.id.player1);
-//        player1.setOnClickListener(this);
-//        ImageView player2 = findViewById(R.id.player2);
-//        player2.setOnClickListener(this);
-//        ImageView player3 = findViewById(R.id.player3);
-//        player3.setOnClickListener(this);
-//        ImageView player4 = findViewById(R.id.player4);
-//        player4.setOnClickListener(this);
-
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
@@ -464,35 +453,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //instantiate the popup.xml layout file
-                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View customView = layoutInflater.inflate(R.layout.backbutton_popup, null);
-
-                closebtn = customView.findViewById(R.id.close);
-                backtolobby = customView.findViewById(R.id.backtolobby);
-
-                //instantiate popup window
-                popupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
-                //display the popup window
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-
-                //close the popup window on button click
-                closebtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                backtolobby.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+                backtolobby();
             }
         });
 
@@ -502,91 +463,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         imgVInfo.setOnClickListener(this);
         privatetble = findViewById(R.id.privatetble);
 
-        //////////////// Popup for Userstatus ///////////////////
-
-//        myplayerbtn=(ImageView) findViewById(R.id.myplayer);
-//        privatetble = (DrawerLayout) findViewById(R.id.privatetble);
-//
-//        myplayerbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //instantiate the popup.xml layout file
-//                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View customView = layoutInflater.inflate(R.layout.player_status_popup, null);
-//
-//                ustatusclosebtn = (ImageView) customView.findViewById(R.id.userstatusclose);
-//                //instantiate popup window
-//                ustatuspopupWindow = new PopupWindow(customView,RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//                //display the popup window
-//                ustatuspopupWindow.showAtLocation(relativeLayout, Gravity.CENTER_HORIZONTAL, 0, 0);
-//
-//                //close the popup window on button click
-//                ustatusclosebtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        ustatuspopupWindow.dismiss();
-//                    }
-//                });
-//            }
-//        });
-
-
-        //////////////// Popup for Otheruserstatus ///////////////////
-
-//        oplayerbtn=(ImageView) findViewById(R.id.playerbg2);
-//
-//
-//        oplayerbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //instantiate the popup.xml layout file
-//                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View customView = layoutInflater.inflate(R.layout.other_player_status, null);
-//
-//                msgbtn=customView.findViewById(R.id.msg);
-//
-//                // onclick event for message button
-//                msgbtn.setOnClickListener(new View.OnClickListener() {
-//                    public void onClick(View v) {
-//                        LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                        View customView1 = layoutInflater.inflate(R.layout.send_message_popup, null);
-//                        msgclosebtn=customView1.findViewById(R.id.msgclose);
-//                        //instantiate popup window
-//                        sendmsgpopupWindow = new PopupWindow(customView1,RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//
-//                        //display the popup window
-//                        sendmsgpopupWindow.showAtLocation(relativeLayout, Gravity.TOP, 0, 0);
-//
-//                        //close the popup window on button click
-//                        msgclosebtn.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                sendmsgpopupWindow.dismiss();
-//                            }
-//                        });
-//
-//                        oustatuspopupWindow.dismiss();
-//                    }
-//
-//                });
-//
-//                oustatusclosebtn = (ImageView) customView.findViewById(R.id.ouserstatusclose);
-//                //instantiate popup window
-//                oustatuspopupWindow = new PopupWindow(customView,RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//                //display the popup window
-//                oustatuspopupWindow.showAtLocation(relativeLayout, Gravity.CENTER_HORIZONTAL, 0, 0);
-//
-//                //close the popup window on button click
-//                oustatusclosebtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        oustatuspopupWindow.dismiss();
-//                    }
-//                });
-//            }
-//        });
 
         //////////////// Popup for Dealer ///////////////////
 
@@ -724,33 +600,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         });
-
-
-//        winnerblinker1.setVisibility(View.INVISIBLE);
-//        winnerblinker1.postDelayed(new Runnable() {
-//            public void run() {
-//                winnerblinker1.setVisibility(View.VISIBLE);
-//                profile.setOnClickListener(new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        winnerblinker1.setVisibility(View.VISIBLE);
-////                        winnerblinker2.setVisibility(View.VISIBLE);
-//
-//                        // start the animation
-//                        winnerblinker1.startAnimation(animBlink);
-////                        winnerblinker2.startAnimation(animBlink);
-//                    }
-//                });
-//                winnerblinker1.clearAnimation();
-//                winnerblinker1.setVisibility(View.GONE);
-//            }
-//        }, 600);
     }
 
 
     @Override
     public void onBackPressed() {
+        backtolobby();
+    }
+
+    /////////// Onclick for Backtolobby /////////////
+    public void backtolobby() {
         LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View customView = layoutInflater.inflate(R.layout.backbutton_popup, null);
 
@@ -770,11 +629,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 popupWindow.dismiss();
             }
         });
+
         backtolobby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-                startActivity(intent);
+                DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
+                new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+                stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
                 try {
                     if (broadcastReceiver != null) {
                         unregisterReceiver(broadcastReceiver);
@@ -782,15 +643,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
-    }
-
-    /////////// Onclick for Backtolobby /////////////
-    public void backtolobby(View view) {
-        Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-        startActivity(intent);
+        DataHolder.getDataString(PrivateActivity.this,"userstatus");
     }
 
     @Override
@@ -1345,6 +1203,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             //LAST CHANCES DATA
             Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
             startService(intentService);
+            DataHolder.setData(PrivateActivity.this,"CHECK_SERVICE",true);
 
             //BroadcastReceiver LAST DATA
             broadcastReceiver = new BroadcastReceiverDATA();
@@ -1593,6 +1452,69 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         storeNextValue = lastNext_user;
     }
 
+    public String updateUserStatusApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
+            jsonObject.accumulate("user_status", "offline");//pev
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return updateUserStatusApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                if (message.equalsIgnoreCase("Client status successfully changed")){
+                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     BroadcastReceiverDATA broadcastReceiver;
     public class BroadcastReceiverDATA extends BroadcastReceiver {
         @Override
@@ -1606,5 +1528,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
 
 }

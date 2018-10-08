@@ -68,6 +68,9 @@ public class ServiceLastUserData extends Service {
 
                 int len = arr.length();
 
+                /*if (DataHolder.getDataBoolean(ServiceLastUserData.this,"CHECK_SERVICE")){
+
+                }*/
                 Intent intent = new Intent(DataHolder.ACTION_USER_LAST_DATA);
                 intent.putExtra(DataHolder.KEY_USER_LAST_DATA, result);
                 sendBroadcast(intent);

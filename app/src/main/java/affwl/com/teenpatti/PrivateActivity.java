@@ -421,35 +421,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         backbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //instantiate the popup.xml layout file
-                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View customView = layoutInflater.inflate(R.layout.backbutton_popup, null);
-
-                closebtn = customView.findViewById(R.id.close);
-                backtolobby = customView.findViewById(R.id.backtolobby);
-
-                //instantiate popup window
-                popupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
-                //display the popup window
-                popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-
-                //close the popup window on button click
-                closebtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        popupWindow.dismiss();
-                    }
-                });
-
-                backtolobby.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+                backtolobby();
             }
         });
 
@@ -708,6 +680,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     public void onBackPressed() {
+        backtolobby();
+    }
+
+    /////////// Onclick for Backtolobby /////////////
+    public void backtolobby() {
         LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View customView = layoutInflater.inflate(R.layout.backbutton_popup, null);
 
@@ -727,11 +704,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 popupWindow.dismiss();
             }
         });
+
         backtolobby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-                startActivity(intent);
+                DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
+                new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+                stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
                 try {
                     if (broadcastReceiver != null) {
                         unregisterReceiver(broadcastReceiver);
@@ -739,15 +718,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+                Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
+                startActivity(intent);
                 finish();
             }
         });
-    }
-
-    /////////// Onclick for Backtolobby /////////////
-    public void backtolobby(View view) {
-        Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-        startActivity(intent);
+        DataHolder.getDataString(PrivateActivity.this,"userstatus");
     }
 
     @Override
@@ -1171,6 +1147,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             //LAST CHANCES DATA
             Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
             startService(intentService);
+            DataHolder.setData(PrivateActivity.this,"CHECK_SERVICE",true);
 
             //BroadcastReceiver LAST DATA
             broadcastReceiver = new BroadcastReceiverDATA();
@@ -1419,6 +1396,69 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         storeNextValue = lastNext_user;
     }
 
+    public String updateUserStatusApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
+            jsonObject.accumulate("user_status", "offline");//pev
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return updateUserStatusApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                if (message.equalsIgnoreCase("Client status successfully changed")){
+                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     BroadcastReceiverDATA broadcastReceiver;
     public class BroadcastReceiverDATA extends BroadcastReceiver {
         @Override
@@ -1432,5 +1472,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
+
 
 }

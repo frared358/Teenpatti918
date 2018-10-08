@@ -28,39 +28,6 @@ import microsoft.aspnet.signalr.client.hubs.HubProxy;
 
 public class DataHolder {
 
-    public static String LOGIN_TOKEN;
-
-    public static ProgressDialog progressDialog;
-    public static void showProgress(Context context){
-        progressDialog=new ProgressDialog(context);
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Please Wait ... ");
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-    }
-
-    public static void cancelProgress(){
-        if(progressDialog != null){
-            progressDialog.dismiss();
-        }
-    }
-
-    //  Stack Share Prefrences
-    private static SharedPreferences getPrefSTACK(Context context) {
-        return context.getSharedPreferences("PREF_STACK", Context.MODE_PRIVATE);
-    }
-
-    public static String getSTACK(Context context,String Key) {
-        return getPrefSTACK(context).getString(Key, "");
-    }
-
-    public static void setSTACK(Context context,String Key, String input) {
-        SharedPreferences.Editor editor = getPrefSTACK(context).edit();
-        editor.putString(Key, input);
-        editor.commit();
-    }
-
     //Data Share Prefrences
     private static SharedPreferences getPrefData(Context context) {
         return context.getSharedPreferences("PREF_DATA", Context.MODE_PRIVATE);
@@ -94,7 +61,8 @@ public class DataHolder {
         editor.putLong(Key, input);
         editor.commit();
     }
-//Int setData
+
+    //Int setData
     public static void setData(Context context,String Key, int input) {
         SharedPreferences.Editor editor = getPrefData(context).edit();
         editor.putInt(Key, input);
@@ -156,7 +124,6 @@ public class DataHolder {
         return result;
     }
 
-    Context context;
 
     public static String  setApiToken(String url,Context context){
 
@@ -171,7 +138,6 @@ public class DataHolder {
 
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            Toast.makeText(context, ""+getDataString(context,"token"), Toast.LENGTH_SHORT).show();
             httpPost.setHeader("Authorization", getDataString(context,"token"));
             Log.e("Check","rtuyty");
 
@@ -206,6 +172,37 @@ public class DataHolder {
         return result;
     }
 
+    public static String getUserApi(String url, Context context) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(context,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
     public static void unAuthorized(Context context,String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -221,7 +218,9 @@ public class DataHolder {
         }
     }
 
+    public static String first_name,last_name,mobile_no,balance,emailaddress;
 
-    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id;
+    public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
+    public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
 
 }

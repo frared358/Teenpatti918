@@ -189,7 +189,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else if (password.equals("") || password == null) {
                 edittextpassword.setError("Enter Password");
             } else {
-                new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authenticate");
+                new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
 
             //Add Avatar
@@ -422,15 +422,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject key = array.getJSONObject(i);
-                        DataHolder.user_id = key.getString("userid");
                         DataHolder.first_name = key.getString("first_name");
                         DataHolder.last_name = key.getString("last_name");
                         DataHolder.mobile_no = key.getString("mobile_no");
                         DataHolder.balance = key.getString("balance");
                         DataHolder.emailaddress = key.getString("emailaddress");
-                        Log.i("TAGTAGTAG", DataHolder.user_id + " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
+
+                        DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
+                        Log.i("TAGTAGTAG",  " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }
-                    DataHolder.setData(LoginActivity.this, "userid", DataHolder.user_id);
 
                     if (rememberMeCheckBox.isChecked()) {
                         saveLoginDetails(username, password);

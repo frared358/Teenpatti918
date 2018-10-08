@@ -16,6 +16,21 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'x86', 'armeabi-v7a'
+            universalApk true
+        }
+    }
+
+    packagingOptions {
+        exclude 'lib/getLibs.ps1'
+        exclude 'lib/getLibs.sh'
+        exclude 'lib/gson-2.2.2.jar'
+    }
+
     compileOptions.encoding = 'ISO-8859-1'
 }
 

@@ -123,17 +123,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         //  new GetChanceAsyncTask().execute("http://213.136.81.137:8081/api/getchancedetail?desk_id="+DeskId+"&round=1&turn=1");
 
 
-//        ImageView myplayer = findViewById(R.id.myplayer);
-//        myplayer.setOnClickListener(this);
-//        ImageView player1 = findViewById(R.id.player1);
-//        player1.setOnClickListener(this);
-//        ImageView player2 = findViewById(R.id.player2);
-//        player2.setOnClickListener(this);
-//        ImageView player3 = findViewById(R.id.player3);
-//        player3.setOnClickListener(this);
-//        ImageView player4 = findViewById(R.id.player4);
-//        player4.setOnClickListener(this);
-
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
@@ -474,91 +463,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         imgVInfo.setOnClickListener(this);
         privatetble = findViewById(R.id.privatetble);
 
-        //////////////// Popup for Userstatus ///////////////////
-
-//        myplayerbtn=(ImageView) findViewById(R.id.myplayer);
-//        privatetble = (DrawerLayout) findViewById(R.id.privatetble);
-//
-//        myplayerbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //instantiate the popup.xml layout file
-//                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View customView = layoutInflater.inflate(R.layout.player_status_popup, null);
-//
-//                ustatusclosebtn = (ImageView) customView.findViewById(R.id.userstatusclose);
-//                //instantiate popup window
-//                ustatuspopupWindow = new PopupWindow(customView,RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//                //display the popup window
-//                ustatuspopupWindow.showAtLocation(relativeLayout, Gravity.CENTER_HORIZONTAL, 0, 0);
-//
-//                //close the popup window on button click
-//                ustatusclosebtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        ustatuspopupWindow.dismiss();
-//                    }
-//                });
-//            }
-//        });
-
-
-        //////////////// Popup for Otheruserstatus ///////////////////
-
-//        oplayerbtn=(ImageView) findViewById(R.id.playerbg2);
-//
-//
-//        oplayerbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                //instantiate the popup.xml layout file
-//                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View customView = layoutInflater.inflate(R.layout.other_player_status, null);
-//
-//                msgbtn=customView.findViewById(R.id.msg);
-//
-//                // onclick event for message button
-//                msgbtn.setOnClickListener(new View.OnClickListener() {
-//                    public void onClick(View v) {
-//                        LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                        View customView1 = layoutInflater.inflate(R.layout.send_message_popup, null);
-//                        msgclosebtn=customView1.findViewById(R.id.msgclose);
-//                        //instantiate popup window
-//                        sendmsgpopupWindow = new PopupWindow(customView1,RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//
-//                        //display the popup window
-//                        sendmsgpopupWindow.showAtLocation(relativeLayout, Gravity.TOP, 0, 0);
-//
-//                        //close the popup window on button click
-//                        msgclosebtn.setOnClickListener(new View.OnClickListener() {
-//                            @Override
-//                            public void onClick(View v) {
-//                                sendmsgpopupWindow.dismiss();
-//                            }
-//                        });
-//
-//                        oustatuspopupWindow.dismiss();
-//                    }
-//
-//                });
-//
-//                oustatusclosebtn = (ImageView) customView.findViewById(R.id.ouserstatusclose);
-//                //instantiate popup window
-//                oustatuspopupWindow = new PopupWindow(customView,RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//                //display the popup window
-//                oustatuspopupWindow.showAtLocation(relativeLayout, Gravity.CENTER_HORIZONTAL, 0, 0);
-//
-//                //close the popup window on button click
-//                oustatusclosebtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        oustatuspopupWindow.dismiss();
-//                    }
-//                });
-//            }
-//        });
 
         //////////////// Popup for Dealer ///////////////////
 
@@ -696,28 +600,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         });
-
-
-//        winnerblinker1.setVisibility(View.INVISIBLE);
-//        winnerblinker1.postDelayed(new Runnable() {
-//            public void run() {
-//                winnerblinker1.setVisibility(View.VISIBLE);
-//                profile.setOnClickListener(new View.OnClickListener() {
-//
-//                    @Override
-//                    public void onClick(View v) {
-//                        winnerblinker1.setVisibility(View.VISIBLE);
-////                        winnerblinker2.setVisibility(View.VISIBLE);
-//
-//                        // start the animation
-//                        winnerblinker1.startAnimation(animBlink);
-////                        winnerblinker2.startAnimation(animBlink);
-//                    }
-//                });
-//                winnerblinker1.clearAnimation();
-//                winnerblinker1.setVisibility(View.GONE);
-//            }
-//        }, 600);
     }
 
 

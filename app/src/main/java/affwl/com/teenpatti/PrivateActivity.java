@@ -745,7 +745,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                winnerblinker1.clearAnimation();
 //                winnerblinker1.setVisibility(View.GONE);
 //            }
-//        }, 6000);
+//        }, 600);
     }
 
 

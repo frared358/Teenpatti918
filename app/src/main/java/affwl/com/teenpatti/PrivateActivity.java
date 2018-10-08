@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.media.MediaPlayer;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -57,6 +59,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -64,34 +70,47 @@ import de.hdodenhof.circleimageview.CircleImageView;
 @SuppressLint("WrongViewCast")
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn;
-    TextView closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
-    TextView txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit;
-    PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow;
-    RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
+    ImageView player_blink_circle1,player_blink_circle2,player_blink_circle3,player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
+    TextView player_balance, player_name, other_player_name, other_player_balance, displayAmount, display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
+    PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
+    RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble, playerlayout;
     Session session;
     LinearLayout below_layout;
-    TextView display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt;
-    Animation animations;
     CircleImageView inner_player_img;
-    ImageView card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1,
-            winnerblinker2, player_blink_circle1,player_blink_circle2,player_blink_circle3,player_blink_circle4;
-
-    Animation animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8,
-            animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
-
-    TextView btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4;
+    Animation animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
     View  viewBlinkCircle;
     Handler handler;
     int minteger = 0;
-    TextView displayAmount;
     private CircleProgressBar progressBarChances;
+    ScheduledExecutorService scheduleTaskExecutor;
+    MediaPlayer mediaPlayer;
+    RoundCornerProgressBar progressChaalTimer;
+    String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
+
+
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level" + level);
+                if (level <= 2) {
+                    Toast.makeText(PrivateActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PrivateActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, 0, 1, TimeUnit.MINUTES);
 
         new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
 
@@ -103,6 +122,21 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         //  new GetChanceAsyncTask().execute("http://213.136.81.137:8081/api/getchancedetail?desk_id="+DeskId+"&round=1&turn=1");
 
+
+//        ImageView myplayer = findViewById(R.id.myplayer);
+//        myplayer.setOnClickListener(this);
+//        ImageView player1 = findViewById(R.id.player1);
+//        player1.setOnClickListener(this);
+//        ImageView player2 = findViewById(R.id.player2);
+//        player2.setOnClickListener(this);
+//        ImageView player3 = findViewById(R.id.player3);
+//        player3.setOnClickListener(this);
+//        ImageView player4 = findViewById(R.id.player4);
+//        player4.setOnClickListener(this);
+
+        other_player_name = findViewById(R.id.other_player_name);
+        other_player_balance = findViewById(R.id.other_player_balance);
+
         display_myplayer_bind = findViewById(R.id.display_myplayer_bind);
         rl_bottom_caption = findViewById(R.id.rl_bottom_caption);
         below_layout = findViewById(R.id.below_layout);
@@ -113,7 +147,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         //        implemention of user profile pic
         profile = findViewById(R.id.inner_player_img);
+        profile.setOnClickListener(this);
         profile1 = findViewById(R.id.inner_player_img1);
+        profile1.setOnClickListener(this);
+        profile2 = findViewById(R.id.inner_player_img2);
+        profile2.setOnClickListener(this);
+        profile3 = findViewById(R.id.inner_player_img3);
+        profile3.setOnClickListener(this);
+        profile4 = findViewById(R.id.inner_player_img4);
+        profile4.setOnClickListener(this);
+
         nametext = findViewById(R.id.nametext);
         nametext1 = findViewById(R.id.nametext1);
         nametext2 = findViewById(R.id.nametext2);
@@ -655,26 +698,26 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
 
 
-        winnerblinker1.setVisibility(View.INVISIBLE);
-        winnerblinker1.postDelayed(new Runnable() {
-            public void run() {
-                winnerblinker1.setVisibility(View.VISIBLE);
-                myplayer.setOnClickListener(new View.OnClickListener() {
-
-                    @Override
-                    public void onClick(View v) {
-                        winnerblinker1.setVisibility(View.VISIBLE);
-//                        winnerblinker2.setVisibility(View.VISIBLE);
-
-                        // start the animation
-                        winnerblinker1.startAnimation(animBlink);
-//                        winnerblinker2.startAnimation(animBlink);
-                    }
-                });
-                winnerblinker1.clearAnimation();
-                winnerblinker1.setVisibility(View.GONE);
-            }
-        }, 6000);
+//        winnerblinker1.setVisibility(View.INVISIBLE);
+//        winnerblinker1.postDelayed(new Runnable() {
+//            public void run() {
+//                winnerblinker1.setVisibility(View.VISIBLE);
+//                profile.setOnClickListener(new View.OnClickListener() {
+//
+//                    @Override
+//                    public void onClick(View v) {
+//                        winnerblinker1.setVisibility(View.VISIBLE);
+////                        winnerblinker2.setVisibility(View.VISIBLE);
+//
+//                        // start the animation
+//                        winnerblinker1.startAnimation(animBlink);
+////                        winnerblinker2.startAnimation(animBlink);
+//                    }
+//                });
+//                winnerblinker1.clearAnimation();
+//                winnerblinker1.setVisibility(View.GONE);
+//            }
+//        }, 600);
     }
 
 
@@ -730,6 +773,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         String sub;
         Handler handler = new Handler();
+        session = new Session(this);
+        String encodedimage = session.getImage();
+
+        playerlayout = findViewById(R.id.privatetble);
+        LayoutInflater inflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        assert inflater != null;
+        View customView = inflater.inflate(R.layout.player_status_popup, null, false);
+        View customView2 = inflater.inflate(R.layout.other_player_status, null, false);
 
         switch (v.getId()) {
             case R.id.plus_btn:
@@ -796,11 +847,125 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.btn_see_cards:
                 seeCardOperation();
                 break;
+
+
+            case R.id.inner_player_img:
+
+                Toast.makeText(this, "Click", Toast.LENGTH_SHORT).show();
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
+                PlayerStatusWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
+
+                player_name = customView.findViewById(R.id.player_name);
+                player_balance = customView.findViewById(R.id.player_balance);
+                player_status_circle = customView.findViewById(R.id.player_status_circle);
+
+                player_name.setText(USER_NAME);
+                player_balance.setText(BALANCE);
+
+                PlayerStatusWindow.showAtLocation(playerlayout, Gravity.CENTER, 0, 0);
+
+                if (!encodedimage.equalsIgnoreCase("")) {
+                    byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    player_status_circle.setImageBitmap(bmp);
+                }
+                break;
+
+            case R.id.inner_player_img1:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
+                OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
+
+                other_player_name = customView2.findViewById(R.id.other_player_name);
+                other_player_balance = customView2.findViewById(R.id.other_player_balance);
+                oplayer_status_circle = customView2.findViewById(R.id.oplayer_status_circle);
+
+                other_player_name.setText(USER_NAME1);
+                other_player_balance.setText(BALANCE1);
+
+                OPlayerStatusWindow.showAtLocation(playerlayout, Gravity.CENTER, 0, 0);
+
+                if (!encodedimage.equalsIgnoreCase("")) {
+                    byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    oplayer_status_circle.setImageBitmap(bmp);
+                }
+                break;
+
+            case R.id.inner_player_img2:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
+                OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
+
+                other_player_name = customView2.findViewById(R.id.other_player_name);
+                other_player_balance = customView2.findViewById(R.id.other_player_balance);
+                oplayer_status_circle = customView2.findViewById(R.id.oplayer_status_circle);
+
+                other_player_name.setText(USER_NAME2);
+                other_player_balance.setText(BALANCE2);
+
+                OPlayerStatusWindow.showAtLocation(playerlayout, Gravity.CENTER, 0, 0);
+
+                if (!encodedimage.equalsIgnoreCase("")) {
+                    byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    oplayer_status_circle.setImageBitmap(bmp);
+                }
+                break;
+
+            case R.id.inner_player_img3:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
+                OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
+
+                other_player_name = customView2.findViewById(R.id.other_player_name);
+                other_player_balance = customView2.findViewById(R.id.other_player_balance);
+                oplayer_status_circle = customView2.findViewById(R.id.oplayer_status_circle);
+
+                other_player_name.setText(USER_NAME3);
+                other_player_balance.setText(BALANCE3);
+
+                OPlayerStatusWindow.showAtLocation(playerlayout, Gravity.CENTER, 0, 0);
+
+                if (!encodedimage.equalsIgnoreCase("")) {
+                    byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    oplayer_status_circle.setImageBitmap(bmp);
+                }
+                break;
+
+            case R.id.inner_player_img4:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
+                OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
+
+                other_player_name = customView2.findViewById(R.id.other_player_name);
+                other_player_balance = customView2.findViewById(R.id.other_player_balance);
+                oplayer_status_circle = customView2.findViewById(R.id.oplayer_status_circle);
+
+                other_player_name.setText(USER_NAME4);
+                other_player_balance.setText(BALANCE4);
+
+                OPlayerStatusWindow.showAtLocation(playerlayout, Gravity.CENTER, 0, 0);
+
+                if (!encodedimage.equalsIgnoreCase("")) {
+                    byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+                    Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+                    oplayer_status_circle.setImageBitmap(bmp);
+                }
         }
-
-        return;
     }
-
 
     //PACK USER
     public void packOperation(){
@@ -1117,23 +1282,32 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (userid.equals(arrayListUserIdSequence.get(0))) {
                         nametext.setText(user_name);
+                        USER_NAME = user_name;
+                        BALANCE = key.getString("balance");
                         user_id.setText(userid);
                         txtVBalanceMainPlayer.setText(key.getString("balance"));
 
                     } else if (userid.equals(arrayListUserIdSequence.get(1))) {
+                        USER_NAME1 = user_name;
+                        BALANCE1 = key.getString("balance");
                         nametext1.setText(user_name);
                         user_id1.setText(userid);
-                        Next_User = userid;
 
                     } else if (userid.equals(arrayListUserIdSequence.get(2))) {
+                        USER_NAME2 = user_name;
+                        BALANCE2 = key.getString("balance");
                         nametext2.setText(user_name);
                         user_id2.setText(userid);
 
                     } else if (userid.equals(arrayListUserIdSequence.get(3))) {
+                        USER_NAME3 = user_name;
+                        BALANCE3 = key.getString("balance");
                         nametext3.setText(user_name);
                         user_id3.setText(userid);
 
                     } else if (userid.equals(arrayListUserIdSequence.get(4))) {
+                        USER_NAME4 = user_name;
+                        BALANCE4 = key.getString("balance");
                         nametext4.setText(user_name);
                         user_id4.setText(userid);
 
@@ -1330,65 +1504,65 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             int len = arr.length();
 
-                for (int i=0;i<len;i++){
-                    JSONObject key = arr.getJSONObject(i);
+            for (int i=0;i<len;i++){
+                JSONObject key = arr.getJSONObject(i);
 
-                    lastChanceid = key.getString("chanceid");
-                    lastDesk_id = key.getString("desk_id");
-                    lastChaal_amount = key.getString("chaal_amount");
-                    lastUser_id = key.getString("user_id");
-                    lastChance_status = key.getString("chance_status");
-                    lastPot_value = key.getString("pot_value");
-                    lastBalance = key.getString("balance");
-                    lastShow = key.getString("show");
-                    lastSeen_blind = key.getString("seen_blind");
-                    lastDealer_id = key.getString("dealer_id");
-                    lastTip = key.getString("tip");
-                    lastTurn = key.getString("turn");
-                    lastNext_user = key.getString("next_user");
-                    lastWin_lose = key.getString("win_lose");
-                    lastDatetime = key.getString("datetime");
+                lastChanceid = key.getString("chanceid");
+                lastDesk_id = key.getString("desk_id");
+                lastChaal_amount = key.getString("chaal_amount");
+                lastUser_id = key.getString("user_id");
+                lastChance_status = key.getString("chance_status");
+                lastPot_value = key.getString("pot_value");
+                lastBalance = key.getString("balance");
+                lastShow = key.getString("show");
+                lastSeen_blind = key.getString("seen_blind");
+                lastDealer_id = key.getString("dealer_id");
+                lastTip = key.getString("tip");
+                lastTurn = key.getString("turn");
+                lastNext_user = key.getString("next_user");
+                lastWin_lose = key.getString("win_lose");
+                lastDatetime = key.getString("datetime");
 
 //                    Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
-                    Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
-                    Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
-                    if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
-                        try {
-                            viewBlinkCircle.clearAnimation();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
+                Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
+                if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
+                    try {
+                        viewBlinkCircle.clearAnimation();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN0","-"+lastNext_user);
-                        ChaalAmount = Integer.parseInt(lastChaal_amount);
-                        simulateProgress();
-                        Log.i("CHKIL1",ChaalAmount+"");
-                        rl_bottom_caption.setVisibility(View.VISIBLE);
-                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN1","-"+lastNext_user);
-                            viewBlinkCircle = player_blink_circle1;
-                            player_blink_circle1.startAnimation(animBlink);
-
-                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN2","-"+lastNext_user);
-                            viewBlinkCircle = player_blink_circle2;
-                            player_blink_circle2.startAnimation(animBlink);
-
-                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN3","-"+lastNext_user);
-                            viewBlinkCircle = player_blink_circle3;
-                            player_blink_circle3.startAnimation(animBlink);
-
-                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN4","-"+lastNext_user);
-                            viewBlinkCircle = player_blink_circle4;
-                            player_blink_circle4.startAnimation(animBlink);
-                    }
-
-                    Log.i("CHANCESID",""+lastChanceid);
                 }
+
+                if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN0","-"+lastNext_user);
+                    ChaalAmount = Integer.parseInt(lastChaal_amount);
+                    simulateProgress();
+                    Log.i("CHKIL1",ChaalAmount+"");
+                    rl_bottom_caption.setVisibility(View.VISIBLE);
+                }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN1","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle1;
+                    player_blink_circle1.startAnimation(animBlink);
+
+                }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN2","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle2;
+                    player_blink_circle2.startAnimation(animBlink);
+
+                }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN3","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle3;
+                    player_blink_circle3.startAnimation(animBlink);
+
+                }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN4","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle4;
+                    player_blink_circle4.startAnimation(animBlink);
+                }
+
+                Log.i("CHANCESID",""+lastChanceid);
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();

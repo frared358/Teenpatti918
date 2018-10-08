@@ -1,12 +1,16 @@
 package affwl.com.teenpatti;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,13 +29,12 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import affwl.com.teenpatti.DataHolder;
+import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -44,15 +47,19 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static android.provider.Settings.Secure.ANDROID_ID;
 
@@ -64,8 +71,10 @@ public class MainActivity extends AppCompatActivity {
     RelativeLayout RelativeLayoutloader, relativelayout321, relativeLayoutsixpatti, relativeLayout_tourney, yellowchiplayout, orangechipslayout, limechipslayout, darkbluechiplayout, blackchipslayout, cyanchipslayout, ygreenchipslayout;
     TextView txtVUserNameMain, code;
     Session session;
-
-
+    String time_check, local_Time, tableid, table_name, table_time, wait_time;
+    int server_time, system_time;
+    long wait;
+    MediaPlayer mediaPlayer;
 
     private TextView user_id;
     private TextView deviceid;
@@ -77,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView network_type;
     private TextView software_version;
     private static final String TAG = "mainactivity";
+    private ScheduledExecutorService scheduleTaskExecutor;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
@@ -96,6 +106,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.teenpatti_activity_main);
+
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level " + level);
+                if (level == 5 || level == 4 || level == 3) {
+                    Toast.makeText(MainActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
+                } else if (level == 2 || level == 1 || level == 0) {
+                    Toast.makeText(MainActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Internet very slow", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, 0, 1, TimeUnit.MINUTES);
 
 
         user_id = findViewById(R.id.user_id);
@@ -122,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             profile.setImageBitmap(bmp);
         }
         String name = session.getName();
-        txtVUserNameMain.setText(DataHolder.first_name+" "+DataHolder.last_name);
+        txtVUserNameMain.setText(DataHolder.first_name + " " + DataHolder.last_name);
 
         ygreenchipslayout = findViewById(R.id.ygreenchipslayout);
 
@@ -141,7 +169,7 @@ public class MainActivity extends AppCompatActivity {
                 closeHelpBtn = customView.findViewById(R.id.close_helpus);
 
                 //instantiate popup window
-                HelpUspopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                HelpUspopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 //display the popup window
                 HelpUspopupWindow.showAtLocation(RelativeLayoutloader, Gravity.TOP, 0, 0);
@@ -151,8 +179,12 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         HelpUspopupWindow.dismiss();
+                        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                        mediaPlayer.start();
                     }
                 });
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
             }
         });
 
@@ -302,18 +334,10 @@ public class MainActivity extends AppCompatActivity {
         ygreenchipslayout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-
-                //Delays the click event by 5 seconds
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent i = new Intent(MainActivity.this, LoadingScreen_private.class);
-                        startActivity(i);
-                        finish();
-                    }
-                }, 1000);
-
+//                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
             }
         });
 
@@ -365,9 +389,9 @@ public class MainActivity extends AppCompatActivity {
         getSimOperator();
         getSoftwareVersion();
         getImei();
+//        getWifiLevel();
         getImsi();
         new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
-
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -382,16 +406,18 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-
     //////////// Onclick method for teenpatti table /////////////
     @Override
     public void onBackPressed() {
-        displayExitAlert("Alert","Do you want to Exit?");
+        displayExitAlert("Alert", "Do you want to Exit?");
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mp.start();
+        finish();
     }
 
     private void displayExitAlert(String title, String message) {
 
-        TextView tv_alert_ok,tv_alert_title,tv_alert_message,tv_alert_cancel;
+        TextView tv_alert_ok, tv_alert_title, tv_alert_message, tv_alert_cancel;
         ImageView alert_box_close;
 
         final Dialog myAlertDialog = new Dialog(this);
@@ -400,10 +426,10 @@ public class MainActivity extends AppCompatActivity {
         myAlertDialog.setContentView(R.layout.alert_box);
 
         tv_alert_ok = myAlertDialog.findViewById(R.id.tv_alert_ok);
-        tv_alert_cancel=myAlertDialog.findViewById(R.id.tv_alert_cancel);
-        alert_box_close=myAlertDialog.findViewById(R.id.alert_box_close);
-        tv_alert_title=myAlertDialog.findViewById(R.id.tv_alert_title);
-        tv_alert_message=myAlertDialog.findViewById(R.id.tv_alert_message);
+        tv_alert_cancel = myAlertDialog.findViewById(R.id.tv_alert_cancel);
+        alert_box_close = myAlertDialog.findViewById(R.id.alert_box_close);
+        tv_alert_title = myAlertDialog.findViewById(R.id.tv_alert_title);
+        tv_alert_message = myAlertDialog.findViewById(R.id.tv_alert_message);
 
         tv_alert_title.setText(title);
         tv_alert_message.setText(message);
@@ -434,8 +460,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
-//    Get Information About User Device
+    /*Get Information About User Device*/
 
     private String getUUID() {
         // TODO Auto-generated method stub
@@ -495,7 +520,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String getAndroidId() {
         // TODO Auto-generated method stub
-        deviceid.setText(Settings.Secure.getString(getContentResolver(),ANDROID_ID));
+        deviceid.setText(Settings.Secure.getString(getContentResolver(), ANDROID_ID));
         return Settings.Secure.getString(getContentResolver(), ANDROID_ID);
     }
 
@@ -570,7 +595,7 @@ public class MainActivity extends AppCompatActivity {
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            jsonObject.accumulate("user_id", DataHolder.getDataString(MainActivity.this,"userid"));
+            jsonObject.accumulate("user_id", DataHolder.getDataString(MainActivity.this, "userid"));
             jsonObject.accumulate("deviceid", getAndroidId());
             jsonObject.accumulate("IMEI", getImei());
             jsonObject.accumulate("IMSI", getImsi());
@@ -606,6 +631,37 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    public String getTimeApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
     private class DevicePost extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -614,15 +670,100 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.i("CheckDevice", ""+result);
+            Log.i("CheckDevice", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
             } catch (JSONException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    private class getTableAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return getTimeApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            Log.i("CheckTable", "" + result);
+            {
+                try {
+                    JSONObject jsonObjMain = new JSONObject(result);
+                    String message = jsonObjMain.getString("message");
+                    Log.i("TAG", "" + message);
+
+                    JSONArray array = new JSONArray(jsonObjMain.getString("data"));
+                    for (int i = 0; i < array.length(); i++) {
+
+
+
+                        JSONObject key = array.getJSONObject(i);
+
+                        tableid = key.getString("tableid");
+                        table_name = key.getString("table_name");
+                        table_time = key.getString("table_time");
+
+                        {
+                            try {
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+                                Date date = format.parse(table_time);
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+                                Date current_time = Calendar.getInstance().getTime();
+                                local_Time = sdf.format(current_time);
+                                time_check = sdf.format(date);
+
+                                Log.i("CurrentTime", "" + local_Time);
+                                Log.i("ServerTime", "" + time_check);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (i == 0) {
+
+                                if (Objects.equals(local_Time, time_check)) {
+                                    startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+                                } else {
+                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
+//                                    builder.setCancelable(true);
+//
+//                                    builder.setPositiveButton(
+//                                            "OK",
+//                                            new DialogInterface.OnClickListener() {
+//                                                public void onClick(DialogInterface dialog, int id) {
+//                                                    dialog.cancel();
+//                                                }
+//                                            });
+//                                    AlertDialog alert = builder.create();
+//                                    alert.show();
+                                }
+//                            } else if (i == 1) {
+//                                tableid = key.getString("tableid");
+//                                table_name = key.getString("table_name");
+//                                table_time = key.getString("table_time");
+//                            } else if (i == 2) {
+//                                tableid = key.getString("tableid");
+//                                table_name = key.getString("table_name");
+//                                table_time = key.getString("table_time");
+//                            } else if (i == 3) {
+//                                tableid = key.getString("tableid");
+//                                table_name = key.getString("table_name");
+//                                table_time = key.getString("table_time");
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

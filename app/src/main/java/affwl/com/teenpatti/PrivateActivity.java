@@ -13,6 +13,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.media.Image;
+import android.media.MediaPlayer;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -61,6 +63,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -68,22 +74,14 @@ import de.hdodenhof.circleimageview.CircleImageView;
 @SuppressLint("WrongViewCast")
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status;
-    TextView closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, player_balance, player_name, other_player_name, other_player_balance, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
-    TextView txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit;
+    ImageView handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;;
+    TextView display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, player_balance, player_name, other_player_name, other_player_balance, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble, playerlayout;
     Session session;
     LinearLayout below_layout;
-    TextView display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt;
-    Animation animations;
     CircleImageView inner_player_img;
-    ImageView oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
-
-    Animation animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8,
-            animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
-
-    TextView btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4;
+    Animation animations,animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
     SharedPreferences sharedPreferences;
     String Username;
@@ -91,15 +89,34 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     int minteger = 0;
     TextView displayAmount;
     private CircleProgressBar mCustomProgressBar2;
-
+    ScheduledExecutorService scheduleTaskExecutor;
+    MediaPlayer mediaPlayer;
     RoundCornerProgressBar progressChaalTimer;
-
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
+
+
+        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level" + level);
+                if (level <= 2) {
+                    Toast.makeText(PrivateActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PrivateActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        }, 0, 1, TimeUnit.MINUTES);
+
+
 
         new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
 
@@ -874,6 +891,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         });
+
+//        getWifiLevel();
     }
 
     @Override
@@ -905,6 +924,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         });
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mp.start();
+        finish();
     }
 
     /////////// Onclick for Backtolobby /////////////
@@ -1038,6 +1060,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.myplayer:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
                 PlayerStatusWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 player_name = customView.findViewById(R.id.player_name);
@@ -1057,6 +1083,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.player1:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
                 OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 other_player_name = customView2.findViewById(R.id.other_player_name);
@@ -1076,6 +1106,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.player2:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
                 OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 other_player_name = customView2.findViewById(R.id.other_player_name);
@@ -1095,6 +1129,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.player3:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
                 OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 other_player_name = customView2.findViewById(R.id.other_player_name);
@@ -1114,6 +1152,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.player4:
+
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+
                 OPlayerStatusWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 other_player_name = customView2.findViewById(R.id.other_player_name);
@@ -1654,7 +1696,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
 
-                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid")))
+                    {
                         sequence = true;
                     }
                     if (sequence) {
@@ -1742,7 +1785,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         animator.setDuration(10000);
         animator.start();
     }
-
 
     String Seen_Blind = "blind";
 

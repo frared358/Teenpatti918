@@ -1528,6 +1528,4 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
-
-
 }

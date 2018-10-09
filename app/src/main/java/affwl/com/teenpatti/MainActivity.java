@@ -115,11 +115,11 @@ public class MainActivity extends AppCompatActivity {
                 int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
                 Log.i("SPEED", "WIFI level " + level);
                 if (level == 5 || level == 4 || level == 3) {
-                    Toast.makeText(MainActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(), "Internet Proper " +level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 } else if (level == 2 || level == 1 || level == 0) {
-                    Toast.makeText(MainActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(), "Internet Moderate " +level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 } else {
-                    Toast.makeText(MainActivity.this, "Internet very slow", Toast.LENGTH_SHORT).show();
+                    TastyToast.makeText(getApplicationContext(), "Internet Slow " +level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 }
 
             }
@@ -348,19 +348,13 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.ygreenchips).startAnimation(animation);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
+            public void onAnimationStart(Animation animation) {}
 
             @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
+            public void onAnimationEnd(Animation animation) {}
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
+            public void onAnimationRepeat(Animation animation) {}
         });
 
         Animation antianimation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate_anticlockwise);
@@ -702,7 +696,6 @@ public class MainActivity extends AppCompatActivity {
 
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
                     for (int i = 0; i < array.length(); i++) {
-
 
 
                         JSONObject key = array.getJSONObject(i);

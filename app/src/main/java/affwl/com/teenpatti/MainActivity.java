@@ -334,8 +334,8 @@ public class MainActivity extends AppCompatActivity {
         ygreenchipslayout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-//                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
-                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+//                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
             }
@@ -386,6 +386,7 @@ public class MainActivity extends AppCompatActivity {
 //        getWifiLevel();
         getImsi();
         new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -757,6 +758,29 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            DataHolder.setData(MainActivity.this, "userstatus", "offline");
+            return DataHolder.updateUserStatusApi(urls[0],MainActivity.this,"offline");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                if (message.equalsIgnoreCase("Client status successfully changed")){
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }

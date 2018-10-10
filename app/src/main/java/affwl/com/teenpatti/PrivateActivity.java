@@ -101,6 +101,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(this, "userid"));
 
+        DataHolder.setData(PrivateActivity.this, "userstatus", "online");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","online");
+
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
@@ -516,7 +519,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(View v) {
                         String sub = displayInteger.getText().toString().substring(1);
                         minteger = Integer.parseInt(sub) * 2;
-                        displayInteger.setText("₹" + minteger);
+                        displayInteger.setText("?" + minteger);
                         displayInteger.setBackgroundResource(R.drawable.empty_btn);
 
                     }
@@ -530,7 +533,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     public void onClick(View v) {
                         String sub = displayInteger.getText().toString().substring(1);
                         minteger = Integer.parseInt(sub) / 2;
-                        displayInteger.setText("₹" + minteger);
+                        displayInteger.setText("?" + minteger);
                         displayInteger.setBackgroundResource(R.drawable.empty_btn);
                     }
                 });
@@ -612,7 +615,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
-                new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+                new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","offline");
                 stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
                 try {
                     if (broadcastReceiver != null) {
@@ -626,7 +629,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 finish();
             }
         });
-        DataHolder.getDataString(PrivateActivity.this,"userstatus");
     }
 
     @Override
@@ -900,7 +902,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         Handler handler1 = new Handler();
         display_myplayer_bind.setText(String.valueOf(ChaalAmount));
         display_myplayer_bind.bringToFront();
-        int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replaceAll("₹", "").replace(" ", ""));
+        int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
         int AMOUNT = ChaalAmount + TablelayAmtc;
         txtVTableAmt.setText(String.valueOf(AMOUNT));
 
@@ -982,7 +984,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return getUserApi(urls[0]);
+            return DataHolder.getApi(urls[0],PrivateActivity.this);
         }
 
         @Override
@@ -1080,6 +1082,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
+    private ArrayList<String> arrayListUnPackedUser = new ArrayList<>();
     private boolean sequence = false;
     public static String BootValue, PotLimit, MaxBlind, chaalLimit,DeskId;
     int PotLimitInt,ChaalAmount;
@@ -1088,12 +1091,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return getUserApi(urls[0]);
+            return DataHolder.getApi(urls[0],PrivateActivity.this);
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check123", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1103,7 +1106,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
                 chaalLimit = jsonObjMain.getString("chaal_limit");
-                ChaalAmount = Integer.parseInt(jsonObjMain.getString("desk_limit"));//Start Chaal
+                ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
                 displayAmount.setText(String.valueOf(ChaalAmount));
                 DeskId = jsonObjMain.getString("desk_id");
 
@@ -1131,6 +1134,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
                 }
+                arrayListUnPackedUser = arrayListUserIdSequence;
 
                 for (int i = 0; i < len; i++) {
 
@@ -1152,6 +1156,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         BALANCE1 = key.getString("balance");
                         nametext1.setText(user_name);
                         user_id1.setText(userid);
+                        Next_User = userid;
 
                     } else if (userid.equals(arrayListUserIdSequence.get(2))) {
                         USER_NAME2 = user_name;
@@ -1211,7 +1216,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 Log.i("TAGTAGA","hi "+progress);
                 if (CHECK_TIME_OUT){
                     animator.cancel();
-                    animator.end();
                     CHECK_TIME_OUT = false;
                     progressBarChances.setVisibility(View.GONE);
                 }
@@ -1248,9 +1252,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             jsonObject.accumulate("chaalamount", ChaalAmount);//pev
             jsonObject.accumulate("chance_status", mchance_Status);
             jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());//pev
-            jsonObject.accumulate("balance", txtVBalanceMainPlayer.getText().toString());
             jsonObject.accumulate("show", mShow_Status);//user count
             jsonObject.accumulate("seen_blind", mSeen_Blind);
+            Log.i("TAG",""+mNext_User);
             jsonObject.accumulate("next_user", mNext_User);
             jsonObject.accumulate("dealer_id", 1);
 
@@ -1291,7 +1295,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check123", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1306,7 +1310,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return getUserApi(urls[0]);
+            return DataHolder.getApi(urls[0],PrivateActivity.this);
         }
 
         @Override
@@ -1353,6 +1357,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             lastShow,lastSeen_blind,lastDealer_id,lastTip,lastTurn,lastNext_user,lastWin_lose,lastDatetime;
 
     String storeNextValue="";
+    boolean TIMER_ROTATION=true;
     private void getLastChanceData(String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result);
@@ -1370,7 +1375,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 lastUser_id = key.getString("user_id");
                 lastChance_status = key.getString("chance_status");
                 lastPot_value = key.getString("pot_value");
-                lastBalance = key.getString("balance");
                 lastShow = key.getString("show");
                 lastSeen_blind = key.getString("seen_blind");
                 lastDealer_id = key.getString("dealer_id");
@@ -1380,7 +1384,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 lastWin_lose = key.getString("win_lose");
                 lastDatetime = key.getString("datetime");
 
-//                    Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
+//              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
                 Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
                 Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
                 if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
@@ -1394,28 +1398,35 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
                     Log.i("ChkilIN0","-"+lastNext_user);
                     ChaalAmount = Integer.parseInt(lastChaal_amount);
-                    simulateProgress();
+                    if (TIMER_ROTATION) {
+                        TIMER_ROTATION=false;
+                        simulateProgress();
+                    }
                     Log.i("CHKIL1",ChaalAmount+"");
                     rl_bottom_caption.setVisibility(View.VISIBLE);
                 }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
                     Log.i("ChkilIN1","-"+lastNext_user);
                     viewBlinkCircle = player_blink_circle1;
                     player_blink_circle1.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
 
                 }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
                     Log.i("ChkilIN2","-"+lastNext_user);
                     viewBlinkCircle = player_blink_circle2;
                     player_blink_circle2.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
 
                 }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
                     Log.i("ChkilIN3","-"+lastNext_user);
                     viewBlinkCircle = player_blink_circle3;
                     player_blink_circle3.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
 
                 }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
                     Log.i("ChkilIN4","-"+lastNext_user);
                     viewBlinkCircle = player_blink_circle4;
                     player_blink_circle4.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
                 }
 
                 Log.i("CHANCESID",""+lastChanceid);
@@ -1427,52 +1438,89 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         storeNextValue = lastNext_user;
     }
 
-    public String updateUserStatusApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
+    private void getUserData(String result){
+        Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+        Log.i("Check123", "" + result);
         try {
+            JSONObject jsonObjMain = new JSONObject(result.toString());
 
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
+            BootValue = jsonObjMain.getString("boot_value");
+            MaxBlind = jsonObjMain.getString("max_no_blinds");
+            PotLimit = jsonObjMain.getString("pot_limit");
+            PotLimitInt = Integer.parseInt(PotLimit);
+            chaalLimit = jsonObjMain.getString("chaal_limit");
+            ChaalAmount = Integer.parseInt(jsonObjMain.getString("desk_limit"));//Start Chaal
+            displayAmount.setText(String.valueOf(ChaalAmount));
+            DeskId = jsonObjMain.getString("desk_id");
 
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
+            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
-            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
-            jsonObject.accumulate("user_status", "offline");//pev
+            int len = arr.length();
 
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
+            for (int i = 0; i < len; i++) {
 
-            httpPost.setEntity(new StringEntity(json));
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+                JSONObject key = arr.getJSONObject(i);
+                String userid = key.getString("user_id");
+                String user_name = key.getString("user_name");
 
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-            inputStream = httpResponse.getEntity().getContent();
+                Log.i("CHECk", "" + arrayListUserIdSequence.get(i));
 
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
+                if (userid.equals(arrayListUserIdSequence.get(0))) {
+                    nametext.setText(user_name);
+                    USER_NAME = user_name;
+                    BALANCE = key.getString("balance");
+                    user_id.setText(userid);
+                    txtVBalanceMainPlayer.setText(key.getString("balance"));
+
+                } else if (userid.equals(arrayListUserIdSequence.get(1))) {
+                    USER_NAME1 = user_name;
+                    BALANCE1 = key.getString("balance");
+                    nametext1.setText(user_name);
+                    user_id1.setText(userid);
+
+                } else if (userid.equals(arrayListUserIdSequence.get(2))) {
+                    USER_NAME2 = user_name;
+                    BALANCE2 = key.getString("balance");
+                    nametext2.setText(user_name);
+                    user_id2.setText(userid);
+
+                } else if (userid.equals(arrayListUserIdSequence.get(3))) {
+                    USER_NAME3 = user_name;
+                    BALANCE3 = key.getString("balance");
+                    nametext3.setText(user_name);
+                    user_id3.setText(userid);
+
+                } else if (userid.equals(arrayListUserIdSequence.get(4))) {
+                    USER_NAME4 = user_name;
+                    BALANCE4 = key.getString("balance");
+                    nametext4.setText(user_name);
+                    user_id4.setText(userid);
                 }
-            } else
-                result = "Did not work!";
 
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
-        return result;
+        //LAST CHANCES DATA
+        Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
+        startService(intentService);
+        DataHolder.setData(PrivateActivity.this,"CHECK_SERVICE",true);
+
+        //BroadcastReceiver LAST DATA
+        broadcastReceiver = new BroadcastReceiverDATA();
+        IntentFilter intentFilter = new IntentFilter(DataHolder.ACTION_USER_LAST_DATA);
+        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(broadcastReceiver, intentFilter);
+
+        new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id="+DeskId);
     }
+
     private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
-            return updateUserStatusApi(urls[0]);
+            return DataHolder.updateUserStatusApi(urls[0],PrivateActivity.this,urls[1]);
         }
 
         @Override
@@ -1500,6 +1548,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 String result = intent.getStringExtra(DataHolder.KEY_USER_LAST_DATA);
                 getLastChanceData(result);
                 Log.i("TAG124 result",result);
+            }else if(action.equalsIgnoreCase(DataHolder.ACTION_USER_DATA)){
+                String resultDATA = intent.getStringExtra(DataHolder.KEY_USER_DATA);
+                //getLastChanceData(resultDATA);
+                Log.i("TAG124 result",resultDATA);
             }
         }
     }

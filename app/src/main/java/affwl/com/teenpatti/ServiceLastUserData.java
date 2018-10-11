@@ -87,6 +87,21 @@ public class ServiceLastUserData extends Service {
         }
     }
 
+    private class GeteLast5ChancAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.getApi(urls[0],ServiceLastUserData.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Intent intent = new Intent(DataHolder.ACTION_LAST_5_DATA);
+            intent.putExtra(DataHolder.KEY_LAST_5_DATA, result);
+            sendBroadcast(intent);
+        }
+    }
+
     //class TimeDisplay for handling task
     class TimeDisplay extends TimerTask {
         @Override
@@ -95,7 +110,8 @@ public class ServiceLastUserData extends Service {
                 @Override
                 public void run() {
                     new GetChanceLastDataAsyncTask().execute("http://213.136.81.137:8081/api/getlastchance");
-                    new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(ServiceLastUserData.this, "userid"));
+                    new GeteLast5ChancAsyncTask().execute("http://213.136.81.137:8081/api/getEachChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
+                    //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(ServiceLastUserData.this, "userid"));
                 }
             });
         }

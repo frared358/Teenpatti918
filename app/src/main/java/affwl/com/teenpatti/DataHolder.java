@@ -222,6 +222,8 @@ public class DataHolder {
     public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time;
     public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
     public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
+    public static String ACTION_LAST_5_DATA="affwl.com.teenpatti.LAST5DATA";
+    public static String KEY_LAST_5_DATA="teenpatti.LAST5DATA";
     public static String ACTION_USER_DATA="affwl.com.teenpatti.USERDATA";
     public static String KEY_USER_DATA="teenpatti.USERDATA";
 

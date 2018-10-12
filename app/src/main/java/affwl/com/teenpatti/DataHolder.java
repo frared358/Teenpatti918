@@ -85,7 +85,7 @@ public class DataHolder {
         String result = "";
         while((line = bufferedReader.readLine()) != null){
             result += line;
-            //Log.e("Line",result);
+            //Log.e("Line", result);
         }
 
         inputStream.close();

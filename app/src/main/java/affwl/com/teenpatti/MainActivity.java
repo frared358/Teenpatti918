@@ -407,7 +407,6 @@ public class MainActivity extends AppCompatActivity {
         displayExitAlert("Alert", "Do you want to Exit?");
         MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mp.start();
-        finish();
     }
 
     private void displayExitAlert(String title, String message) {
@@ -725,20 +724,28 @@ public class MainActivity extends AppCompatActivity {
                                 if (Objects.equals(local_Time, time_check)) {
                                     startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
                                 } else {
-                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
-//                                    builder.setCancelable(true);
-//
-//                                    builder.setPositiveButton(
-//                                            "OK",
-//                                            new DialogInterface.OnClickListener() {
-//                                                public void onClick(DialogInterface dialog, int id) {
-//                                                    dialog.cancel();
-//                                                }
-//                                            });
-//                                    AlertDialog alert = builder.create();
-//                                    alert.show();
+//                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
+                                    builder.setCancelable(true);
+
+                                    builder.setPositiveButton(
+                                            "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+
+                                    builder.setNegativeButton(
+                                            "No",
+                                            new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
                                 }
 //                            } else if (i == 1) {
 //                                tableid = key.getString("tableid");

@@ -12,6 +12,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -178,6 +179,8 @@ public class DataHolder {
         return result;
     }
 
+    public static String getApi(String url, Context context) {
+
 
     public static String getUserApi(String url, Context context) {
         InputStream inputStream = null;
@@ -234,6 +237,50 @@ public class DataHolder {
     public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time;
     public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
     public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
+    public static String ACTION_LAST_5_DATA="affwl.com.teenpatti.LAST5DATA";
+    public static String KEY_LAST_5_DATA="teenpatti.LAST5DATA";
+    public static String ACTION_USER_DATA="affwl.com.teenpatti.USERDATA";
+    public static String KEY_USER_DATA="teenpatti.USERDATA";
 
+    public static String updateUserStatusApi(String url,Context context,String status) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
 
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("userid", DataHolder.getDataString(context,"userid"));
+            jsonObject.accumulate("user_status", status);
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(context,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
 }

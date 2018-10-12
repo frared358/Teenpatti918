@@ -29,11 +29,9 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -43,7 +41,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -578,7 +575,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-
     @Override
     public void onBackPressed() {
         backtolobby();
@@ -921,7 +917,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         return result;
     }
 
-
     String cardUrl1, cardUrl2, cardUrl3, cardUrl4, cardUrl5, cardUrl6, cardUrl7, cardUrl8, cardUrl9, cardUrl10, cardUrl11, cardUrl12, cardUrl13, cardUrl14, cardUrl15;
 
     private class getCardDataAsyncTask extends AsyncTask<String, Void, String> {
@@ -944,9 +939,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                 int len = arr.length();
-
-
-
                 for (int i = 0; i < len; i++) {
                     JSONObject key = arr.getJSONObject(i);
                     /* TODO "cardsallocatedusers_id": "20189210004",
@@ -1018,12 +1010,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         //nametext4.setText(key.getString("first_name"));
                     }
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
+
+
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
     private ArrayList<String> arrayListUnPackedUser = new ArrayList<>();
@@ -1119,7 +1112,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         BALANCE4 = key.getString("balance");
                         nametext4.setText(user_name);
                         user_id4.setText(userid);
-
                     }
                 }
             } catch (JSONException e) {
@@ -1147,7 +1139,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     private boolean CHECK_TIME_OUT = false;
+
     ValueAnimator animator;
+
     private void simulateProgress() {
         progressBarChances.setVisibility(View.VISIBLE);
         animator = ValueAnimator.ofInt(0, 100);
@@ -1227,7 +1221,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return result;
-    }
+    } //POST
 
     private class ChanceAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -1288,18 +1282,18 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     Log.i("CHANCESID",""+chanceid);
                 }
-
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    String lastChanceid,lastDesk_id,lastChaal_amount,lastUser_id,lastChance_status,lastPot_value,lastBalance,
-            lastShow,lastSeen_blind,lastDealer_id,lastTip,lastTurn,lastNext_user,lastWin_lose,lastDatetime;
+    String lastChanceid,lastDesk_id,lastChaal_amount,lastUser_id,lastChance_status,lastPot_value,lastBalance, lastShow,lastSeen_blind,lastDealer_id,lastTip,lastTurn,lastNext_user,lastWin_lose,lastDatetime;
 
     String storeNextValue="";
+
     boolean TIMER_ROTATION=true;
+
     private void getLastChanceData(String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result);
@@ -1671,6 +1665,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     BroadcastReceiverDATA broadcastReceiver;
+
     public class BroadcastReceiverDATA extends BroadcastReceiver {
         @Override
         public void onReceive(Context context,final Intent intent) {
@@ -1688,5 +1683,41 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 Log.i("TAG124 result",resultDATA);
             }
         }
+    }
+
+    public String winnerApi(String url){
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
     }
 }

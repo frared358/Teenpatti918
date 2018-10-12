@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -34,17 +35,21 @@ public class DataHolder {
         return context.getSharedPreferences("PREF_DATA", Context.MODE_PRIVATE);
     }
 
+
     public static String getDataString(Context context,String Key) {
         return getPrefData(context).getString(Key, "");
     }
+
 
     public static int getDataInt(Context context,String Key) {
         return getPrefData(context).getInt(Key, 0);
     }
 
+
     public static Long getDataLong(Context context,String Key) {
         return getPrefData(context).getLong(Key, -1);
     }
+
 
     public static boolean getDataBoolean(Context context,String Key) {
         return getPrefData(context).getBoolean(Key, false);
@@ -56,6 +61,7 @@ public class DataHolder {
         editor.putString(Key, input);
         editor.commit();
     }
+
     //Long setData
     public static void setData(Context context,String Key, Long input) {
         SharedPreferences.Editor editor = getPrefData(context).edit();
@@ -78,19 +84,19 @@ public class DataHolder {
     }
 
 
-
     public static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";
         String result = "";
         while((line = bufferedReader.readLine()) != null){
             result += line;
-            //Log.e("Line",result);
+            //Log.e("Line", result);
         }
 
         inputStream.close();
         return result;
     }
+
 
     public static String  getApi(String url){
         InputStream inputStream = null;
@@ -174,6 +180,9 @@ public class DataHolder {
     }
 
     public static String getApi(String url, Context context) {
+
+
+    public static String getUserApi(String url, Context context) {
         InputStream inputStream = null;
         String result = "";
         try {
@@ -204,6 +213,7 @@ public class DataHolder {
         return result;
     }
 
+
     public static void unAuthorized(Context context,String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -217,6 +227,11 @@ public class DataHolder {
         } catch (JSONException e1) {
             e1.printStackTrace();
         }
+    }
+
+
+    public static Bitmap getProfilePic(String avt1, String avt2, String avt3, String avt4, String avt5, String avt6, String avt7, String avt8){
+        return null;
     }
 
     public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time;

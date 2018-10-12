@@ -1,6 +1,5 @@
 package affwl.com.teenpatti;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +18,7 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -36,10 +36,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.JsonArray;
+import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -57,6 +60,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -74,23 +78,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     ImageView selectimage, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, camera, choosepic;
     Session session;
-    TextView playNow, balancetext;
+    TextView playNow;
     CheckBox rememberMeCheckBox;
     LoginDatabaseHelper loginDatabaseHelper;
     DBHandler dbHandler;
     EditText edittextusername, edittextpassword;
-    String username, password, userid, deviceid, devicename, softwareversion, operatorname, networktype, imei, imsi, uuid;
+    String username, password;
     MediaPlayer mediaPlayer;
 
-    private TextView user_id;
-    private TextView android_id;
-    private TextView imei_number;
-    private TextView imsi_number;
-    private TextView uuid_number;
-    private TextView device_name;
-    private TextView sim_operator;
-    private TextView network_type;
-    private TextView software_version;
     private static final String TAG = "loginactivity";
     private ScheduledExecutorService scheduleTaskExecutor;
 
@@ -116,6 +111,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         avatar5 = findViewById(R.id.avatar5);
         avatar6 = findViewById(R.id.avatar6);
         avatar7 = findViewById(R.id.avatar7);
+        avatar8 = findViewById(R.id.avatar8);
         camera = findViewById(R.id.camera);
         choosepic = findViewById(R.id.choosepic);
 
@@ -126,6 +122,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         avatar5.setOnClickListener(this);
         avatar6.setOnClickListener(this);
         avatar7.setOnClickListener(this);
+        avatar8.setOnClickListener(this);
         camera.setOnClickListener(this);
         choosepic.setOnClickListener(this);
         playNow.setOnClickListener(this);
@@ -142,6 +139,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         }
 
+        new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         checkPermission();
         requestPermission();
 
@@ -160,6 +158,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             }
         }, 0, 1, TimeUnit.MINUTES);
+
+
     }
 
     //selecting avatar
@@ -174,50 +174,66 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.avatar2) {
             image = findViewById(R.id.avatar2);
             img = image.getDrawable();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.avatar3) {
             image = findViewById(R.id.avatar3);
             img = image.getDrawable();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.avatar4) {
             image = findViewById(R.id.avatar4);
             img = image.getDrawable();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.avatar5) {
             image = findViewById(R.id.avatar5);
             img = image.getDrawable();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.avatar6) {
             image = findViewById(R.id.avatar6);
             img = image.getDrawable();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.avatar7) {
             image = findViewById(R.id.avatar7);
             img = image.getDrawable();
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             avatarimage.setImageDrawable(img);
+
+        } else if (id == R.id.avatar8) {
+            image = findViewById(R.id.avatar8);
+            img = image.getDrawable();
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
+            avatarimage.setImageDrawable(img);
+
         } else if (id == R.id.camera) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent, 1);
+
         } else if (id == R.id.choosepic) {
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
             mediaPlayer.start();
             Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, 6);
+
         } else if (id == R.id.playNow) {
 
             //get USERNAME and PASSWORD
@@ -458,12 +474,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
-                Toast.makeText(LoginActivity.this, "" + message, Toast.LENGTH_SHORT).show();
+
                 DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token").toString());
 
 
                 if (message.equalsIgnoreCase("successfully authenticated")) {
-
+                    TastyToast.makeText(LoginActivity.this, "Login Successful", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject key = array.getJSONObject(i);
@@ -475,7 +491,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                         DataHolder.setData(LoginActivity.this, "userstatus", "offline");
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
-                        Log.i("TAGTAGTAG",  " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
+                        Log.i("TAGTAGTAG", " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }
 
                     if (rememberMeCheckBox.isChecked()) {
@@ -483,13 +499,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     }
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
-                } else {
-                    Toast.makeText(getApplicationContext(), "Enter Correct Details", Toast.LENGTH_SHORT).show();
                 }
                 Log.i("result", " Status " + message);
 
             } catch (JSONException e) {
                 e.printStackTrace();
+                try {
+                    JSONObject jsonObjMain = new JSONObject(result.toString());
+                    TastyToast.makeText(LoginActivity.this, jsonObjMain.getString("message"), TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
             }
         }
     }
@@ -502,6 +522,107 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         finish();
     }
 
+    public String getApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(LoginActivity.this, "token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
+    String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
+
+    private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return getApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(LoginActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                String message = jsonObjMain.getString("message");
+                ArrayList<String> avatarId = new ArrayList<>();
+                Log.i("TAG", "" + message);
+
+
+                JSONArray array = new JSONArray(jsonObjMain.getString("data"));
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject key = array.getJSONObject(i);
+
+                    if (i == 0) {
+                        String Url1 = key.getString("avatar_url");
+                        avatar_1 = Url1;
+                        Glide.with(getApplicationContext()).load(avatar_1).into(avatar1);
+                        Log.i("URL 1", i + " " + Url1);
+                    } else if (i == 1) {
+                        String Url2 = key.getString("avatar_url");
+                        avatar_2 = Url2;
+                        Glide.with(getApplicationContext()).load(avatar_2).into(avatar2);
+                        Log.i("URL 2", i + " " + Url2);
+                    } else if (i == 2) {
+                        String Url3 = key.getString("avatar_url");
+                        avatar_3 = Url3;
+                        Glide.with(getApplicationContext()).load(avatar_3).into(avatar3);
+                        Log.i("URL 3", i + " " + Url3);
+                    } else if (i == 3) {
+                        String Url4 = key.getString("avatar_url");
+                        avatar_4 = Url4;
+                        Glide.with(getApplicationContext()).load(avatar_4).into(avatar4);
+                        Log.i("URL 4", i + " " + Url4);
+                    } else if (i == 4) {
+                        String Url5 = key.getString("avatar_url");
+                        avatar_5 = Url5;
+                        Glide.with(getApplicationContext()).load(avatar_5).into(avatar5);
+                        Log.i("URL 5", i + " " + Url5);
+                    } else if (i == 5) {
+                        String Url6 = key.getString("avatar_url");
+                        avatar_6 = Url6;
+                        Glide.with(getApplicationContext()).load(avatar_6).into(avatar6);
+                        Log.i("URL 6", i + " " + Url6);
+                    } else if (i == 6) {
+                        String Url7 = key.getString("avatar_url");
+                        avatar_7 = Url7;
+                        Glide.with(getApplicationContext()).load(avatar_7).into(avatar7);
+                        Log.i("URL 7", i + " " + Url7);
+                    } else if (i == 7) {
+                        String Url8 = key.getString("avatar_url");
+                        avatar_8 = Url8;
+                        Glide.with(getApplicationContext()).load(avatar_8).into(avatar8);
+                        Log.i("URL 8", i + " " + Url8);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 //    public boolean checkNetworkConnection() {
 //        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
 //        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();

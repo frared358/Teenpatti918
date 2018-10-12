@@ -63,7 +63,6 @@ import java.util.concurrent.TimeUnit;
 
 import static android.provider.Settings.Secure.ANDROID_ID;
 
-
 public class MainActivity extends AppCompatActivity {
 
     ImageView showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
@@ -685,7 +684,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("CheckTable", "" + result);
             {
                 try {
@@ -746,18 +745,6 @@ public class MainActivity extends AppCompatActivity {
                                     AlertDialog alert = builder.create();
                                     alert.show();
                                 }
-//                            } else if (i == 1) {
-//                                tableid = key.getString("tableid");
-//                                table_name = key.getString("table_name");
-//                                table_time = key.getString("table_time");
-//                            } else if (i == 2) {
-//                                tableid = key.getString("tableid");
-//                                table_name = key.getString("table_name");
-//                                table_time = key.getString("table_time");
-//                            } else if (i == 3) {
-//                                tableid = key.getString("tableid");
-//                                table_name = key.getString("table_name");
-//                                table_time = key.getString("table_time");
                             }
                         }
                     }

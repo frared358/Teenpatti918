@@ -489,7 +489,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.balance = key.getString("balance");
                         DataHolder.emailaddress = key.getString("emailaddress");
 
-                        DataHolder.setData(LoginActivity.this, "userstatus", "offline");
+                        DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
                         Log.i("TAGTAGTAG", " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }

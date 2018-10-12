@@ -55,50 +55,51 @@ public class ServiceLastUserData extends Service {
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],ServiceLastUserData.this);
+            return DataHolder.getUserApi(urls[0],ServiceLastUserData.this);
         }
 
         @Override
         protected void onPostExecute(String result) {
             Log.i("Check1235", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                int len = arr.length();
 
                 /*if (DataHolder.getDataBoolean(ServiceLastUserData.this,"CHECK_SERVICE")){
 
                 }*/
-            Intent intent = new Intent(DataHolder.ACTION_USER_LAST_DATA);
-            intent.putExtra(DataHolder.KEY_USER_LAST_DATA, result);
-            sendBroadcast(intent);
-        }
-    }
+                Intent intent = new Intent(DataHolder.ACTION_USER_LAST_DATA);
+                intent.putExtra(DataHolder.KEY_USER_LAST_DATA, result);
+                sendBroadcast(intent);
 
-    private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
+                /*for (int i=0;i<len;i++){
+                    JSONObject key = arr.getJSONObject(i);
 
-        @Override
-        protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],ServiceLastUserData.this);
-        }
+                    lastChanceid = key.getString("chanceid");
+                    lastDesk_id = key.getString("desk_id");
+                    lastChaal_amount = key.getString("chaal_amount");
+                    lastUser_id = key.getString("user_id");
+                    lastChance_status = key.getString("chance_status");
+                    lastPot_value = key.getString("pot_value");
+                    lastBalance = key.getString("balance");
+                    lastShow = key.getString("show");
+                    lastSeen_blind = key.getString("seen_blind");
+                    lastDealer_id = key.getString("dealer_id");
+                    lastTip = key.getString("tip");
+                    lastTurn = key.getString("turn");
+                    lastNext_user = key.getString("game_status");
+                    lastWin_lose = key.getString("win_lose");
+                    lastDatetime = key.getString("datetime");
 
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("Check123", "" + result);
-            Intent intent = new Intent(DataHolder.ACTION_USER_DATA);
-            intent.putExtra(DataHolder.KEY_USER_DATA, result);
-            sendBroadcast(intent);
-        }
-    }
+                    Log.i("CHANCESID",""+lastChanceid);
+                }*/
 
-    private class GeteLast5ChancAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],ServiceLastUserData.this);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Intent intent = new Intent(DataHolder.ACTION_LAST_5_DATA);
-            intent.putExtra(DataHolder.KEY_LAST_5_DATA, result);
-            sendBroadcast(intent);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -110,8 +111,6 @@ public class ServiceLastUserData extends Service {
                 @Override
                 public void run() {
                     new GetChanceLastDataAsyncTask().execute("http://213.136.81.137:8081/api/getlastchance");
-                    new GeteLast5ChancAsyncTask().execute("http://213.136.81.137:8081/api/getEachChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
-                    //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(ServiceLastUserData.this, "userid"));
                 }
             });
         }

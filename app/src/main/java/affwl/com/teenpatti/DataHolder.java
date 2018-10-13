@@ -38,21 +38,17 @@ public class DataHolder {
         return context.getSharedPreferences("PREF_DATA", Context.MODE_PRIVATE);
     }
 
-
     public static String getDataString(Context context,String Key) {
         return getPrefData(context).getString(Key, "");
     }
-
 
     public static int getDataInt(Context context,String Key) {
         return getPrefData(context).getInt(Key, 0);
     }
 
-
     public static Long getDataLong(Context context,String Key) {
         return getPrefData(context).getLong(Key, -1);
     }
-
 
     public static boolean getDataBoolean(Context context,String Key) {
         return getPrefData(context).getBoolean(Key, false);
@@ -64,7 +60,6 @@ public class DataHolder {
         editor.putString(Key, input);
         editor.commit();
     }
-
     //Long setData
     public static void setData(Context context,String Key, Long input) {
         SharedPreferences.Editor editor = getPrefData(context).edit();
@@ -91,6 +86,7 @@ public class DataHolder {
     }
 
 
+
     public static String convertInputStreamToString(InputStream inputStream) throws IOException {
         BufferedReader bufferedReader = new BufferedReader( new InputStreamReader(inputStream));
         String line = "";
@@ -103,7 +99,6 @@ public class DataHolder {
         inputStream.close();
         return result;
     }
-
 
     public static String  getApi(String url){
         InputStream inputStream = null;
@@ -186,8 +181,7 @@ public class DataHolder {
         return result;
     }
 
-
-    public static String getUserApi(String url, Context context) {
+    public static String getApi(String url, Context context) {
         InputStream inputStream = null;
         String result = "";
         try {
@@ -218,7 +212,6 @@ public class DataHolder {
         return result;
     }
 
-
     public static void unAuthorized(Context context,String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -234,7 +227,8 @@ public class DataHolder {
         }
     }
 
-    public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time, imageURL, avatar_url;
+
+    public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time;
     public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
     public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
     public static String ACTION_LAST_5_DATA="affwl.com.teenpatti.LAST5DATA";
@@ -255,6 +249,7 @@ public class DataHolder {
 
             jsonObject.accumulate("userid", DataHolder.getDataString(context,"userid"));
             jsonObject.accumulate("user_status", status);
+
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);

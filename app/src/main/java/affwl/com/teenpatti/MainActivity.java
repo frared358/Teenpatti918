@@ -333,8 +333,8 @@ public class MainActivity extends AppCompatActivity {
         ygreenchipslayout.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-//                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
-                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+//                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
             }
@@ -385,6 +385,7 @@ public class MainActivity extends AppCompatActivity {
 //        getWifiLevel();
         getImsi();
         new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
+        new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -722,28 +723,28 @@ public class MainActivity extends AppCompatActivity {
                                 if (Objects.equals(local_Time, time_check)) {
                                     startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
                                 } else {
-//                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
-                                    builder.setCancelable(true);
-
-                                    builder.setPositiveButton(
-                                            "OK",
-                                            new DialogInterface.OnClickListener() {
-                                                public void onClick(DialogInterface dialog, int id) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-
-                                    builder.setNegativeButton(
-                                            "No",
-                                            new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int id) {
-                                            dialog.cancel();
-                                        }
-                                    });
-                                    AlertDialog alert = builder.create();
-                                    alert.show();
+                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
+//                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
+//                                    builder.setCancelable(true);
+//
+//                                    builder.setPositiveButton(
+//                                            "OK",
+//                                            new DialogInterface.OnClickListener() {
+//                                                public void onClick(DialogInterface dialog, int id) {
+//                                                    dialog.cancel();
+//                                                }
+//                                            });
+//
+//                                    builder.setNegativeButton(
+//                                            "No",
+//                                            new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int id) {
+//                                            dialog.cancel();
+//                                        }
+//                                    });
+//                                    AlertDialog alert = builder.create();
+//                                    alert.show();
                                 }
                             }
                         }
@@ -751,6 +752,66 @@ public class MainActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+            }
+        }
+    }
+
+    public String changeImageApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.accumulate("user_id", (DataHolder.getDataString(MainActivity.this, "userid")));
+            jsonObject.accumulate("avatar_url", (DataHolder.Url1));
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    private class changeimageAsyncTask extends AsyncTask<String, Void, String>{
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return changeImageApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.i("CheckImage", "" + s);
+            try {
+                JSONObject jsonObjMain = new JSONObject(s.toString());
+
+                String message = jsonObjMain.getString("message");
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }

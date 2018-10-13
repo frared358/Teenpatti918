@@ -113,7 +113,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         progressBarChances = findViewById(R.id.progressBarChances);
         viewBlinkCircle = new View(PrivateActivity.this);
 
-        //        implemention of user profile pic
+        //  implemention of user profile pic
         profile = findViewById(R.id.inner_player_img);
         profile.setOnClickListener(this);
         profile1 = findViewById(R.id.inner_player_img1);

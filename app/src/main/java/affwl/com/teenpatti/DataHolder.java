@@ -226,6 +226,8 @@ public class DataHolder {
     public static String KEY_LAST_5_DATA="teenpatti.LAST5DATA";
     public static String ACTION_USER_DATA="affwl.com.teenpatti.USERDATA";
     public static String KEY_USER_DATA="teenpatti.USERDATA";
+    public static String ACTION_NEXT_CHANCE_DATA="affwl.com.teenpatti.NEXT_CHANCE_DATA";
+    public static String KEY_NEXT_CHANCE_DATA="teenpatti.NEXT_CHANCE_DATA";
 
     public static String updateUserStatusApi(String url,Context context,String status) {
         InputStream inputStream = null;
@@ -266,6 +268,34 @@ public class DataHolder {
             Log.d("InputStream", "" + e);
         }
 
+        return result;
+    }
+
+    public static String setApi(String url,Context context) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(context,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
         return result;
     }
 }

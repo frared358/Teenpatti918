@@ -8,10 +8,15 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.InputStream;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -110,10 +115,26 @@ public class ServiceLastUserData extends Service {
                 @Override
                 public void run() {
                     new GetChanceLastDataAsyncTask().execute("http://213.136.81.137:8081/api/getlastchance");
-                    new GeteLast5ChancAsyncTask().execute("http://213.136.81.137:8081/api/getEachChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
+                    //new GeteLast5ChancAsyncTask().execute("http://213.136.81.137:8081/api/getEachChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
+                    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
                     //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(ServiceLastUserData.this, "userid"));
                 }
             });
+        }
+    }
+
+//    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DeskId);
+
+    private class NextChanceAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.setApi(urls[0],ServiceLastUserData.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Check1230", "" + result);
         }
     }
 

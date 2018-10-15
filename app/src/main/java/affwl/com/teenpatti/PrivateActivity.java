@@ -74,7 +74,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private CircleProgressBar progressBarChances;
     ScheduledExecutorService scheduleTaskExecutor;
     MediaPlayer mediaPlayer;
-    RoundCornerProgressBar progressChaalTimer;
+    //RoundCornerProgressBar progressChaalTimer;
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
 
     @Override

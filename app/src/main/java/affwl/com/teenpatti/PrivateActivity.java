@@ -144,9 +144,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         user_status3 = findViewById(R.id.user_status3);
         user_status4 = findViewById(R.id.user_status4);
 
-
-        new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
-
         txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
 
 //        code = findViewById(R.id.code);

@@ -32,6 +32,8 @@ import android.widget.Toast;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.sdsmdg.tastytoast.TastyToast;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -142,6 +144,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         user_status3 = findViewById(R.id.user_status3);
         user_status4 = findViewById(R.id.user_status4);
 
+
+        new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
 
         txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
 
@@ -668,28 +672,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.show_btn:
-                Handler handlerDisp = new Handler();
-                Show_Status = "1";
-                handlerDisp.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
-                        Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
-                        Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
-
-                        Glide.with(PrivateActivity.this).load(cardUrl4).into(card2);
-                        Glide.with(PrivateActivity.this).load(cardUrl5).into(card7);
-                        Glide.with(PrivateActivity.this).load(cardUrl6).into(card12);
-
-                        Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
-                        Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
-                        Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
-
-                        Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
-                        Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
-                        Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
-                    }
-                });
+                showCards();
                 break;
 
             case R.id.imgVInfo:
@@ -743,6 +726,33 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 backtolobby();
                 break;
         }
+    }
+
+    //SHOW Cards
+    public void showCards(){
+        Handler handlerDisp = new Handler();
+        Show_Status = "1";
+        new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
+        handlerDisp.post(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
+                Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
+                Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
+
+                Glide.with(PrivateActivity.this).load(cardUrl4).into(card2);
+                Glide.with(PrivateActivity.this).load(cardUrl5).into(card7);
+                Glide.with(PrivateActivity.this).load(cardUrl6).into(card12);
+
+                Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
+                Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
+                Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
+
+                Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
+                Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
+                Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
+            }
+        });
     }
 
     //individual User Info
@@ -846,7 +856,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         txtVTableAmt.setText(String.valueOf(AMOUNT));
 
         if (AMOUNT >= PotLimitInt) {
-            Toast.makeText(this, "Pot Limit Exceeded", Toast.LENGTH_SHORT).show();
+            TastyToast.makeText(this, "Pot Limit Exceeded", TastyToast.LENGTH_LONG, TastyToast.INFO);
+            showCards();
         }
         animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
         display_myplayer_bind.startAnimation(animations);
@@ -1004,7 +1015,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
-
 
     private ArrayList<String> arrayListUserId = new ArrayList<>();
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
@@ -1404,7 +1414,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
+        } /*catch (Exception e) {
+            e.printStackTrace();
+        }*/
         storeNextValue = lastNext_user;
     }
 

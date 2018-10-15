@@ -234,7 +234,7 @@ public class DataHolder {
         }
     }
 
-    public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time, imageURL, avatar_url;
+    public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time, imageURL, avatar_url, encodeimage;
     public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
     public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
     public static String ACTION_LAST_5_DATA="affwl.com.teenpatti.LAST5DATA";

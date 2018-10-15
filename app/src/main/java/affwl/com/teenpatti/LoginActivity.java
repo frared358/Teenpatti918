@@ -251,28 +251,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 displayAlertMessage("Teenpatti", "Please select a image");
             } else {
                 try {
-                    URL url = new URL(DataHolder.imageURL);
+                    URL url = new URL(DataHolder.avatar_url);
                     try {
                         Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
                         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                        bmp.compress(Bitmap.CompressFormat.PNG, 100, baos);
                         byte[] b = baos.toByteArray();
-                        String encodeimage = Base64.encodeToString(b, Base64.DEFAULT);
-                        session.put(encodeimage);
+                        DataHolder.encodeimage = Base64.encodeToString(b, Base64.DEFAULT);
+                        session.put(DataHolder.encodeimage);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 } catch (MalformedURLException e1) {
                     e1.printStackTrace();
                 }
-//                Bitmap bmp = ((BitmapDrawable) avatarimage.getDrawable()).getBitmap();
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                byte[] b = baos.toByteArray();
-//                String encodeimage = Base64.encodeToString(b, Base64.DEFAULT);
-//                String setNameHere = edittextusername.getText().toString().trim();
-//                session.put(encodeimage, setNameHere);
-//                long result = loginDatabaseHelper.add(encodeimage, setNameHere);
             }
 
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);

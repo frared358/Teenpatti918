@@ -61,6 +61,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
 public class MainActivity extends AppCompatActivity {
@@ -142,9 +143,9 @@ public class MainActivity extends AppCompatActivity {
 
         code = findViewById(R.id.code);
         session = new Session(this);
-        String encodedimage = session.getImage();
-        if (!encodedimage.equalsIgnoreCase("")) {
-            byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+        encodeimage = session.getImage();
+        if (!encodeimage.equalsIgnoreCase("")) {
+            byte[] b = Base64.decode(encodeimage, Base64.DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             profile.setImageBitmap(bmp);
         }
@@ -767,7 +768,7 @@ public class MainActivity extends AppCompatActivity {
             String json = "";
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("user_id", (DataHolder.getDataString(MainActivity.this, "userid")));
-            jsonObject.accumulate("avatar_url", (DataHolder.Url1));
+            jsonObject.accumulate("avatar_url", encodeimage);
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -776,6 +777,7 @@ public class MainActivity extends AppCompatActivity {
             httpPost.setEntity(new StringEntity(json));
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
             HttpResponse httpResponse = httpclient.execute(httpPost);
             inputStream = httpResponse.getEntity().getContent();
 
@@ -806,7 +808,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             Log.i("CheckImage", "" + s);
             try {
-                JSONObject jsonObjMain = new JSONObject(s.toString());
+                JSONObject jsonObjMain = new JSONObject(s);
 
                 String message = jsonObjMain.getString("message");
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();

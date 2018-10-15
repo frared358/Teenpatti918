@@ -4,8 +4,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,6 +16,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,6 +79,10 @@ public class DataHolder {
         SharedPreferences.Editor editor = getPrefData(context).edit();
         editor.putBoolean(Key, input);
         editor.commit();
+    }
+
+    public static String getAvatarImage(Context context,String Key) {
+        return getPrefData(context).getString(Key, "");
     }
 
 
@@ -219,6 +227,7 @@ public class DataHolder {
         }
     }
 
+
     public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time;
     public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
     public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
@@ -242,6 +251,7 @@ public class DataHolder {
 
             jsonObject.accumulate("userid", DataHolder.getDataString(context,"userid"));
             jsonObject.accumulate("user_status", status);
+
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -298,4 +308,13 @@ public class DataHolder {
         }
         return result;
     }
+    
+    static String Url1;
+    static String Url2;
+    static String Url3;
+    static String Url4;
+    static String Url5;
+    static String Url6;
+    static String Url7;
+    static String Url8;
 }

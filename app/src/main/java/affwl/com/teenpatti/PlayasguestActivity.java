@@ -161,7 +161,7 @@ public class PlayasguestActivity extends AppCompatActivity implements View.OnCli
                 if (setNameHere.equalsIgnoreCase("") || setNameHere.equalsIgnoreCase(null)) {
                     displayAlertMessage("Teenpatti","Name can't be empty");
                 } else {
-                    session.put(encodeimage, setNameHere);
+                    session.put(encodeimage);
                     long result = loginDatabaseHelper.add(encodeimage, setNameHere);
 //                    Toast.makeText(this, String.valueOf(result), Toast.LENGTH_SHORT).show();
                     //intent.putExtra("img",bmp);

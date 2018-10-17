@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.google.gson.JsonArray;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpResponse;
@@ -54,6 +56,9 @@ import java.util.concurrent.TimeUnit;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+
 @SuppressWarnings("deprecation")
 @SuppressLint("WrongViewCast")
 
@@ -74,7 +79,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private CircleProgressBar progressBarChances;
     ScheduledExecutorService scheduleTaskExecutor;
     MediaPlayer mediaPlayer;
-    //RoundCornerProgressBar progressChaalTimer;
+    RoundCornerProgressBar progressChaalTimer;
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
 
     @Override
@@ -431,7 +436,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
 
         //////////////// Popup for Backbutton ///////////////////
-/*
+
         backbtn = findViewById(R.id.back);
         backbtn.setOnClickListener(this);
 
@@ -440,113 +445,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         imgVInfo.setOnClickListener(this);
 
 
-        //////////////// Popup for Dealer ///////////////////
-        dealerbtn = findViewById(R.id.dealer);
-        dealerbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //instantiate the popup.xml layout file
-                LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View customView = layoutInflater.inflate(R.layout.dealer_popup, null);
 
-                relativeLayout2 = customView.findViewById(R.id.inctip_layout);
-                relativeLayout3 = customView.findViewById(R.id.bottombtns);
-                tipsbtn = customView.findViewById(R.id.tipbtn);
-                canceltipbtn = customView.findViewById(R.id.canceltip);
-                chngdbtn = customView.findViewById(R.id.chngdealer);
-                // onclick event for tip button to hide and show layout
-                tipsbtn.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        if (relativeLayout2.getVisibility() == View.INVISIBLE) {
-                            relativeLayout2.setVisibility(View.VISIBLE);
-                        }
-                        if (relativeLayout3.getVisibility() == View.VISIBLE) {
-                            relativeLayout3.setVisibility(View.INVISIBLE);
-                        }
-                    }
-
-                });
-                // onclick event for change dealer button
-                chngdbtn.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View v) {
-                        LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                        View customView2 = layoutInflater.inflate(R.layout.change_dealer, null);
-                        chngdealerclosebtn = customView2.findViewById(R.id.chngdealerclose);
-                        //instantiate popup window
-                        chngdpopupWindow = new PopupWindow(customView2, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
-                        //display the popup window
-                        chngdpopupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-
-                        //close the popup window on button click
-                        chngdealerclosebtn.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                chngdpopupWindow.dismiss();
-                            }
-                        });
-                        dealerpopupWindow.dismiss();
-                    }
-
-                });
-                // onclick event for cancel button of tip
-                canceltipbtn.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        if (relativeLayout2.getVisibility() == View.VISIBLE) {
-                            relativeLayout2.setVisibility(View.INVISIBLE);
-                        }
-                        if (relativeLayout3.getVisibility() == View.INVISIBLE) {
-                            relativeLayout3.setVisibility(View.VISIBLE);
-                        }
-                    }
-                });
-
-                //Implementation of increament tip button
-                final TextView displayInteger = customView.findViewById(R.id.tipamount);
-                plusbtn = customView.findViewById(R.id.plus);
-                plusbtn.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        String sub = displayInteger.getText().toString().substring(1);
-                        minteger = Integer.parseInt(sub) * 2;
-                        displayInteger.setText("?" + minteger);
-                        displayInteger.setBackgroundResource(R.drawable.empty_btn);
-
-                    }
-
-                });
-
-                //Implementation of decreament tip
-                minusbtn = customView.findViewById(R.id.minus);
-                minusbtn.setOnClickListener(new View.OnClickListener() {
-
-                    public void onClick(View v) {
-                        String sub = displayInteger.getText().toString().substring(1);
-                        minteger = Integer.parseInt(sub) / 2;
-                        displayInteger.setText("?" + minteger);
-                        displayInteger.setBackgroundResource(R.drawable.empty_btn);
-                    }
-                });
-                dealerclsbtn = customView.findViewById(R.id.dealerclose);
-                //instantiate popup window
-                dealerpopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-
-                //display the popup window
-                dealerpopupWindow.showAtLocation(relativeLayout, Gravity.CENTER_HORIZONTAL, 0, 0);
-
-                //close the popup window on button click
-                dealerclsbtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dealerpopupWindow.dismiss();
-                    }
-                });
-            }
-        });*/
-
-        //Winner Animation
+        ////////////////Winner Animation////////////////
         winnerblinker1 = (ImageView) findViewById(R.id.winnerblinker1);
 //      winnerblinker2 = (ImageView) findViewById(R.id.winnerblinker2);
         myplayer = (ImageView) findViewById(R.id.myplayer);
@@ -573,19 +473,34 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         });
-
         onTick(5000);
     }
 
 
     public void onTick(long millisUntilFinished) {
-        new gameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
         Toast.makeText(getApplicationContext(), "Generating game request in : " + millisUntilFinished/1000, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onBackPressed() {
-        backtolobby();
+        if (popupWindow != null && popupWindow.isShowing()) {
+            popupWindow.dismiss();
+        } else {
+            backtolobby();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        backPress();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /////////// Onclick for Backtolobby /////////////
@@ -601,7 +516,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         //display the popup window
         popupWindow.showAtLocation(relativeLayout, Gravity.CENTER, 0, 0);
-
+        popupWindow.setFocusable(false);
         //close the popup window on button click
         closebtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -613,19 +528,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         backtolobby.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
-                new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","offline");
-                stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
-                try {
-                    if (broadcastReceiver != null) {
-                        unregisterReceiver(broadcastReceiver);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                backPress();
                 Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
+                intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP|FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
-                finish();
             }
         });
     }
@@ -674,6 +580,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.pack_btn:
                 packOperation();
+                new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
                 break;
 
             case R.id.show_btn:
@@ -730,6 +637,20 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.back:
                 backtolobby();
                 break;
+        }
+    }
+
+    //On BackPress
+    public void backPress(){
+        DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","offline");
+        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
+        try {
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -794,7 +715,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         profile.setImageResource(R.drawable.fade_inner_img);
         chance_Status = "packed";
         CHECK_TIME_OUT = true;
-        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
     }
 
     //Seen Card Operation
@@ -809,7 +729,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
         btn_see_cards.setVisibility(View.GONE);
-        show_btn.setVisibility(View.VISIBLE);
+        //show_btn.setVisibility(View.VISIBLE);
         blind_btn.setVisibility(View.GONE);
         chaal_btn.setVisibility(View.VISIBLE);
         Seen_Blind="seen";
@@ -945,7 +865,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         protected void onPostExecute(String result) {
 
             Log.i("Check", "" + result);
-//            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataString(PrivateActivity.this,"token"), Toast.LENGTH_SHORT).show();
+            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataString(PrivateActivity.this,"token"), Toast.LENGTH_SHORT).show();
 
             try {
                 JSONObject jsonObjMain = new JSONObject(result);
@@ -1018,6 +938,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
+
         }
     }
 
@@ -1037,6 +960,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
+            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check123", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1049,6 +973,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
                 displayAmount.setText(String.valueOf(ChaalAmount));
                 DeskId = jsonObjMain.getString("desk_id");
+                displayAmount.setText(String.valueOf(ChaalAmount));
                 DataHolder.setData(PrivateActivity.this, "deskid",DeskId);
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
@@ -1058,7 +983,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
-
                     if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
                         sequence = true;
                     }
@@ -1074,14 +998,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
                 }
-                arrayListUnPackedUser = arrayListUserIdSequence;
+                //arrayListUnPackedUser = arrayListUserIdSequence;
 
                 for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
                     String user_name = key.getString("user_name");
-
+                    String user_status = key.getString("user_status");
                     Log.i("CHECk", "" + arrayListUserIdSequence.get(i));
 
                     if (userid.equals(arrayListUserIdSequence.get(0))) {
@@ -1090,31 +1014,60 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         BALANCE = key.getString("balance");
                         user_id.setText(userid);
                         txtVBalanceMainPlayer.setText(key.getString("balance"));
+                        arrayListUnPackedUser.add(userid);
 
                     } else if (userid.equals(arrayListUserIdSequence.get(1))) {
                         USER_NAME1 = user_name;
                         BALANCE1 = key.getString("balance");
                         nametext1.setText(user_name);
                         user_id1.setText(userid);
+                        user_status1.setText(user_status);
                         Next_User = userid;
+                        if (user_status.equalsIgnoreCase("online")) {
+                            arrayListUnPackedUser.add(userid);
+                            user_status1.setTextColor(Color.GREEN);
+                        }else if (user_status.equalsIgnoreCase("offline")){
+                            user_status1.setTextColor(Color.RED);
+                        }
 
                     } else if (userid.equals(arrayListUserIdSequence.get(2))) {
                         USER_NAME2 = user_name;
                         BALANCE2 = key.getString("balance");
                         nametext2.setText(user_name);
                         user_id2.setText(userid);
+                        user_status2.setText(user_status);
+                        if (user_status.equalsIgnoreCase("online")) {
+                            arrayListUnPackedUser.add(userid);
+                            user_status2.setTextColor(Color.GREEN);
+                        }else if (user_status.equalsIgnoreCase("offline")){
+                            user_status2.setTextColor(Color.RED);
+                        }
 
                     } else if (userid.equals(arrayListUserIdSequence.get(3))) {
                         USER_NAME3 = user_name;
                         BALANCE3 = key.getString("balance");
                         nametext3.setText(user_name);
                         user_id3.setText(userid);
+                        user_status3.setText(user_status);
+                        if (user_status.equalsIgnoreCase("online")) {
+                            arrayListUnPackedUser.add(userid);
+                            user_status3.setTextColor(Color.GREEN);
+                        }else if (user_status.equalsIgnoreCase("offline")){
+                            user_status3.setTextColor(Color.RED);
+                        }
 
                     } else if (userid.equals(arrayListUserIdSequence.get(4))) {
                         USER_NAME4 = user_name;
                         BALANCE4 = key.getString("balance");
                         nametext4.setText(user_name);
                         user_id4.setText(userid);
+                        user_status4.setText(user_status);
+                        if (user_status.equalsIgnoreCase("online")) {
+                            arrayListUnPackedUser.add(userid);
+                            user_status4.setTextColor(Color.GREEN);
+                        }else if (user_status.equalsIgnoreCase("offline")){
+                            user_status4.setTextColor(Color.RED);
+                        }
                     }
                 }
             } catch (JSONException e) {
@@ -1122,25 +1075,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id="+DeskId);
-
-            //LAST CHANCES DATA
-            Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
-            startService(intentService);
-            DataHolder.setData(PrivateActivity.this,"CHECK_SERVICE",true);
-
-            //BroadcastReceiver LAST DATA
-            broadcastReceiver = new BroadcastReceiverDATA();
-            IntentFilter intentFilter = new IntentFilter(DataHolder.ACTION_USER_LAST_DATA);
-            intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-            registerReceiver(broadcastReceiver, intentFilter);
-
-
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     private boolean CHECK_TIME_OUT = false;
@@ -1164,7 +1099,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 if (99==progress){
                     animator.cancel();
-                    //packOperation();
+                    packOperation();
                     progressBarChances.setVisibility(View.GONE);
                 }
 
@@ -1172,7 +1107,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
         Log.i("TAGTAGA1","hello");
         animator.setRepeatCount(ValueAnimator.INFINITE);
-        animator.setDuration(15000);
+        animator.setDuration(20000);
         animator.start();
     }
 
@@ -1196,7 +1131,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());//pev
             jsonObject.accumulate("show", mShow_Status);//user count
             jsonObject.accumulate("seen_blind", mSeen_Blind);
-            //jsonObject.accumulate("next_user", mNext_User);
+            jsonObject.accumulate("next_user", mNext_User);
             jsonObject.accumulate("dealer_id", 1);
 
             json = jsonObject.toString();
@@ -1225,7 +1160,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
 
         return result;
-    } //POST
+    }
 
     private class ChanceAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -1255,7 +1190,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-//            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check123", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1298,6 +1233,43 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     boolean TIMER_ROTATION=true;
 
+    private class NextChanceAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.setApi(urls[0],PrivateActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(PrivateActivity.this, ""+result, Toast.LENGTH_SHORT).show();
+            Log.i("Check1230", "" + result);
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                for (int i=0; i<arr.length(); i++){
+                    String s = arr.getString(i);
+                    Log.i("TTYY",""+s);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            //LAST CHANCES DATA
+            Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
+            startService(intentService);
+            DataHolder.setData(PrivateActivity.this,"CHECK_SERVICE",true);
+
+            //BroadcastReceiver LAST DATA
+            broadcastReceiver = new BroadcastReceiverDATA();
+            IntentFilter intentFilter = new IntentFilter(DataHolder.ACTION_USER_LAST_DATA);
+            intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+            registerReceiver(broadcastReceiver, intentFilter);
+        }
+    }
+
     private void getLastChanceData(String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result);
@@ -1309,6 +1281,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             //len is zero then add condition
 
+            if(len==0){
+                new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(this, "deskid"));
+
+            }
+
             for (int i=0;i<len;i++){
                 JSONObject key = arr.getJSONObject(i);
 
@@ -1328,7 +1305,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 lastDatetime = key.getString("datetime");
 
 //              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
-                Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
                 Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
                 if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
                     try {
@@ -1338,167 +1314,110 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
 
-                if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN0","-"+lastNext_user);
-                    ChaalAmount = Integer.parseInt(lastChaal_amount);
-                    if (TIMER_ROTATION) {
-                        TIMER_ROTATION=false;
-                        simulateProgress();
-                        btn_see_cards.setVisibility(View.VISIBLE);
-                    }
-                    Log.i("CHKIL1",ChaalAmount+"");
-                    rl_bottom_caption.setVisibility(View.VISIBLE);
-                }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN1","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle1;
-                    player_blink_circle1.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-                    user_status1.setText(lastSeen_blind);
-                    user_status1.setVisibility(View.VISIBLE);
-                }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN2","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle2;
-                    player_blink_circle2.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-                    user_status2.setText(lastSeen_blind);
-                    user_status2.setVisibility(View.VISIBLE);
-                }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN3","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle3;
-                    player_blink_circle3.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-                    user_status3.setText(lastSeen_blind);
-                    user_status3.setVisibility(View.VISIBLE);
-                }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN4","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle4;
-                    player_blink_circle4.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-                    user_status4.setText(lastSeen_blind);
-                    user_status4.setVisibility(View.VISIBLE);
-                }
-
-                if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)){
-                    if (!lastChance_status.equalsIgnoreCase("packed")) {
+                try {
+                    if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN0","-"+lastNext_user);
+                        ChaalAmount = Integer.parseInt(lastChaal_amount);
+                        if (TIMER_ROTATION) {
+                            TIMER_ROTATION=false;
+                            simulateProgress();
+                            btn_see_cards.setVisibility(View.VISIBLE);
+                        }
+                        Log.i("CHKIL1",ChaalAmount+"");
+                        rl_bottom_caption.setVisibility(View.VISIBLE);
+                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN1","-"+lastNext_user);
+                        viewBlinkCircle = player_blink_circle1;
+                        player_blink_circle1.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
                         user_status1.setText(lastSeen_blind);
-                    }else {
-                        user_status1.setText(lastChance_status);
-                        arrayListUnPackedUser.remove(lastChance_status);
-                        /*card3.setVisibility(View.GONE);
-                        card8.setVisibility(View.GONE);
-                        card13.setVisibility(View.GONE);*/
-                        player1.setImageResource(R.drawable.fade_inner_img);
-                    }
-                }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)){
-                    if (!lastChance_status.equalsIgnoreCase("packed")) {
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN2","-"+lastNext_user);
+                        viewBlinkCircle = player_blink_circle2;
+                        player_blink_circle2.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
                         user_status2.setText(lastSeen_blind);
-                    }else {
-                        user_status2.setText(lastChance_status);
-                        arrayListUnPackedUser.remove(lastChance_status);
-                        player1.setImageResource(R.drawable.fade_inner_img);
-                    }
-                }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)){
-                    if (!lastChance_status.equalsIgnoreCase("packed")) {
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN3","-"+lastNext_user);
+                        viewBlinkCircle = player_blink_circle3;
+                        player_blink_circle3.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
                         user_status3.setText(lastSeen_blind);
-                    }else {
-                        user_status3.setText(lastChance_status);
-                        arrayListUnPackedUser.remove(lastChance_status);
-                        player1.setImageResource(R.drawable.fade_inner_img);
-                    }
-                }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)){
-                    if (!lastChance_status.equalsIgnoreCase("packed")) {
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN4","-"+lastNext_user);
+                        viewBlinkCircle = player_blink_circle4;
+                        player_blink_circle4.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
                         user_status4.setText(lastSeen_blind);
-                    }else {
-                        user_status4.setText(lastChance_status);
-                        arrayListUnPackedUser.remove(lastChance_status);
-                        player1.setImageResource(R.drawable.fade_inner_img);
                     }
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
                 }
+
+                try {
+                    if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                            user_status1.setText(lastSeen_blind);
+                        }else {
+                            user_status1.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card2.setVisibility(View.GONE);
+                            card7.setVisibility(View.GONE);
+                            card12.setVisibility(View.GONE);
+                        }
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                            user_status2.setText(lastSeen_blind);
+                        }else {
+                            user_status2.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card1.setVisibility(View.GONE);
+                            card6.setVisibility(View.GONE);
+                            card11.setVisibility(View.GONE);
+                        }
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                            user_status3.setText(lastSeen_blind);
+                        }else {
+                            user_status3.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card5.setVisibility(View.GONE);
+                            card10.setVisibility(View.GONE);
+                            card15.setVisibility(View.GONE);
+                        }
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
+                            user_status4.setText(lastSeen_blind);
+                        }else {
+                            user_status4.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card4.setVisibility(View.GONE);
+                            card9.setVisibility(View.GONE);
+                            card11.setVisibility(View.GONE);
+                        }
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
+            txtVTableAmt.setText("Rs "+lastPot_value);
+
+            if (arrayListUnPackedUser.size() == 2){
+                show_btn.setVisibility(View.VISIBLE);
+            }
+
+            if (arrayListUnPackedUser.size() == 1){
+                //ShowData Set Winner
+                new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
-        } /*catch (Exception e) {
-            e.printStackTrace();
-        }*/
-        storeNextValue = lastNext_user;
-    }
-
-    private void getLast5UsersChanceData(String result){
-        try {
-            JSONObject jsonObjMain = new JSONObject(result);
-
-            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
-            int len = arr.length();
-
-            for (int i=0;i<len;i++){
-                JSONObject key = arr.getJSONObject(i);
-
-                lastChanceid = key.getString("chanceid");
-                lastDesk_id = key.getString("desk_id");
-                lastChaal_amount = key.getString("chaal_amount");
-                lastUser_id = key.getString("user_id");
-                lastChance_status = key.getString("chance_status");
-                lastPot_value = key.getString("pot_value");
-                lastShow = key.getString("show");
-                lastSeen_blind = key.getString("seen_blind");
-                lastDealer_id = key.getString("dealer_id");
-                lastTip = key.getString("tip");
-                lastTurn = key.getString("turn");
-                lastNext_user = key.getString("next_user");
-                lastWin_lose = key.getString("win_lose");
-                lastDatetime = key.getString("datetime");
-
-//              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
-                Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
-                Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
-                if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
-                    try {
-                        viewBlinkCircle.clearAnimation();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN0","-"+lastNext_user);
-                    ChaalAmount = Integer.parseInt(lastChaal_amount);
-                    if (TIMER_ROTATION) {
-                        TIMER_ROTATION=false;
-                        simulateProgress();
-                    }
-                    Log.i("CHKIL1",ChaalAmount+"");
-                    rl_bottom_caption.setVisibility(View.VISIBLE);
-                }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN1","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle1;
-                    player_blink_circle1.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-
-                }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN2","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle2;
-                    player_blink_circle2.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-
-                }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN3","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle3;
-                    player_blink_circle3.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-
-                }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
-                    Log.i("ChkilIN4","-"+lastNext_user);
-                    viewBlinkCircle = player_blink_circle4;
-                    player_blink_circle4.startAnimation(animBlink);
-                    TIMER_ROTATION=true;
-                }
-
-                Log.i("CHANCESID",""+lastChanceid);
-            }
-
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         storeNextValue = lastNext_user;
@@ -1537,7 +1456,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(String result) {
             Log.i("Check123545", "" + result);
-            Toast.makeText(PrivateActivity.this, "ABCDEF\n"+result, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1600,7 +1518,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         return result;
     }
-private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
+    private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -1610,11 +1528,10 @@ private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected void onPostExecute(String result) {
             Log.i("Check123545", "" + result);
-            Toast.makeText(PrivateActivity.this, "ABCDEF\n"+result, Toast.LENGTH_SHORT).show();
         }
     }
 
-    public String gameRequestApi(String url){
+    public String gameRequestApi(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
@@ -1625,9 +1542,9 @@ private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            jsonObject.accumulate("desk_id", "102");
+            jsonObject.accumulate("deskid", DeskId);
             jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
-            jsonObject.accumulate("request_next", "next");
+            jsonObject.accumulate("request_next", "next");//pev
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -1657,7 +1574,7 @@ private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
         return result;
     }
 
-    private class gameRequestAyncTask extends AsyncTask<String, Void, String>{
+    private class GameRequestAyncTask extends AsyncTask<String, Void, String>{
 
         @Override
         protected String doInBackground(String... urls) {
@@ -1666,8 +1583,6 @@ private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.i("Check123545", "" + result);
-            Toast.makeText(PrivateActivity.this, "ABCDEF\n"+result, Toast.LENGTH_SHORT).show();
             Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("CheckGame", "" + result);
             try {
@@ -1677,4 +1592,96 @@ private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
             }
         }
     }
+
 }
+
+
+
+
+
+
+
+
+
+
+/*private void getLast5UsersChanceData(String result){
+        try {
+            JSONObject jsonObjMain = new JSONObject(result);
+
+            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+            int len = arr.length();
+
+            for (int i=0;i<len;i++){
+                JSONObject key = arr.getJSONObject(i);
+
+                lastChanceid = key.getString("chanceid");
+                lastDesk_id = key.getString("desk_id");
+                lastChaal_amount = key.getString("chaal_amount");
+                lastUser_id = key.getString("user_id");
+                lastChance_status = key.getString("chance_status");
+                lastPot_value = key.getString("pot_value");
+                lastShow = key.getString("show");
+                lastSeen_blind = key.getString("seen_blind");
+                lastDealer_id = key.getString("dealer_id");
+                lastTip = key.getString("tip");
+                lastTurn = key.getString("turn");
+                lastNext_user = key.getString("next_user");
+                lastWin_lose = key.getString("win_lose");
+                lastDatetime = key.getString("datetime");
+
+//              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
+                Log.i("CHKIL",DataHolder.getDataString(this,"userid")+" "+lastNext_user+"  "+arrayListUserIdSequence.size());
+                Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
+                if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
+                    try {
+                        viewBlinkCircle.clearAnimation();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN0","-"+lastNext_user);
+                    ChaalAmount = Integer.parseInt(lastChaal_amount);
+                    if (TIMER_ROTATION) {
+                        TIMER_ROTATION=false;
+                        simulateProgress();
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(this, "deskid"));
+
+                    }
+                    Log.i("CHKIL1",ChaalAmount+"");
+                    rl_bottom_caption.setVisibility(View.VISIBLE);
+                }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN1","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle1;
+                    player_blink_circle1.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
+
+                }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN2","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle2;
+                    player_blink_circle2.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
+
+                }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN3","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle3;
+                    player_blink_circle3.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
+
+                }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
+                    Log.i("ChkilIN4","-"+lastNext_user);
+                    viewBlinkCircle = player_blink_circle4;
+                    player_blink_circle4.startAnimation(animBlink);
+                    TIMER_ROTATION=true;
+                }
+
+                Log.i("CHANCESID",""+lastChanceid);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        storeNextValue = lastNext_user;
+    }*/

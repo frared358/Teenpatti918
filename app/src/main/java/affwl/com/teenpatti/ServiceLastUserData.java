@@ -49,11 +49,12 @@ public class ServiceLastUserData extends Service {
     public void onDestroy() {
         super.onDestroy();
         mTimer.cancel();    //For Cancel Timer
+        this.stopSelf();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private class GetChanceLastDataAsyncTask extends AsyncTask<String, Void, String> {
@@ -116,7 +117,6 @@ public class ServiceLastUserData extends Service {
                 public void run() {
                     new GetChanceLastDataAsyncTask().execute("http://213.136.81.137:8081/api/getlastchance");
                     //new GeteLast5ChancAsyncTask().execute("http://213.136.81.137:8081/api/getEachChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
-                    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
                     //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(ServiceLastUserData.this, "userid"));
                 }
             });
@@ -125,17 +125,6 @@ public class ServiceLastUserData extends Service {
 
 //    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DeskId);
 
-    private class NextChanceAsyncTask extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected String doInBackground(String... urls) {
-            return DataHolder.setApi(urls[0],ServiceLastUserData.this);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("Check1230", "" + result);
-        }
-    }
 
 }

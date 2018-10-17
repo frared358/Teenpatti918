@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class LoadingScreen_private extends AppCompatActivity {
+public class LoadingScreenPrivate extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class LoadingScreen_private extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 finish();
-                startActivity(new Intent(LoadingScreen_private.this, PrivateActivity.class));
+                startActivity(new Intent(LoadingScreenPrivate.this, PrivateActivity.class));
 
             }
 
@@ -48,7 +48,7 @@ public class LoadingScreen_private extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation myAnimation) {
                 finish();
-                startActivity(new Intent(LoadingScreen_private.this, PrivateActivity.class));
+                startActivity(new Intent(LoadingScreenPrivate.this, PrivateActivity.class));
             }
 
             @Override

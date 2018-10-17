@@ -158,5 +158,6 @@ to 999 will be 750.\n If you have 9-Ace-9 \nthen you havea 991 and \nyou are pro
     <string name="revolving_joker">Revolving Joker</string>
     <string name="in_out_desc">In this variation, highest hand wins. After viewing the cards, each player may drop or continue in the game. Now there is show. Winner takes the pot money. The remaining players put 1.5 times the pot money to fill the pot, and the game continues.</string>
     <string name="remember_me">Remember me</string>
+    <string name="login">LOGIN</string>
 
 </resources>

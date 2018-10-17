@@ -4,30 +4,16 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.provider.MediaStore;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
@@ -36,11 +22,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.google.gson.JsonArray;
 import com.sdsmdg.tastytoast.TastyToast;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -52,23 +34,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.CAMERA;
@@ -76,12 +48,10 @@ import static android.Manifest.permission.READ_PHONE_STATE;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 
-    ImageView selectimage, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, camera, choosepic;
     Session session;
     TextView playNow;
     CheckBox rememberMeCheckBox;
-    LoginDatabaseHelper loginDatabaseHelper;
-    DBHandler dbHandler;
+
     EditText edittextusername, edittextpassword;
     String username, password, avatar;
     MediaPlayer mediaPlayer;
@@ -101,35 +71,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edittextpassword = findViewById(R.id.edittextpassword);
         rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox);
         playNow = findViewById(R.id.playNow);
-
-        selectimage = findViewById(R.id.selectimage);
-        avatarimage = findViewById(R.id.avatarimage);
-        avatar1 = findViewById(R.id.avatar1);
-        avatar2 = findViewById(R.id.avatar2);
-        avatar3 = findViewById(R.id.avatar3);
-        avatar4 = findViewById(R.id.avatar4);
-        avatar5 = findViewById(R.id.avatar5);
-        avatar6 = findViewById(R.id.avatar6);
-        avatar7 = findViewById(R.id.avatar7);
-        avatar8 = findViewById(R.id.avatar8);
-        camera = findViewById(R.id.camera);
-        choosepic = findViewById(R.id.choosepic);
-
-        avatar1.setOnClickListener(this);
-        avatar2.setOnClickListener(this);
-        avatar3.setOnClickListener(this);
-        avatar4.setOnClickListener(this);
-        avatar5.setOnClickListener(this);
-        avatar6.setOnClickListener(this);
-        avatar7.setOnClickListener(this);
-        avatar8.setOnClickListener(this);
-        camera.setOnClickListener(this);
-        choosepic.setOnClickListener(this);
         playNow.setOnClickListener(this);
         rememberMeCheckBox.setOnClickListener(this);
         session = new Session(this);
-        loginDatabaseHelper = new LoginDatabaseHelper(this);
-        dbHandler = new DBHandler(this, "UserInfo", null, 1);
+
+
 
         if (DataHolder.getDataBoolean(this, "remember_me") && DataHolder.getDataLong(this, "ExpiredDate") > System.currentTimeMillis()) {
 
@@ -138,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             edittextpassword.setText(DataHolder.getDataString(this, "password"));
         }
 
-        new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
+//        new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         checkPermission();
         requestPermission();
 
@@ -164,77 +110,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     //selecting avatar
     @Override
     public void onClick(View v) {
-        ImageView image;
         int id = v.getId();
-        Drawable img;
-        if (id == R.id.avatar1) {
-            image = findViewById(R.id.avatar1);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar2) {
-            image = findViewById(R.id.avatar2);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar3) {
-            image = findViewById(R.id.avatar3);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar4) {
-            image = findViewById(R.id.avatar4);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar5) {
-            image = findViewById(R.id.avatar5);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar6) {
-            image = findViewById(R.id.avatar6);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar7) {
-            image = findViewById(R.id.avatar7);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.avatar8) {
-            image = findViewById(R.id.avatar8);
-            img = image.getDrawable();
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            avatarimage.setImageDrawable(img);
-
-        } else if (id == R.id.camera) {
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            startActivityForResult(intent, 1);
-
-        } else if (id == R.id.choosepic) {
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
-            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            startActivityForResult(intent, 6);
-
-        } else if (id == R.id.playNow) {
-
+        if (id == R.id.playNow) {
             //get USERNAME and PASSWORD
             username = edittextusername.getText().toString();
             password = edittextpassword.getText().toString();
@@ -245,38 +122,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else {
                 new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
-
-            //Add Avatar
-            if (avatarimage.getDrawable() == null) {
-                displayAlertMessage("Teenpatti", "Please select a image");
-            } else {
-                try {
-                    URL url = new URL(DataHolder.imageURL);
-                    try {
-                        Bitmap bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] b = baos.toByteArray();
-                        String encodeimage = Base64.encodeToString(b, Base64.DEFAULT);
-                        session.put(encodeimage);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                } catch (MalformedURLException e1) {
-                    e1.printStackTrace();
-                }
-//                Bitmap bmp = ((BitmapDrawable) avatarimage.getDrawable()).getBitmap();
-//                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                byte[] b = baos.toByteArray();
-//                String encodeimage = Base64.encodeToString(b, Base64.DEFAULT);
-//                String setNameHere = edittextusername.getText().toString().trim();
-//                session.put(encodeimage, setNameHere);
-//                long result = loginDatabaseHelper.add(encodeimage, setNameHere);
-            }
-
-            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-            mediaPlayer.start();
 
         } else if (v.getId() == R.id.rememberMeCheckBox) {
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
@@ -292,7 +137,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void saveLoginDetails(String username, String password, String avatar) {
         DataHolder.setData(this, "username", username);
         DataHolder.setData(this, "password", password);
-        DataHolder.setData(this, "user_image", avatar);
         DataHolder.setData(this, "ExpiredDate", System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24));
     }
 
@@ -332,33 +176,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         tv_alert_cancel.setVisibility(View.GONE);
         myAlertDialog.show();
 
-    }
-
-    //Camera Implementation
-    @Override
-    protected void onActivityResult(int requestCode, int resultcode, Intent data) {
-        if (requestCode == 1) {
-            Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-            avatarimage.setImageBitmap(bitmap);
-
-        }
-        if (requestCode == 6) {
-            // Implementaion of Gallary
-            Bitmap bitmap = null;
-            if (resultcode == RESULT_OK) {
-                Uri selectedimageuri = data.getData();
-                String selectedimagepath = getPath(selectedimageuri);
-                avatarimage.setImageURI(selectedimageuri);
-            }
-        }
-    }
-
-    public String getPath(Uri uri) {
-        String[] projection = {MediaStore.Images.Media.DATA};
-        Cursor cursor = managedQuery(uri, projection, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(column_index);
     }
 
     private boolean checkPermission() {
@@ -448,7 +265,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("user_name", username);
             jsonObject.accumulate("password", password);
-            jsonObject.accumulate("user_image", avatar);
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -472,7 +288,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         } catch (Exception e) {
             Log.d("InputStream", "" + e);
         }
-
         return result;
     }
 
@@ -504,8 +319,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.balance = key.getString("balance");
                         DataHolder.emailaddress = key.getString("emailaddress");
                         DataHolder.imageURL = key.getString("user_image");
+                        DataHolder.setData(LoginActivity.this, "user_image", DataHolder.imageURL);
+                        Toast.makeText(LoginActivity.this, "" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
                         DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
+
                         Log.i("TAGTAGTAG", " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }
 
@@ -567,87 +385,4 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         return result;
     }
-
-    String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
-
-    private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-        protected String doInBackground(String... urls) {
-            return getApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(LoginActivity.this, "" + result, Toast.LENGTH_SHORT).show();
-
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                ArrayList<String> avatarId = new ArrayList<>();
-                Log.i("TAGGAT", "" + message);
-
-
-                JSONArray array = new JSONArray(jsonObjMain.getString("data"));
-                for (int i = 0; i < array.length(); i++) {
-                    JSONObject key = array.getJSONObject(i);
-
-                    if (i == 0) {
-                        DataHolder.Url1 = key.getString("avatar_url");
-                        avatar_1 = DataHolder.Url1;
-                        Glide.with(getApplicationContext()).load(avatar_1).into(avatar1);
-                        Log.i("URL 1", i + " " + DataHolder.Url1);
-                    } else if (i == 1) {
-                        DataHolder.Url2 = key.getString("avatar_url");
-                        avatar_2 = DataHolder.Url2;
-                        Glide.with(getApplicationContext()).load(avatar_2).into(avatar2);
-                        Log.i("URL 2", i + " " + DataHolder.Url2);
-                    } else if (i == 2) {
-                        DataHolder.Url3 = key.getString("avatar_url");
-                        avatar_3 = DataHolder.Url3;
-                        Glide.with(getApplicationContext()).load(avatar_3).into(avatar3);
-                        Log.i("URL 3", i + " " + DataHolder.Url3);
-                    } else if (i == 3) {
-                        DataHolder.Url4 = key.getString("avatar_url");
-                        avatar_4 = DataHolder.Url4;
-                        Glide.with(getApplicationContext()).load(avatar_4).into(avatar4);
-                        Log.i("URL 4", i + " " + DataHolder.Url4);
-                    } else if (i == 4) {
-                        DataHolder.Url5 = key.getString("avatar_url");
-                        avatar_5 = DataHolder.Url5;
-                        Glide.with(getApplicationContext()).load(avatar_5).into(avatar5);
-                        Log.i("URL 5", i + " " + DataHolder.Url5);
-                    } else if (i == 5) {
-                        DataHolder.Url6 = key.getString("avatar_url");
-                        avatar_6 = DataHolder.Url6;
-                        Glide.with(getApplicationContext()).load(avatar_6).into(avatar6);
-                        Log.i("URL 6", i + " " + DataHolder.Url6);
-                    } else if (i == 6) {
-                        DataHolder.Url7 = key.getString("avatar_url");
-                        avatar_7 = DataHolder.Url7;
-                        Glide.with(getApplicationContext()).load(avatar_7).into(avatar7);
-                        Log.i("URL 7", i + " " + DataHolder.Url7);
-                    } else if (i == 7) {
-                        DataHolder.Url8 = key.getString("avatar_url");
-                        avatar_8 = DataHolder.Url8;
-                        Glide.with(getApplicationContext()).load(avatar_8).into(avatar8);
-                        Log.i("URL 8", i + " " + DataHolder.Url8);
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-//    public boolean checkNetworkConnection() {
-//        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-//        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-//        boolean isConnected = false;
-//        if (networkInfo != null && (isConnected = networkInfo.isConnected())) {
-//            Toast.makeText(this, "Net Connected", Toast.LENGTH_SHORT).show();
-//        } else {
-//            Toast.makeText(this, "Net Not Connected", Toast.LENGTH_SHORT).show();
-//        }
-//        return isConnected;
-//    }
 }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
@@ -34,6 +35,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpResponse;
@@ -52,6 +54,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -64,17 +67,20 @@ import java.util.concurrent.TimeUnit;
 import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-    ImageView showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
+    ImageView join_game, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
     PopupWindow RateuspopupWindow, HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
     RelativeLayout RelativeLayoutloader, relativelayout321, relativeLayoutsixpatti, relativeLayout_tourney, yellowchiplayout, orangechipslayout, limechipslayout, darkbluechiplayout, blackchipslayout, cyanchipslayout, ygreenchipslayout;
-    TextView txtVUserNameMain, code;
+    TextView txtVUserNameMain;
     Session session;
     String time_check, local_Time, tableid, table_name, table_time, wait_time;
     int server_time, system_time;
     long wait;
     MediaPlayer mediaPlayer;
+    Drawable img;
+    ImageView image;
+
 
     private TextView user_id;
     private TextView deviceid;
@@ -115,11 +121,11 @@ public class MainActivity extends AppCompatActivity {
                 int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
                 Log.i("SPEED", "WIFI level " + level);
                 if (level == 5 || level == 4 || level == 3) {
-                    TastyToast.makeText(getApplicationContext(), "Internet Proper " +level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                    TastyToast.makeText(getApplicationContext(), "Internet Proper " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 } else if (level == 2 || level == 1 || level == 0) {
-                    TastyToast.makeText(getApplicationContext(), "Internet Moderate " +level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                    TastyToast.makeText(getApplicationContext(), "Internet Moderate " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 } else {
-                    TastyToast.makeText(getApplicationContext(), "Internet Slow " +level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                    TastyToast.makeText(getApplicationContext(), "Internet Slow " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 }
 
             }
@@ -135,13 +141,35 @@ public class MainActivity extends AppCompatActivity {
         sim_operator = findViewById(R.id.sim_operator);
         device_name = findViewById(R.id.device_name);
         software_version = findViewById(R.id.software_version);
+        join_game = findViewById(R.id.join_game);
+
+        avatar1 = findViewById(R.id.avatar1);
+        avatar2 = findViewById(R.id.avatar2);
+        avatar3 = findViewById(R.id.avatar3);
+        avatar4 = findViewById(R.id.avatar4);
+        avatar5 = findViewById(R.id.avatar5);
+        avatar6 = findViewById(R.id.avatar6);
+        avatar7 = findViewById(R.id.avatar7);
+        avatar8 = findViewById(R.id.avatar8);
+        showPopupBtn = findViewById(R.id.help_btn_loader);
 
         profile = findViewById(R.id.profile);
+
+
+        avatar1.setOnClickListener(this);
+        avatar2.setOnClickListener(this);
+        avatar3.setOnClickListener(this);
+        avatar4.setOnClickListener(this);
+        avatar5.setOnClickListener(this);
+        avatar6.setOnClickListener(this);
+        avatar7.setOnClickListener(this);
+        avatar8.setOnClickListener(this);
+        showPopupBtn.setOnClickListener(this);
+
+        Glide.with(getApplicationContext()).load(DataHolder.getDataString(this,"user_image")).into(profile);
         txtVUserNameMain = findViewById(R.id.txtVUserNameMain);
 
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-        code = findViewById(R.id.code);
         session = new Session(this);
         encodeimage = session.getImage();
         if (!encodeimage.equalsIgnoreCase("")) {
@@ -152,17 +180,130 @@ public class MainActivity extends AppCompatActivity {
         String name = session.getName();
         txtVUserNameMain.setText(DataHolder.first_name + " " + DataHolder.last_name);
 
-        ygreenchipslayout = findViewById(R.id.ygreenchipslayout);
-
-
-        // Popup for Help
-        showPopupBtn = findViewById(R.id.help_btn_loader);
+        //////////////// Popup for Private ////////////////
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
 
-        showPopupBtn.setOnClickListener(new View.OnClickListener() {
+
+        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
+
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate);
+
+        findViewById(R.id.join_game).startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onClick(View v) {
-                //instantiate the popup.xml three_two_one_leaderboard file
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+
+        getUUID();
+        getAndroidId();
+        getDeviceName();
+        getNetworkType();
+        getSimOperator();
+        getSoftwareVersion();
+        getImei();
+//        getWifiLevel();
+        getImsi();
+        new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
+        new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+    }
+
+
+    String AVATAR;
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+
+            case R.id.avatar1:
+                image = findViewById(R.id.avatar1);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar1.png";
+                break;
+
+            case R.id.avatar2:
+                image = findViewById(R.id.avatar2);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar2.png";
+                break;
+
+            case R.id.avatar3:
+                image = findViewById(R.id.avatar3);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar3.png";
+                break;
+
+            case R.id.avatar4:
+                image = findViewById(R.id.avatar4);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar4.png";
+                break;
+
+            case R.id.avatar5:
+                image = findViewById(R.id.avatar5);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar5.png";
+                break;
+
+            case R.id.avatar6:
+                image = findViewById(R.id.avatar6);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar6.png";
+                break;
+
+            case R.id.avatar7:
+                image = findViewById(R.id.avatar7);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar7.png";
+                break;
+
+            case R.id.avatar8:
+                image = findViewById(R.id.avatar8);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar8.png";
+                break;
+
+            case R.id.help_btn_loader:
+                RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
+
                 LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View customView = layoutInflater.inflate(R.layout.help_popup, null);
 
@@ -185,208 +326,9 @@ public class MainActivity extends AppCompatActivity {
                 });
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
-            }
-        });
+                break;
 
-        //////////////// teen patti ////////////////
-
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-//        yellowchiplayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, LoadingScreen_teenpatti.class);
-//                        startActivity(i);
-//                        yellowchiplayout.clearAnimation();
-//                        //yellowchiplayout.startAnimation(Animchipsleft);
-//                        orangechipslayout.startAnimation(Animchipsright);
-//                        limechipslayout.startAnimation(Animchipsright);
-//                        darkbluechiplayout.startAnimation(Animchipsright);
-//                        ygreenchipslayout.startAnimation(Animchipsright);
-//                        blackchipslayout.startAnimation(Animchipsright);
-//                        ygreenchipslayout.startAnimation(Animchipsright);
-//                    }
-//                }, 500);
-//            }
-//        });
-
-
-        //////////////// Popup for 321 tournament ////////////////
-
-//        orangechipsbtn = findViewById(R.id.mainorgchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-//        orangechipslayout = findViewById(R.id.orangechipslayout);
-
-//        orangechipslayout.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//
-//                //Delays the click event by 5 seconds
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, ThreetwooneTournament.class);
-//                        startActivity(i);
-//                        orangechipslayout.clearAnimation();
-//                        orangechipslayout.startAnimation(Animchipsleft);
-//                        limechipslayout.startAnimation(Animchipsleft);
-//                    }
-//                }, 500);
-//
-//            }
-//        });
-
-        //////////////// Popup for six patti ////////////////
-//        bluechipsbtn = findViewById(R.id.darkbluechips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-//        darkbluechiplayout.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//
-//                //Delays the click event by 5 seconds
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                        startActivity(i);
-//                        finish();
-//                    }
-//                }, 3000);
-//
-//            }
-//        });
-
-
-//        bluechipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_sixpatti.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
-
-        //////////////// Popup for Tourney ////////////////
-//        cyanchipsbtn = findViewById(R.id.cyanchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-//        cyanchipslayout.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//
-//                //Delays the click event by  milliseconds
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                        startActivity(i);
-//                        finish();
-//                    }
-//                }, 3000);
-//
-//            }
-//        });
-
-
-//        cyanchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
-
-
-        //////////////// Popup for Tourney2 ////////////////
-//        cyanchipsbtn = findViewById(R.id.cyanchips);
-//        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-//        relativeLayout_tourney = findViewById(R.id.relativelayout_tourney);
-//
-//
-//        cyanchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                startActivity(intent);
-//                finish();
-//
-//            }
-//        });
-
-
-        //////////////// Popup for Private ////////////////
-        ygreenchipsbtn = findViewById(R.id.ygreenchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-        ygreenchipslayout.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
-//                new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
-                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
-                mediaPlayer.start();
-            }
-        });
-
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate);
-
-        findViewById(R.id.ygreenchips).startAnimation(animation);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {}
-
-            @Override
-            public void onAnimationEnd(Animation animation) {}
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {}
-        });
-
-        Animation antianimation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate_anticlockwise);
-//        findViewById(R.id.innerlime).startAnimation(antianimation);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        getUUID();
-        getAndroidId();
-        getDeviceName();
-        getNetworkType();
-        getSimOperator();
-        getSoftwareVersion();
-        getImei();
-//        getWifiLevel();
-        getImsi();
-        new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
-        new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+        }
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -656,6 +598,13 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    public void OpenPrivateTable(View view) {
+//        startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+        new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mediaPlayer.start();
+    }
+
     private class DevicePost extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -724,28 +673,20 @@ public class MainActivity extends AppCompatActivity {
                                 if (Objects.equals(local_Time, time_check)) {
                                     startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
                                 } else {
-                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
-//                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-//                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
-//                                    builder.setCancelable(true);
-//
-//                                    builder.setPositiveButton(
-//                                            "OK",
-//                                            new DialogInterface.OnClickListener() {
-//                                                public void onClick(DialogInterface dialog, int id) {
-//                                                    dialog.cancel();
-//                                                }
-//                                            });
-//
-//                                    builder.setNegativeButton(
-//                                            "No",
-//                                            new DialogInterface.OnClickListener() {
-//                                        public void onClick(DialogInterface dialog, int id) {
-//                                            dialog.cancel();
-//                                        }
-//                                    });
-//                                    AlertDialog alert = builder.create();
-//                                    alert.show();
+//                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
+                                    builder.setCancelable(true);
+
+                                    builder.setPositiveButton(
+                                            "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
                                 }
                             }
                         }
@@ -768,7 +709,7 @@ public class MainActivity extends AppCompatActivity {
             String json = "";
             JSONObject jsonObject = new JSONObject();
             jsonObject.accumulate("user_id", (DataHolder.getDataString(MainActivity.this, "userid")));
-            jsonObject.accumulate("avatar_url", encodeimage);
+            jsonObject.accumulate("avatar_url", DataHolder.imageURL);
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -797,7 +738,7 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    private class changeimageAsyncTask extends AsyncTask<String, Void, String>{
+    private class changeimageAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -812,6 +753,132 @@ public class MainActivity extends AppCompatActivity {
 
                 String message = jsonObjMain.getString("message");
                 Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
+    String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
+    ArrayList<String> arrayListAvatar = new ArrayList<>();
+    private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return getApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+//            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                String message = jsonObjMain.getString("message");
+                ArrayList<String> avatarId = new ArrayList<>();
+                Log.i("TAGGAT", "" + message);
+
+
+                JSONArray array = new JSONArray(jsonObjMain.getString("data"));
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject key = array.getJSONObject(i);
+
+                    if (i == 0) {
+                        DataHolder.Url1 = key.getString("avatar_url");
+                        avatar_1 = DataHolder.Url1;
+                        Glide.with(getApplicationContext()).load(avatar_1).into(avatar1);
+                        Log.i("URL 1", i + " " + DataHolder.Url1);
+                    } else if (i == 1) {
+                        DataHolder.Url2 = key.getString("avatar_url");
+                        avatar_2 = DataHolder.Url2;
+                        Glide.with(getApplicationContext()).load(avatar_2).into(avatar2);
+                        Log.i("URL 2", i + " " + DataHolder.Url2);
+                    } else if (i == 2) {
+                        DataHolder.Url3 = key.getString("avatar_url");
+                        avatar_3 = DataHolder.Url3;
+                        Glide.with(getApplicationContext()).load(avatar_3).into(avatar3);
+                        Log.i("URL 3", i + " " + DataHolder.Url3);
+                    } else if (i == 3) {
+                        DataHolder.Url4 = key.getString("avatar_url");
+                        avatar_4 = DataHolder.Url4;
+                        Glide.with(getApplicationContext()).load(avatar_4).into(avatar4);
+                        Log.i("URL 4", i + " " + DataHolder.Url4);
+                    } else if (i == 4) {
+                        DataHolder.Url5 = key.getString("avatar_url");
+                        avatar_5 = DataHolder.Url5;
+                        Glide.with(getApplicationContext()).load(avatar_5).into(avatar5);
+                        Log.i("URL 5", i + " " + DataHolder.Url5);
+                    } else if (i == 5) {
+                        DataHolder.Url6 = key.getString("avatar_url");
+                        avatar_6 = DataHolder.Url6;
+                        Glide.with(getApplicationContext()).load(avatar_6).into(avatar6);
+                        Log.i("URL 6", i + " " + DataHolder.Url6);
+                    } else if (i == 6) {
+                        DataHolder.Url7 = key.getString("avatar_url");
+                        avatar_7 = DataHolder.Url7;
+                        Glide.with(getApplicationContext()).load(avatar_7).into(avatar7);
+                        Log.i("URL 7", i + " " + DataHolder.Url7);
+                    } else if (i == 7) {
+                        DataHolder.Url8 = key.getString("avatar_url");
+                        avatar_8 = DataHolder.Url8;
+                        Glide.with(getApplicationContext()).load(avatar_8).into(avatar8);
+                        Log.i("URL 8", i + " " + DataHolder.Url8);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            DataHolder.setData(MainActivity.this, "userstatus", "offline");
+            return DataHolder.updateUserStatusApi(urls[0],MainActivity.this,"offline");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                if (message.equalsIgnoreCase("Client status successfully changed")){
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }

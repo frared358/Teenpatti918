@@ -15,7 +15,6 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -599,7 +598,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void OpenPrivateTable(View view) {
-//        startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+//        startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
         new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mediaPlayer.start();
@@ -671,7 +670,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             if (i == 0) {
 
                                 if (Objects.equals(local_Time, time_check)) {
-                                    startActivity(new Intent(MainActivity.this, LoadingScreen_private.class));
+                                    startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
                                 } else {
 //                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
                                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);

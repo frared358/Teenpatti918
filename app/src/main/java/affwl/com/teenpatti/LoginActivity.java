@@ -115,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             password = edittextpassword.getText().toString();
             if (username.equals("") || username == null) {
                 edittextusername.setError("Enter User Name");
-            } else if (password.equals("") || password == null) {
+            } else if (password.equals("")) {
                 edittextpassword.setError("Enter Password");
             } else {
                 new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");

@@ -57,7 +57,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     MediaPlayer mediaPlayer;
 
     private static final String TAG = "loginactivity";
-    private ScheduledExecutorService scheduleTaskExecutor;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
@@ -88,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         checkPermission();
         requestPermission();
 
-        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);

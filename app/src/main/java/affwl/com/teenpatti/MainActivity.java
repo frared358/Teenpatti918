@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView network_type;
     private TextView software_version;
     private static final String TAG = "mainactivity";
-    private ScheduledExecutorService scheduleTaskExecutor;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
@@ -106,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.teenpatti_activity_main);
 
-        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);

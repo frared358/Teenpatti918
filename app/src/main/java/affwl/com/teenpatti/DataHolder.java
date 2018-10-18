@@ -1,67 +1,25 @@
 package affwl.com.teenpatti;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import microsoft.aspnet.signalr.client.hubs.HubConnection;
-import microsoft.aspnet.signalr.client.hubs.HubProxy;
 
 
 public class DataHolder {
-
-    public static String LOGIN_TOKEN;
-
-    public static ProgressDialog progressDialog;
-    public static void showProgress(Context context){
-        progressDialog=new ProgressDialog(context);
-        progressDialog.setTitle("Loading");
-        progressDialog.setMessage("Please Wait ... ");
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.show();
-    }
-
-    public static void cancelProgress(){
-        if(progressDialog != null){
-            progressDialog.dismiss();
-        }
-    }
-
-
-
-    //  Stack Share Prefrences
-    private static SharedPreferences getPrefSTACK(Context context) {
-        return context.getSharedPreferences("PREF_STACK", Context.MODE_PRIVATE);
-    }
-
-    public static String getSTACK(Context context,String Key) {
-        return getPrefSTACK(context).getString(Key, "");
-    }
-
-    public static void setSTACK(Context context,String Key, String input) {
-        SharedPreferences.Editor editor = getPrefSTACK(context).edit();
-        editor.putString(Key, input);
-        editor.commit();
-    }
 
     //Data Share Prefrences
     private static SharedPreferences getPrefData(Context context) {
@@ -90,13 +48,15 @@ public class DataHolder {
         editor.putString(Key, input);
         editor.commit();
     }
+
     //Long setData
     public static void setData(Context context,String Key, Long input) {
         SharedPreferences.Editor editor = getPrefData(context).edit();
         editor.putLong(Key, input);
         editor.commit();
     }
-//Int setData
+
+    //Int setData
     public static void setData(Context context,String Key, int input) {
         SharedPreferences.Editor editor = getPrefData(context).edit();
         editor.putInt(Key, input);
@@ -109,7 +69,6 @@ public class DataHolder {
         editor.putBoolean(Key, input);
         editor.commit();
     }
-
 
 
     public static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -158,8 +117,6 @@ public class DataHolder {
         return result;
     }
 
-    Context context;
-
     public static String  setApiToken(String url,Context context){
 
         InputStream inputStream = null;
@@ -173,7 +130,6 @@ public class DataHolder {
 
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            Toast.makeText(context, ""+getDataString(context,"token"), Toast.LENGTH_SHORT).show();
             httpPost.setHeader("Authorization", getDataString(context,"token"));
             Log.e("Check","rtuyty");
 
@@ -208,6 +164,37 @@ public class DataHolder {
         return result;
     }
 
+    public static String getApi(String url, Context context) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(context,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
     public static void unAuthorized(Context context,String result){
         try {
             JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -223,7 +210,92 @@ public class DataHolder {
         }
     }
 
+    public static String first_name, last_name, mobile_no, balance, emailaddress, user_id, tableid, table_name, table_time,imageURL, encodeimage;
+    public static String ACTION_USER_LAST_DATA="affwl.com.teenpatti.LASTDATA";
+    public static String KEY_USER_LAST_DATA="teenpatti.LASTDATA";
+    public static String ACTION_LAST_5_DATA="affwl.com.teenpatti.LAST5DATA";
+    public static String KEY_LAST_5_DATA="teenpatti.LAST5DATA";
+    public static String ACTION_USER_DATA="affwl.com.teenpatti.USERDATA";
+    public static String KEY_USER_DATA="teenpatti.USERDATA";
+    public static String ACTION_NEXT_CHANCE_DATA="affwl.com.teenpatti.NEXT_CHANCE_DATA";
+    public static String KEY_NEXT_CHANCE_DATA="teenpatti.NEXT_CHANCE_DATA";
 
-    public static String first_name,last_name,mobile_no,balance,emailaddress,user_id,user_name;
+    public static String updateUserStatusApi(String url,Context context,String status) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
 
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("userid", DataHolder.getDataString(context,"userid"));
+            jsonObject.accumulate("user_status", status);
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(context,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    public static String setApi(String url,Context context) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(context,"token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
+    static String Url1;
+    static String Url2;
+    static String Url3;
+    static String Url4;
+    static String Url5;
+    static String Url6;
+    static String Url7;
+    static String Url8;
 }

@@ -1,247 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/loginbg"
-    android:gravity="end"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".LoginActivity">
+    <!--Layout for Edit text and login Button-->
+
+    <ImageView
+        android:layout_width="130dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/dts"/>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="70dp"
+        android:orientation="horizontal">
 
+        <EditText
+            android:id="@+id/edittextusername"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/user_edit"
+            android:buttonTint="@color/cb_checked"
+            android:hint="Username"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="#fff"
+            android:textSize="16sp" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginLeft="65dp"
-            android:orientation="vertical">
-            <!--Layout for avatar-->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:background="#250400"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-                <ImageView
-                    android:id="@+id/avatar1"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar1" />
-
-                <ImageView
-                    android:id="@+id/avatar2"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar2" />
-
-                <ImageView
-                    android:id="@+id/avatar3"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar3" />
-
-                <ImageView
-                    android:id="@+id/avatar4"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar4" />
-
-                <ImageView
-                    android:id="@+id/avatar5"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar5" />
-
-                <ImageView
-                    android:id="@+id/avatar6"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar6" />
-
-                <ImageView
-                    android:id="@+id/avatar7"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="3dp"
-                    android:src="@drawable/avatar7" />
-
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/camera"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/btncamera" />
-
-                <ImageView
-                    android:id="@+id/choosepic"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/btnchoosepic" />
-            </LinearLayout>
-            <!--Layout for Edit text and login Button-->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="80dp"
-                android:orientation="horizontal">
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="13dp">
-
-                    <ImageView
-                        android:id="@+id/selectimage"
-                        android:layout_width="65dp"
-                        android:layout_height="65dp"
-                        android:src="@drawable/userpicborder" />
-
-                    <ImageView
-                        android:id="@+id/avatarimage"
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/avatar1" />
-                </FrameLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <EditText
-                        android:id="@+id/edittextusername"
-                        android:layout_width="200dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/user_edit"
-                        android:hint="Username"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorWhite"
-                        android:textColorHint="#fff"
-                        android:textSize="15sp" />
-
-                    <EditText
-                        android:id="@+id/edittextpassword"
-                        android:layout_width="200dp"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/user_edit"
-                        android:hint="Password"
-                        android:inputType="textPassword"
-                        android:textAlignment="center"
-                        android:textColor="@color/colorWhite"
-                        android:textColorHint="#fff"
-                        android:textSize="15sp" />
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-
-                        <CheckBox
-                            android:id="@+id/rememberMeCheckBox"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="20dp"
-                            android:layout_marginTop="10dp"
-                            android:checked="false"
-                            android:buttonTint="@color/cb_checked"
-                            android:text="@string/remember_me"
-                            android:textColor="@color/white"
-                            android:textSize="15sp" />
-
-
-                        <TextView
-                            android:id="@+id/playNow"
-                            android:layout_width="100dp"
-                            android:layout_height="40dp"
-                            android:layout_marginTop="10dp"
-                            android:background="@drawable/playasguestnew"
-                            android:gravity="center"
-                            android:text="@string/play"
-                            android:textColor="#ffffff"
-                            android:textSize="15sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="80dp"
-                android:layout_marginTop="30dp"
-                android:background="@color/colorLanguageBg"
-                android:visibility="gone"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_select_language"
-                    android:gravity="center"
-                    android:text="@string/language_english"
-                    android:textColor="@color/colorWhite" />
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_deselect_language"
-                    android:gravity="center"
-                    android:text="@string/language_hindi"
-                    android:textColor="@color/colorWhite" />
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_deselect_language"
-                    android:gravity="center"
-                    android:text="@string/language_gujarati"
-                    android:textColor="@color/colorWhite" />
-
-                <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="30dp"
-                    android:layout_margin="5dp"
-                    android:background="@drawable/bg_deselect_language"
-                    android:gravity="center"
-                    android:text="@string/language_marathi"
-                    android:textColor="@color/colorWhite" />
-            </LinearLayout>
-        </LinearLayout>
-
-
+        <EditText
+            android:id="@+id/edittextpassword"
+            android:layout_width="170dp"
+            android:layout_height="40dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/user_edit"
+            android:buttonTint="@color/cb_checked"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:textAlignment="center"
+            android:textColor="@color/colorWhite"
+            android:textColorHint="#fff"
+            android:textSize="16sp" />
     </LinearLayout>
 
-</RelativeLayout>
+
+    <CheckBox
+        android:id="@+id/rememberMeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="10dp"
+        android:buttonTint="@color/cb_checked"
+        android:checked="false"
+        android:text="@string/remember_me"
+        android:textColor="@color/white"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/playNow"
+        android:layout_width="130dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="60dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/playasguestnew"
+        android:gravity="center"
+        android:text="@string/login"
+        android:textColor="#ffffff"
+        android:textSize="16sp" />
+
+</LinearLayout>

@@ -75,16 +75,16 @@
                 app:layout_widthPercent="30%">
 
                 <!--<com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar-->
-                    <!--android:id="@+id/progressChaalTimer"-->
-                    <!--android:layout_centerHorizontal="true"-->
-                    <!--android:layout_above="@+id/txtVTableAmt"-->
-                    <!--app:rcRadius="5dp"-->
-                    <!--app:rcBackgroundPadding="2dp"-->
-                    <!--app:rcReverse="true"-->
-                    <!--app:rcProgressColor="@color/Black"-->
-                    <!--app:rcBackgroundColor="@color/colorYellow"-->
-                    <!--app:layout_heightPercent="8%"-->
-                    <!--app:layout_widthPercent="70%"/>-->
+                <!--android:id="@+id/progressChaalTimer"-->
+                <!--android:layout_centerHorizontal="true"-->
+                <!--android:layout_above="@+id/txtVTableAmt"-->
+                <!--app:rcRadius="5dp"-->
+                <!--app:rcBackgroundPadding="2dp"-->
+                <!--app:rcReverse="true"-->
+                <!--app:rcProgressColor="@color/Black"-->
+                <!--app:rcBackgroundColor="@color/colorYellow"-->
+                <!--app:layout_heightPercent="8%"-->
+                <!--app:layout_widthPercent="70%"/>-->
 
 
                 <TextView
@@ -92,7 +92,7 @@
                     android:layout_height="37dp"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:text="5000"
+                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -100,86 +100,6 @@
                     app:layout_widthPercent="80%" />
             </android.support.percent.PercentRelativeLayout>
 
-
-
-            <android.support.percent.PercentRelativeLayout
-                android:id="@+id/rl_playerbg2"
-                android:layout_alignTop="@+id/table"
-                app:layout_heightPercent="30%"
-                app:layout_marginTopPercent="12%"
-                app:layout_widthPercent="20%">
-
-                <ImageView
-                    android:id="@+id/player2"
-                    android:src="@drawable/yellow_circle"
-                    app:layout_heightPercent="100%"
-                    app:layout_widthPercent="100%" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/inner_player_img2"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/inner_img_profile"
-                    app:layout_heightPercent="88%"
-                    app:layout_widthPercent="88%" />
-
-                <TextView
-                    android:id="@+id/nametext2"
-                    android:layout_alignTop="@id/inner_player_img2"
-                    android:background="@color/colorYellowGolden"
-                    android:textAlignment="center"
-                    android:textColor="@color/Black"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="50%" />
-
-                <TextView
-                    android:id="@+id/user_id2"
-                    android:layout_alignParentEnd="true"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="20%"
-                    android:layout_alignParentRight="true"/>
-
-            </android.support.percent.PercentRelativeLayout>
-
-            <android.support.percent.PercentRelativeLayout
-                android:id="@+id/rl_playerbg3"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_alignTop="@+id/table"
-                app:layout_heightPercent="30%"
-                app:layout_marginTopPercent="12%"
-                app:layout_widthPercent="20%">
-
-                <ImageView
-                    android:id="@+id/player3"
-                    android:src="@drawable/yellow_circle"
-                    app:layout_heightPercent="100%"
-                    app:layout_widthPercent="100%" />
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/inner_player_img3"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/inner_img_profile"
-                    app:layout_heightPercent="88%"
-                    app:layout_widthPercent="88%" />
-
-                <TextView
-                    android:id="@+id/nametext3"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@id/inner_player_img3"
-                    android:background="@color/colorYellowGolden"
-                    android:textAlignment="center"
-                    android:textColor="@color/Black"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="50%" />
-
-                <TextView
-                    android:id="@+id/user_id3"
-                    android:layout_alignParentEnd="true"
-                    app:layout_heightPercent="20%"
-                    app:layout_widthPercent="20%"
-                    android:layout_alignParentRight="true" />
-
-            </android.support.percent.PercentRelativeLayout>
 
             <android.support.percent.PercentRelativeLayout
                 android:id="@+id/rl_playerbg1"
@@ -191,7 +111,7 @@
                 tools:ignore="NotSibling">
 
                 <ImageView
-                    android:id="@+id/player1"
+                    android:id="@+id/player_blink_circle1"
                     android:src="@drawable/yellow_circle"
                     app:layout_heightPercent="100%"
                     app:layout_widthPercent="100%" />
@@ -204,14 +124,15 @@
                     app:layout_widthPercent="88%" />
 
                 <TextView
-                    android:id="@+id/user_status"
+                    android:id="@+id/user_status1"
                     android:layout_centerHorizontal="true"
                     app:layout_heightPercent="25%"
                     app:layout_widthPercent="70%"
                     android:layout_alignParentBottom="true"
-                    android:background="@drawable/player_status_bg"
-                    android:text="Chaal"
+                    android:background="@drawable/user_status"
                     android:gravity="center"
+                    android:textColor="@color/Black"
+                    android:textSize="12sp"
                     android:layout_marginBottom="5dp"/>
 
                 <TextView
@@ -233,6 +154,119 @@
             </android.support.percent.PercentRelativeLayout>
 
             <android.support.percent.PercentRelativeLayout
+                android:id="@+id/rl_playerbg2"
+                android:layout_alignTop="@+id/table"
+                app:layout_heightPercent="30%"
+                app:layout_marginTopPercent="12%"
+                app:layout_widthPercent="20%">
+
+                <ImageView
+                    android:id="@+id/player_blink_circle2"
+                    android:src="@drawable/yellow_circle"
+                    app:layout_heightPercent="100%"
+                    app:layout_widthPercent="100%" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/inner_player_img2"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/inner_img_profile"
+                    app:layout_heightPercent="88%"
+                    app:layout_widthPercent="88%" />
+
+
+
+                <TextView
+                    android:id="@+id/user_status2"
+                    android:layout_centerHorizontal="true"
+                    app:layout_heightPercent="25%"
+                    app:layout_widthPercent="70%"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/user_status"
+                    android:gravity="center"
+                    android:textColor="@color/Black"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="5dp"/>
+
+
+                <TextView
+                    android:id="@+id/nametext2"
+                    android:layout_alignTop="@id/inner_player_img2"
+                    android:background="@color/colorYellowGolden"
+                    android:textAlignment="center"
+                    android:textColor="@color/Black"
+                    app:layout_heightPercent="20%"
+                    app:layout_widthPercent="50%" />
+
+                <TextView
+                    android:id="@+id/user_id2"
+                    android:layout_alignParentEnd="true"
+                    app:layout_heightPercent="20%"
+                    app:layout_widthPercent="20%"
+                    android:layout_alignParentRight="true"/>
+
+                <ImageView
+                    android:id="@+id/boot_value1"
+                    android:layout_height="20dp"
+                    android:layout_width="75dp"
+                    android:src="@drawable/boot_bg"
+                    android:layout_alignParentBottom="true"/>
+
+            </android.support.percent.PercentRelativeLayout>
+
+            <android.support.percent.PercentRelativeLayout
+                android:id="@+id/rl_playerbg3"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignTop="@+id/table"
+                app:layout_heightPercent="30%"
+                app:layout_marginTopPercent="12%"
+                app:layout_widthPercent="20%">
+
+                <ImageView
+                    android:id="@+id/player_blink_circle3"
+                    android:src="@drawable/yellow_circle"
+                    app:layout_heightPercent="100%"
+                    app:layout_widthPercent="100%" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/inner_player_img3"
+                    android:layout_centerInParent="true"
+                    android:src="@drawable/inner_img_profile"
+                    app:layout_heightPercent="88%"
+                    app:layout_widthPercent="88%" />
+
+                <TextView
+                    android:id="@+id/user_status3"
+                    android:layout_centerHorizontal="true"
+                    app:layout_heightPercent="25%"
+                    app:layout_widthPercent="70%"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/user_status"
+                    android:gravity="center"
+                    android:textColor="@color/Black"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="5dp"/>
+
+                <TextView
+                    android:id="@+id/nametext3"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignTop="@id/inner_player_img3"
+                    android:background="@color/colorYellowGolden"
+                    android:textAlignment="center"
+                    android:textColor="@color/Black"
+                    app:layout_heightPercent="20%"
+                    app:layout_widthPercent="50%" />
+
+                <TextView
+                    android:id="@+id/user_id3"
+                    android:layout_alignParentEnd="true"
+                    app:layout_heightPercent="20%"
+                    app:layout_widthPercent="20%"
+                    android:layout_alignParentRight="true" />
+
+            </android.support.percent.PercentRelativeLayout>
+
+            <android.support.percent.PercentRelativeLayout
                 android:id="@+id/rl_playerbg4"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
@@ -244,7 +278,7 @@
 
 
                 <ImageView
-                    android:id="@+id/player4"
+                    android:id="@+id/player_blink_circle4"
                     android:src="@drawable/yellow_circle"
                     app:layout_heightPercent="100%"
                     app:layout_widthPercent="100%" />
@@ -255,6 +289,18 @@
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
+
+                <TextView
+                    android:id="@+id/user_status4"
+                    android:layout_centerHorizontal="true"
+                    app:layout_heightPercent="25%"
+                    app:layout_widthPercent="70%"
+                    android:layout_alignParentBottom="true"
+                    android:background="@drawable/user_status"
+                    android:gravity="center"
+                    android:textColor="@color/Black"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="5dp"/>
 
                 <TextView
                     android:id="@+id/nametext4"
@@ -463,7 +509,7 @@
                     app:layout_widthPercent="88%" />
 
                 <com.dinuscxj.progressbar.CircleProgressBar
-                    android:id="@+id/custom_progress2"
+                    android:id="@+id/progressBarChances"
                     app:style="solid"
                     android:layout_marginStart="7.5dp"
                     android:layout_marginTop="6.5dp"
@@ -480,14 +526,14 @@
                     android:layout_width="wrap_content"
                     android:src="@drawable/stars"
                     android:id="@+id/winnerblinker1"
-                    android:visibility="invisible"/>
+                    android:visibility="gone"/>
 
                 <!--<ImageView-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:src="@drawable/stars2"-->
-                    <!--android:id="@+id/winnerblinker2"-->
-                    <!--android:visibility="invisible"/>-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:src="@drawable/stars2"-->
+                <!--android:id="@+id/winnerblinker2"-->
+                <!--android:visibility="invisible"/>-->
 
 
                 <TextView

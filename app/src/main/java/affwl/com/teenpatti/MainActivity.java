@@ -1,14 +1,25 @@
 package affwl.com.teenpatti;
 
+import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
@@ -18,14 +29,12 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import affwl.com.teenpatti.DataHolder;
-
+import com.bumptech.glide.Glide;
+import com.sdsmdg.tastytoast.TastyToast;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -35,28 +44,50 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import static affwl.com.teenpatti.DataHolder.encodeimage;
+import static android.provider.Settings.Secure.ANDROID_ID;
 
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
-    ImageView showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
-    PopupWindow RateuspopupWindow, HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
+    ImageView join_game, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
+    PopupWindow HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
     RelativeLayout RelativeLayoutloader, relativelayout321, relativeLayoutsixpatti, relativeLayout_tourney, yellowchiplayout, orangechipslayout, limechipslayout, darkbluechiplayout, blackchipslayout, cyanchipslayout, ygreenchipslayout;
-    TextView loaderbuychips, joinnowbtn, howtoplay321btn, howtoplaysixpattibtn, joinnowsixpattibtn, join_tourneybtn, create_table_btn, join_variation_btn, txtVUserNameMain, code;
+    TextView txtVUserNameMain;
     Session session;
-    LinearLayout jokerlayout_btn, jokerinfo_layout, ak47_layout_btn, ak47info_layout, xboot_layout_btn, xboot_info_layout,
-            hukum_layout_btn, hukum_info_layout, muflis_layout_btn, muflis_info_layout, faceoff_layout_btn, faceoff_info_layout,
-            ljoker_layout_btn, ljoker_info_layout, nnnine_layout_btn, nnnine_info_layout;
+    String time_check, local_Time, tableid, table_name, table_time;
+    MediaPlayer mediaPlayer;
+    Drawable img;
+    ImageView image;
 
-    ImageView joker_img, ak_img, xboot_img, hukum_img, muflis_img, faceoff_img, ljoker_img, nnnine_img;
-    ImageView mainychips, mainlimegchips, blackchips;
-    Animation animatechips1, animatechips2, animatechips3, animatechips4, animatechips5, animatechips6, animatechips7;
-    Handler handler, handlerLoad;
+
+    private TextView user_id;
+    private TextView deviceid;
+    private TextView imei_number;
+    private TextView imsi_number;
+    private TextView uuid_number;
+    private TextView device_name;
+    private TextView sim_operator;
+    private TextView network_type;
+    private TextView software_version;
+    private static final String TAG = "mainactivity";
+
+    private static final int PERMISSION_REQUEST_CODE = 200;
+    private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
 
 
     int value = 0;
@@ -74,61 +105,203 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.teenpatti_activity_main);
 
+        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
+            public void run() {
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level " + level);
+                if (level == 5 || level == 4 || level == 3) {
+                    TastyToast.makeText(getApplicationContext(), "Internet Proper " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                } else if (level == 2 || level == 1 || level == 0) {
+                    TastyToast.makeText(getApplicationContext(), "Internet Moderate " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                } else {
+                    TastyToast.makeText(getApplicationContext(), "Internet Slow " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
+                }
 
-//        ListView listView = (ListView) findViewById(R.id.ll);
-//        listView.setAdapter(adapter);
+            }
+        }, 0, 1, TimeUnit.MINUTES);
+
+
+        user_id = findViewById(R.id.user_id);
+        deviceid = findViewById(R.id.android_id);
+        imei_number = findViewById(R.id.imei);
+        imsi_number = findViewById(R.id.imsi);
+        uuid_number = findViewById(R.id.uuid);
+        network_type = findViewById(R.id.network_type);
+        sim_operator = findViewById(R.id.sim_operator);
+        device_name = findViewById(R.id.device_name);
+        software_version = findViewById(R.id.software_version);
+        join_game = findViewById(R.id.join_game);
+
+        avatar1 = findViewById(R.id.avatar1);
+        avatar2 = findViewById(R.id.avatar2);
+        avatar3 = findViewById(R.id.avatar3);
+        avatar4 = findViewById(R.id.avatar4);
+        avatar5 = findViewById(R.id.avatar5);
+        avatar6 = findViewById(R.id.avatar6);
+        avatar7 = findViewById(R.id.avatar7);
+        avatar8 = findViewById(R.id.avatar8);
+        showPopupBtn = findViewById(R.id.help_btn_loader);
 
         profile = findViewById(R.id.profile);
+
+
+        avatar1.setOnClickListener(this);
+        avatar2.setOnClickListener(this);
+        avatar3.setOnClickListener(this);
+        avatar4.setOnClickListener(this);
+        avatar5.setOnClickListener(this);
+        avatar6.setOnClickListener(this);
+        avatar7.setOnClickListener(this);
+        avatar8.setOnClickListener(this);
+        showPopupBtn.setOnClickListener(this);
+
+        Glide.with(getApplicationContext()).load(DataHolder.getDataString(this,"user_image")).into(profile);
         txtVUserNameMain = findViewById(R.id.txtVUserNameMain);
 
-        final Animation Animchipsright = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_chips_right);
-        final Animation Animchipsleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_chips_left);
-//        final Animation Animttoleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.translate_tto_left);
-
-//        mainychips = findViewById(R.id.mainychips);
-
-//        mainlimegchips = findViewById(R.id.mainlimegchips);
-//        mainlimegchips.setOnClickListener(this);
-
-//        blackchips = findViewById(R.id.blackchips);
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-        code = findViewById(R.id.code);
         session = new Session(this);
-        String encodedimage = session.getImage();
-        if (!encodedimage.equalsIgnoreCase("")) {
-            byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+        encodeimage = session.getImage();
+        if (!encodeimage.equalsIgnoreCase("")) {
+            byte[] b = Base64.decode(encodeimage, Base64.DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             profile.setImageBitmap(bmp);
         }
         String name = session.getName();
-        txtVUserNameMain.setText(DataHolder.first_name+" "+DataHolder.last_name);
+        txtVUserNameMain.setText(DataHolder.first_name + " " + DataHolder.last_name);
 
-
-//        yellowchiplayout = findViewById(R.id.yellowchiplayout);
-//        orangechipslayout = findViewById(R.id.orangechipslayout);
-//        limechipslayout = findViewById(R.id.limechipslayout);
-//        blackchipslayout = findViewById(R.id.blackchipslayout);
-//        cyanchipslayout = findViewById(R.id.cyanchipslayout);
-//        darkbluechiplayout = findViewById(R.id.darkbluechiplayout);
-        ygreenchipslayout = findViewById(R.id.ygreenchipslayout);
-
-
-        // Popup for Help
-        showPopupBtn = findViewById(R.id.help_btn_loader);
+        //////////////// Popup for Private ////////////////
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
 
-        showPopupBtn.setOnClickListener(new View.OnClickListener() {
+
+        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
+
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate);
+
+        findViewById(R.id.join_game).startAnimation(animation);
+        animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onClick(View v) {
-                //instantiate the popup.xml three_two_one_leaderboard file
+            public void onAnimationStart(Animation animation) {}
+
+            @Override
+            public void onAnimationEnd(Animation animation) {}
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {}
+        });
+
+        getUUID();
+        getAndroidId();
+        getDeviceName();
+        getNetworkType();
+        getSimOperator();
+        getSoftwareVersion();
+        getImei();
+//        getWifiLevel();
+        getImsi();
+        new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
+        new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+    }
+
+    String AVATAR;
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch (id) {
+
+            case R.id.avatar1:
+                image = findViewById(R.id.avatar1);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar1.png";
+                break;
+
+            case R.id.avatar2:
+                image = findViewById(R.id.avatar2);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar2.png";
+                break;
+
+            case R.id.avatar3:
+                image = findViewById(R.id.avatar3);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar3.png";
+                break;
+
+            case R.id.avatar4:
+                image = findViewById(R.id.avatar4);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar4.png";
+                break;
+
+            case R.id.avatar5:
+                image = findViewById(R.id.avatar5);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar5.png";
+                break;
+
+            case R.id.avatar6:
+                image = findViewById(R.id.avatar6);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar6.png";
+                break;
+
+            case R.id.avatar7:
+                image = findViewById(R.id.avatar7);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar7.png";
+                break;
+
+            case R.id.avatar8:
+                image = findViewById(R.id.avatar8);
+                img = image.getDrawable();
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                profile.setImageDrawable(img);
+                new changeimageAsyncTask().execute("http://213.136.81.137:8081/api/changeProfile");
+                DataHolder.imageURL = "http://213.136.81.137/Avatar/avatar8.png";
+                break;
+
+            case R.id.help_btn_loader:
+                RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
+
                 LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View customView = layoutInflater.inflate(R.layout.help_popup, null);
 
                 closeHelpBtn = customView.findViewById(R.id.close_helpus);
 
                 //instantiate popup window
-                HelpUspopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                HelpUspopupWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
                 //display the popup window
                 HelpUspopupWindow.showAtLocation(RelativeLayoutloader, Gravity.TOP, 0, 0);
@@ -138,891 +311,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onClick(View v) {
                         HelpUspopupWindow.dismiss();
+                        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                        mediaPlayer.start();
                     }
                 });
-            }
-        });
+                mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+                mediaPlayer.start();
+                break;
 
-        //////////////// teen patti ////////////////
-
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-//        yellowchiplayout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, LoadingScreen_teenpatti.class);
-//                        startActivity(i);
-//                        yellowchiplayout.clearAnimation();
-//                        //yellowchiplayout.startAnimation(Animchipsleft);
-//                        orangechipslayout.startAnimation(Animchipsright);
-//                        limechipslayout.startAnimation(Animchipsright);
-//                        darkbluechiplayout.startAnimation(Animchipsright);
-//                        ygreenchipslayout.startAnimation(Animchipsright);
-//                        blackchipslayout.startAnimation(Animchipsright);
-//                        ygreenchipslayout.startAnimation(Animchipsright);
-//                    }
-//                }, 500);
-//            }
-//        });
-
-
-        //////////////// Popup for 321 tournament ////////////////
-
-//        orangechipsbtn = findViewById(R.id.mainorgchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-//        orangechipslayout = findViewById(R.id.orangechipslayout);
-
-//        orangechipslayout.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//
-//                //Delays the click event by 5 seconds
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, ThreetwooneTournament.class);
-//                        startActivity(i);
-//                        orangechipslayout.clearAnimation();
-//                        orangechipslayout.startAnimation(Animchipsleft);
-//                        limechipslayout.startAnimation(Animchipsleft);
-//                    }
-//                }, 500);
-//
-//            }
-//        });
-
-        //////////////// Popup for six patti ////////////////
-//        bluechipsbtn = findViewById(R.id.darkbluechips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-//        darkbluechiplayout.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//
-//                //Delays the click event by 5 seconds
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                        startActivity(i);
-//                        finish();
-//                    }
-//                }, 3000);
-//
-//            }
-//        });
-
-
-//        bluechipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_sixpatti.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
-
-        //////////////// Popup for Tourney ////////////////
-//        cyanchipsbtn = findViewById(R.id.cyanchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-//        cyanchipslayout.setOnClickListener(new View.OnClickListener() {
-//
-//            public void onClick(View v) {
-//
-//                //Delays the click event by  milliseconds
-//                Handler handler = new Handler();
-//                handler.postDelayed(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        Intent i = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                        startActivity(i);
-//                        finish();
-//                    }
-//                }, 3000);
-//
-//            }
-//        });
-
-
-//        cyanchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                startActivity(intent);
-//                finish();
-//            }
-//        });
-
-
-        //////////////// Popup for Tourney2 ////////////////
-//        cyanchipsbtn = findViewById(R.id.cyanchips);
-//        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-//        relativeLayout_tourney = findViewById(R.id.relativelayout_tourney);
-//
-//
-//        cyanchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_tourney.class);
-//                startActivity(intent);
-//                finish();
-//
-//            }
-//        });
-
-
-        //////////////// Popup for Private ////////////////
-        ygreenchipsbtn = findViewById(R.id.ygreenchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-        ygreenchipslayout.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-
-                //Delays the click event by 5 seconds
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        Intent i = new Intent(MainActivity.this, LoadingScreen_private.class);
-                        startActivity(i);
-                        finish();
-                    }
-                }, 1000);
-
-            }
-        });
-
-
-//        ygreenchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//
-//
-//                Intent intent = new Intent(MainActivity.this, LoadingScreen_private.class);
-//                startActivity(intent);
-//            }
-//        });
-
-
-        //////////////// Popup for Variation ////////////////
-//        mainlimegchipsbtn = findViewById(R.id.mainlimegchips);
-        RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
-
-//        mainlimegchipsbtn.setOnClickListener(new View.OnClickListener() {
-//            @SuppressLint("WrongViewCast")
-//            @Override
-//            public void onClick(View v) {
-//                //instantiate the popup.xml layout file
-//                LayoutInflater layoutInflater = (LayoutInflater) MainActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//                View customView = layoutInflater.inflate(R.layout.variation_join_table, null);
-//
-//                variation_closebtn = customView.findViewById(R.id.close_var_popup);
-//
-//                jokerlayout_btn = customView.findViewById(R.id.joker_layout);
-//                jokerinfo_layout = customView.findViewById(R.id.jokerinfo);
-//                joker_img = customView.findViewById(R.id.joker_img);
-//
-//                ak47_layout_btn = customView.findViewById(R.id.ak47_layout);
-//                ak47info_layout = customView.findViewById(R.id.ak47info);
-//                ak_img = customView.findViewById(R.id.ak_img);
-//
-//                xboot_layout_btn = customView.findViewById(R.id.xboot_layout);
-//                xboot_info_layout = customView.findViewById(R.id.xboot_info);
-//                xboot_img = customView.findViewById(R.id.xboot_img);
-//
-//                hukum_layout_btn = customView.findViewById(R.id.hukum_layout);
-//                hukum_info_layout = customView.findViewById(R.id.hukum_info);
-//                hukum_img = customView.findViewById(R.id.hukum_img);
-//
-//                muflis_layout_btn = customView.findViewById(R.id.muflis_layout);
-//                muflis_info_layout = customView.findViewById(R.id.muflis_info);
-//                muflis_img = customView.findViewById(R.id.muflis_img);
-//
-//                faceoff_layout_btn = customView.findViewById(R.id.faceoff_layout);
-//                faceoff_info_layout = customView.findViewById(R.id.faceoff_info);
-//                faceoff_img = customView.findViewById(R.id.faceoff_img);
-//
-//                ljoker_layout_btn = customView.findViewById(R.id.ljoker_layout);
-//                ljoker_info_layout = customView.findViewById(R.id.ljoker_info);
-//                ljoker_img = customView.findViewById(R.id.ljoker_img);
-//
-//                nnnine_layout_btn = customView.findViewById(R.id.nnnine_layout);
-//                nnnine_info_layout = customView.findViewById(R.id.nnnine_info);
-//                nnnine_img = customView.findViewById(R.id.nnnine_img);
-//
-//
-//                final Animation Animleft = AnimationUtils.loadAnimation(MainActivity.this, R.anim.left_translate);
-//                final Animation Animright = AnimationUtils.loadAnimation(MainActivity.this, R.anim.right_translate);
-//
-//
-//                //instantiate popup window
-//                join_table_popupwindow = new PopupWindow(customView, RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT);
-//
-//                //display the popup window
-//                join_table_popupwindow.showAtLocation(RelativeLayoutloader, Gravity.CENTER, 0, 0);
-//
-//                variation_closebtn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        join_table_popupwindow.dismiss();
-//                    }
-//                });
-//
-//
-//                // joker variation on click
-//
-//                jokerlayout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value == 0) {
-//                            ak47info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-////                           ak_img.setVisibility(View.VISIBLE);
-//                            jokerinfo_layout.setVisibility(View.VISIBLE);
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//                            Toast.makeText(MainActivity.this, "joker out", Toast.LENGTH_SHORT).show();
-//                            jokerinfo_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value = 1;
-//                            value1 = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        } else if (value == 1) {
-//                            ak47info_layout.clearAnimation();
-//                            jokerinfo_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            Toast.makeText(MainActivity.this, "joker in", Toast.LENGTH_SHORT).show();
-//
-//                            jokerinfo_layout.startAnimation(Animright);
-//                            Animright.setFillAfter(true);
-//                            value = 0;
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//                // AK47 variation on click
-//
-//                ak47_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value1 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-////                            xboot_info_layout.clearAnimation();
-////                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            ak47info_layout.setVisibility(View.VISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ak out", Toast.LENGTH_SHORT).show();
-//
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//                            ak47info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value1 = 1;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        } else if (value1 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ak in", Toast.LENGTH_SHORT).show();
-//
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            ak47info_layout.startAnimation(Animright);
-//                            Animright.setFillAfter(true);
-//                            value1 = 0;
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                // 4X boot variation on click
-//
-//                xboot_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value2 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.VISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "xboot out", Toast.LENGTH_SHORT).show();
-//
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            xboot_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value2 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value2 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "xboot in", Toast.LENGTH_SHORT).show();
-//
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.startAnimation(Animright);
-//                            value2 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//                // hukum variation on click
-//
-//                hukum_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value3 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "hukum out", Toast.LENGTH_SHORT).show();
-//
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            hukum_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value3 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value3 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "hukum in", Toast.LENGTH_SHORT).show();
-//
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            hukum_info_layout.startAnimation(Animright);
-//                            value3 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                // muflis variation on click
-//
-//                muflis_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value4 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "muflis out", Toast.LENGTH_SHORT).show();
-//
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            muflis_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value4 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value4 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "muflis in", Toast.LENGTH_SHORT).show();
-//
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            muflis_info_layout.startAnimation(Animright);
-//                            value4 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                //  faceoff variation on click
-//
-//                faceoff_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value5 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "faceoff out", Toast.LENGTH_SHORT).show();
-//
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            faceoff_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value5 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value6 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value5 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "faceoff in", Toast.LENGTH_SHORT).show();
-//
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            faceoff_info_layout.startAnimation(Animright);
-//                            value5 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                //  ljoker variation on click
-//
-//                ljoker_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value6 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            nnnine_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.VISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ljoker out", Toast.LENGTH_SHORT).show();
-//
-//                            ljoker_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            ljoker_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value6 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value7 = 0;
-//
-//                            return;
-//                        }
-//                        if (value6 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//                            ljoker_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "ljoker in", Toast.LENGTH_SHORT).show();
-//
-//                            ljoker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            ljoker_info_layout.startAnimation(Animright);
-//                            value6 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//
-//                //  nnnine variation on click
-//
-//                nnnine_layout_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        if (value7 == 0) {
-//
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//                            ljoker_info_layout.clearAnimation();
-//
-//                            joker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ak_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            xboot_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            hukum_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            muflis_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            faceoff_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//                            ljoker_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.INVISIBLE);
-//                            nnnine_info_layout.setVisibility(View.VISIBLE);
-//
-//
-//                            Toast.makeText(MainActivity.this, "nnnine out", Toast.LENGTH_SHORT).show();
-//
-//                            nnnine_img.setImageDrawable(getResources().getDrawable(R.drawable.circle_arrow));
-//
-//                            nnnine_info_layout.startAnimation(Animleft);
-//                            Animleft.setFillAfter(true);
-//                            value7 = 1;
-//                            value1 = 0;
-//                            value = 0;
-//                            value2 = 0;
-//                            value3 = 0;
-//                            value4 = 0;
-//                            value5 = 0;
-//                            value6 = 0;
-//
-//                            return;
-//                        }
-//                        if (value7 == 1) {
-//                            jokerinfo_layout.clearAnimation();
-//                            ak47info_layout.clearAnimation();
-//                            xboot_info_layout.clearAnimation();
-//                            hukum_info_layout.clearAnimation();
-//                            muflis_info_layout.clearAnimation();
-//                            faceoff_info_layout.clearAnimation();
-//                            ljoker_info_layout.clearAnimation();
-//                            nnnine_info_layout.clearAnimation();
-//
-//                            xboot_info_layout.setVisibility(View.INVISIBLE);
-//                            hukum_info_layout.setVisibility(View.INVISIBLE);
-//                            ak47info_layout.setVisibility(View.INVISIBLE);
-//                            jokerinfo_layout.setVisibility(View.INVISIBLE);
-//                            muflis_info_layout.setVisibility(View.INVISIBLE);
-//                            faceoff_info_layout.setVisibility(View.INVISIBLE);
-//                            ljoker_info_layout.setVisibility(View.INVISIBLE);
-//                            nnnine_info_layout.setVisibility(View.INVISIBLE);
-//
-//                            Toast.makeText(MainActivity.this, "nnnine in", Toast.LENGTH_SHORT).show();
-//
-//                            nnnine_img.setImageDrawable(getResources().getDrawable(R.drawable.q));
-//
-//                            nnnine_info_layout.startAnimation(Animright);
-//                            value7 = 0;
-//                            Animright.setFillAfter(true);
-//                            return;
-//                        }
-//                    }
-//                });
-//
-//                //join now the popup window on button click
-//                join_variation_btn = customView.findViewById(R.id.variation_jointble);
-//
-//                join_variation_btn.setOnClickListener(new View.OnClickListener() {
-//                    @Override
-//                    public void onClick(View v) {
-//                        Intent intent = new Intent(MainActivity.this, LoadingScreen_variation.class);
-//                        startActivity(intent);
-//                    }
-//                });
-//            }
-//        });
-
-
-        // Animation of chips on main page
-
-        Animation animation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate);
-//        findViewById(R.id.mainychips).startAnimation(animation);
-//        findViewById(R.id.mainlimegchips).startAnimation(animation);
-//        findViewById(R.id.mainorgchips).startAnimation(animation);
-//        findViewById(R.id.darkbluechips).startAnimation(animation);
-//        findViewById(R.id.cyanchips).startAnimation(animation);
-//        findViewById(R.id.blackchips).startAnimation(animation);
-        findViewById(R.id.ygreenchips).startAnimation(animation);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        Animation antianimation = AnimationUtils.loadAnimation(this, R.anim.mainactivity_chips_rotate_anticlockwise);
-//        findViewById(R.id.innerlime).startAnimation(antianimation);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-
-        handler = new Handler();
-        //DataHolder.showProgress(getApplicationContext());
-        handlerLoad = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                //new getUserDataAsyncTask().execute("http://213.136.81.137:8080/api/adminData");
-            }
-        });
-        //txtVUserNameMain.setText(DataHolder.getSTACK(MainActivity.this, "username"));
-    }
-
-    public String setUserApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost Httppost = new HttpPost(url);
-
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.accumulate("username", txtVUserNameMain);
-
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
-
-            Httppost.setEntity(new StringEntity(json));
-            Httppost.setHeader("Accept", "application/json");
-            Httppost.setHeader("Content-type", "application/json");
-
-            HttpResponse httpResponse = httpclient.execute(Httppost);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Does Not Work";
-            Log.e("Check", "HOW" + result);
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
         }
-        Log.d("Check", result + "");
-        return result;
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -1037,126 +334,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return result;
     }
 
-    private class setUserDataAsyncTask extends AsyncTask<String, Void , String> {
-
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return setUserApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("Check", "" + result);
-            try{
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                if (message.equalsIgnoreCase("successfully authenticated")) {
-                    DataHolder.setSTACK(MainActivity.this, "username", txtVUserNameMain.getText().toString());
-                }
-//                Toast.makeText(getApplicationContext(), ""+message, Toast.LENGTH_SHORT).show();
-                Log.i("result", "Status" + message);
-            }catch (JSONException e){
-                e.printStackTrace();
-                DataHolder.unAuthorized(MainActivity.this, result);
-            }
-            DataHolder.cancelProgress();
-        }
-    }
-
-    public String getUserApi(String url){
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet Httpget = new HttpGet(url);
-
-            Httpget.setHeader("Accept", "application/json");
-            Httpget.setHeader("Content-type", "application/json");
-
-            HttpResponse httpResponse = httpclient.execute(Httpget);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-            Log.e("Check", "how " + result);
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-        return result;
-    }
-
-    private class getUserDataAsyncTask extends AsyncTask<String, Void, String>{
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return getUserApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-//            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
-            Log.i("Check", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                Log.i("TAG", "" + message);
-
-                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
-                int len = arr.length();
-
-                for (int i = 0; i < len; i++) {
-
-                    JSONObject key = arr.getJSONObject(i);
-
-                    if (i == 0) {
-//                        nametext1.setText(key.getString("username"));
-                    } else if (i == 1) {
-//                        nametext2.setText(key.getString("username"));
-                    } else if (i == 2) {
-                        //txtVUserNameMain.setText(key.getString("username"));
-                    } else if (i == 3) {
-//                        nametext3.setText(key.getString("username"));
-                    } else if (i == 4) {
-//                        nametext4.setText(key.getString("username"));
-                    }
-                }
-//                JSONObject jsonObjMain = new JSONObject(result.toString());
-//                String message = jsonObjMain.getString("message");
-//                Log.i("TAG", "" + message);
-//
-//
-//                JSONObject jsonObj = new JSONObject(jsonObjMain.getString("data"));
-//
-//                txtVUserNameMain.setText(jsonObj.getString("username"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-
-
-
     //////////// Onclick method for teenpatti table /////////////
     @Override
     public void onBackPressed() {
-        displayExitAlert("Alert","Do you want to Exit?");
+        displayExitAlert("Alert", "Do you want to Exit?");
+        MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mp.start();
     }
 
     private void displayExitAlert(String title, String message) {
 
-        TextView tv_alert_ok,tv_alert_title,tv_alert_message,tv_alert_cancel;
+        TextView tv_alert_ok, tv_alert_title, tv_alert_message, tv_alert_cancel;
         ImageView alert_box_close;
 
         final Dialog myAlertDialog = new Dialog(this);
@@ -1165,10 +353,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         myAlertDialog.setContentView(R.layout.alert_box);
 
         tv_alert_ok = myAlertDialog.findViewById(R.id.tv_alert_ok);
-        tv_alert_cancel=myAlertDialog.findViewById(R.id.tv_alert_cancel);
-        alert_box_close=myAlertDialog.findViewById(R.id.alert_box_close);
-        tv_alert_title=myAlertDialog.findViewById(R.id.tv_alert_title);
-        tv_alert_message=myAlertDialog.findViewById(R.id.tv_alert_message);
+        tv_alert_cancel = myAlertDialog.findViewById(R.id.tv_alert_cancel);
+        alert_box_close = myAlertDialog.findViewById(R.id.alert_box_close);
+        tv_alert_title = myAlertDialog.findViewById(R.id.tv_alert_title);
+        tv_alert_message = myAlertDialog.findViewById(R.id.tv_alert_message);
 
         tv_alert_title.setText(title);
         tv_alert_message.setText(message);
@@ -1199,9 +387,491 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
+    /*Get Information About User Device*/
+
+    private String getUUID() {
+        // TODO Auto-generated method stub
+        final TelephonyManager telephonyManager = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+        final String tmDevice, tmSerial, androidId;
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+        } else {
+            //TODO
+        }
+        tmDevice = "" + telephonyManager.getDeviceId();
+        tmSerial = "" + telephonyManager.getSimSerialNumber();
+        androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), ANDROID_ID);
+        UUID deviceUuid = new UUID(androidId.hashCode(), ((long) tmDevice.hashCode() << 32) | tmSerial.hashCode());
+        uuid_number.setText(deviceUuid.toString());
+        return deviceUuid.toString();
+    }
+
+    private String getImsi() {
+        // TODO Auto-generated method stub
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+        } else {
+            //TODO
+        }
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        imsi_number.setText(telephonyManager.getSubscriberId());
+        return telephonyManager.getSubscriberId();
+    }
+
+    private String getImei() {
+        // TODO Auto-generated method stub
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_ACCESS_COARSE_LOCATION);
+        }
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQUEST_CODE);
+        } else {
+            //TODO
+        }
+        TelephonyManager telephonyManager = (TelephonyManager) this.getSystemService(Context.TELEPHONY_SERVICE);
+        imei_number.setText(telephonyManager.getDeviceId());
+        return telephonyManager.getDeviceId();
+    }
+
+    private String getAndroidId() {
+        // TODO Auto-generated method stub
+        deviceid.setText(Settings.Secure.getString(getContentResolver(), ANDROID_ID));
+        return Settings.Secure.getString(getContentResolver(), ANDROID_ID);
+    }
+
+    private String getDeviceName() {
+        String str = android.os.Build.MODEL;
+        device_name.setText(str);
+        return str;
+    }
+
+    private String getSimOperator() {
+        OperatorHolder operatorholder = new OperatorHolder(this);
+        sim_operator.setText(operatorholder.getOperatorName());
+        Log.i(TAG, operatorholder.getOperatorName());
+        return operatorholder.getOperatorName();
+    }
+
+    private String getNetworkType() {
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        int networkType = telephonyManager.getNetworkType();
+        switch (networkType) {
+            case TelephonyManager.NETWORK_TYPE_1xRTT:
+                return "1xRTT";
+            case TelephonyManager.NETWORK_TYPE_CDMA:
+                return "CDMA";
+            case TelephonyManager.NETWORK_TYPE_EDGE:
+                return "EDGE";
+            case TelephonyManager.NETWORK_TYPE_EHRPD:
+                return "eHRPD";
+            case TelephonyManager.NETWORK_TYPE_EVDO_0:
+                return "EVDO rev. 0";
+            case TelephonyManager.NETWORK_TYPE_EVDO_A:
+                return "EVDO rev. A";
+            case TelephonyManager.NETWORK_TYPE_EVDO_B:
+                return "EVDO rev. B";
+            case TelephonyManager.NETWORK_TYPE_GPRS:
+                return "GPRS";
+            case TelephonyManager.NETWORK_TYPE_HSDPA:
+                return "HSDPA";
+            case TelephonyManager.NETWORK_TYPE_HSPA:
+                return "HSPA";
+            case TelephonyManager.NETWORK_TYPE_HSPAP:
+                return "HSPA+";
+            case TelephonyManager.NETWORK_TYPE_HSUPA:
+                return "HSUPA";
+            case TelephonyManager.NETWORK_TYPE_IDEN:
+                return "iDen";
+            case TelephonyManager.NETWORK_TYPE_LTE:
+                return "LTE";
+            case TelephonyManager.NETWORK_TYPE_UMTS:
+                return "UMTS";
+            case TelephonyManager.NETWORK_TYPE_UNKNOWN:
+                return "Unknown";
+        }
+        network_type.setText(getNetworkType());
+        throw new RuntimeException("New type of network");
+    }
+
+    private String getSoftwareVersion() {
+        String versionRelease = Build.VERSION.RELEASE;
+        software_version.setText(versionRelease);
+        return versionRelease;
+    }
+
+    public String DeviceApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("user_id", DataHolder.getDataString(MainActivity.this, "userid"));
+            jsonObject.accumulate("deviceid", getAndroidId());
+            jsonObject.accumulate("IMEI", getImei());
+            jsonObject.accumulate("IMSI", getImsi());
+            jsonObject.accumulate("UUID", getUUID());
+            jsonObject.accumulate("network_type", getNetworkType());
+            jsonObject.accumulate("operator_name", getSimOperator());
+            jsonObject.accumulate("device_name", getDeviceName());
+            jsonObject.accumulate("softwareversion", getSoftwareVersion());
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    public String getTimeApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
+    public void OpenPrivateTable(View view) {
+//        startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
+        new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mediaPlayer.start();
+    }
+
+    private class DevicePost extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return DeviceApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("CheckDevice", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+//                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class getTableAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return getTimeApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+//            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+            Log.i("CheckTable", "" + result);
+            {
+                try {
+                    JSONObject jsonObjMain = new JSONObject(result);
+                    String message = jsonObjMain.getString("message");
+                    Log.i("TAG", "" + message);
+
+                    JSONArray array = new JSONArray(jsonObjMain.getString("data"));
+                    for (int i = 0; i < array.length(); i++) {
+
+
+                        JSONObject key = array.getJSONObject(i);
+
+                        tableid = key.getString("tableid");
+                        table_name = key.getString("table_name");
+                        table_time = key.getString("table_time");
+
+                        {
+                            try {
+                                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+                                Date date = format.parse(table_time);
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
+                                Date current_time = Calendar.getInstance().getTime();
+                                local_Time = sdf.format(current_time);
+                                time_check = sdf.format(date);
+
+                                Log.i("CurrentTime", "" + local_Time);
+                                Log.i("ServerTime", "" + time_check);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (i == 0) {
+
+                                if (Objects.equals(local_Time, time_check)) {
+                                    startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
+                                } else {
+//                                    TastyToast.makeText(MainActivity.this, "Table Not Available, Next table at " + time_check, TastyToast.LENGTH_LONG, TastyToast.ERROR);
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                                    builder.setMessage("Table Not Available, Next table will be Available at " + time_check);
+                                    builder.setCancelable(true);
+
+                                    builder.setPositiveButton(
+                                            "OK",
+                                            new DialogInterface.OnClickListener() {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
+                                                }
+                                            });
+                                    AlertDialog alert = builder.create();
+                                    alert.show();
+                                }
+                            }
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public String changeImageApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.accumulate("user_id", (DataHolder.getDataString(MainActivity.this, "userid")));
+            jsonObject.accumulate("avatar_url", DataHolder.imageURL);
+
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    private class changeimageAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return changeImageApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            Log.i("CheckImage", "" + s);
+            try {
+                JSONObject jsonObjMain = new JSONObject(s);
+
+                String message = jsonObjMain.getString("message");
+                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpGet Httpget = new HttpGet(url);
+
+            Httpget.setHeader("Accept", "application/json");
+            Httpget.setHeader("Content-type", "application/json");
+            Httpget.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
+
+            HttpResponse httpResponse = httpclient.execute(Httpget);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+            Log.e("Check", "how " + result);
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+        return result;
+    }
+
+    String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
+    ArrayList<String> arrayListAvatar = new ArrayList<>();
+    private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+            return getApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+//            Toast.makeText(MainActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                String message = jsonObjMain.getString("message");
+                ArrayList<String> avatarId = new ArrayList<>();
+                Log.i("TAGGAT", "" + message);
+
+
+                JSONArray array = new JSONArray(jsonObjMain.getString("data"));
+                for (int i = 0; i < array.length(); i++) {
+                    JSONObject key = array.getJSONObject(i);
+
+                    if (i == 0) {
+                        DataHolder.Url1 = key.getString("avatar_url");
+                        avatar_1 = DataHolder.Url1;
+                        Glide.with(getApplicationContext()).load(avatar_1).into(avatar1);
+                        Log.i("URL 1", i + " " + DataHolder.Url1);
+                    } else if (i == 1) {
+                        DataHolder.Url2 = key.getString("avatar_url");
+                        avatar_2 = DataHolder.Url2;
+                        Glide.with(getApplicationContext()).load(avatar_2).into(avatar2);
+                        Log.i("URL 2", i + " " + DataHolder.Url2);
+                    } else if (i == 2) {
+                        DataHolder.Url3 = key.getString("avatar_url");
+                        avatar_3 = DataHolder.Url3;
+                        Glide.with(getApplicationContext()).load(avatar_3).into(avatar3);
+                        Log.i("URL 3", i + " " + DataHolder.Url3);
+                    } else if (i == 3) {
+                        DataHolder.Url4 = key.getString("avatar_url");
+                        avatar_4 = DataHolder.Url4;
+                        Glide.with(getApplicationContext()).load(avatar_4).into(avatar4);
+                        Log.i("URL 4", i + " " + DataHolder.Url4);
+                    } else if (i == 4) {
+                        DataHolder.Url5 = key.getString("avatar_url");
+                        avatar_5 = DataHolder.Url5;
+                        Glide.with(getApplicationContext()).load(avatar_5).into(avatar5);
+                        Log.i("URL 5", i + " " + DataHolder.Url5);
+                    } else if (i == 5) {
+                        DataHolder.Url6 = key.getString("avatar_url");
+                        avatar_6 = DataHolder.Url6;
+                        Glide.with(getApplicationContext()).load(avatar_6).into(avatar6);
+                        Log.i("URL 6", i + " " + DataHolder.Url6);
+                    } else if (i == 6) {
+                        DataHolder.Url7 = key.getString("avatar_url");
+                        avatar_7 = DataHolder.Url7;
+                        Glide.with(getApplicationContext()).load(avatar_7).into(avatar7);
+                        Log.i("URL 7", i + " " + DataHolder.Url7);
+                    } else if (i == 7) {
+                        DataHolder.Url8 = key.getString("avatar_url");
+                        avatar_8 = DataHolder.Url8;
+                        Glide.with(getApplicationContext()).load(avatar_8).into(avatar8);
+                        Log.i("URL 8", i + " " + DataHolder.Url8);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            DataHolder.setData(MainActivity.this, "userstatus", "offline");
+            return DataHolder.updateUserStatusApi(urls[0],MainActivity.this,"offline");
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                if (message.equalsIgnoreCase("Client status successfully changed")){
+                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

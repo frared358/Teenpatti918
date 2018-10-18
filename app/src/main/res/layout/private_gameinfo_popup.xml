@@ -217,31 +217,6 @@
             />
     </RelativeLayout>
 
-    <!--Footer layout-->
-   <!-- <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/potlimit"
-        android:layout_marginTop="10dp"
-        >
-        <TextView
-            android:id="@+id/publictbl"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="PRIVATE TABLE"
-            android:textColor="@color/colorYellowDark"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#fcfbae"
-            android:text="INVITE FRIENDS AND ENJOY TEEN PATTI."
-            android:layout_below="@id/publictbl"
-            android:layout_centerHorizontal="true" />
-
-    </RelativeLayout>-->
-
     <TextView
         android:id="@+id/table_change_request"
         android:layout_width="wrap_content"

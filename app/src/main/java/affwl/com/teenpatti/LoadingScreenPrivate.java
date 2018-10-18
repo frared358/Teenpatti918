@@ -6,7 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
-public class LoadingScreen_private extends AppCompatActivity {
+public class LoadingScreenPrivate extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class LoadingScreen_private extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 finish();
-                startActivity(new Intent(LoadingScreen_private.this, PrivateActivity.class));
+                startActivity(new Intent(LoadingScreenPrivate.this, PrivateActivity.class));
 
             }
 
@@ -36,23 +36,23 @@ public class LoadingScreen_private extends AppCompatActivity {
             }
         });
 
-        Animation myani;
-        myani = AnimationUtils.loadAnimation(this, R.anim.inner_load);
-        findViewById(R.id.loadinginner).startAnimation(myani);
-        myani.setAnimationListener(new Animation.AnimationListener() {
+        Animation myAnimation;
+        myAnimation = AnimationUtils.loadAnimation(this, R.anim.inner_load);
+        findViewById(R.id.loadinginner).startAnimation(myAnimation);
+        myAnimation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation myanim) {
+            public void onAnimationStart(Animation myAnimation) {
 
             }
 
             @Override
-            public void onAnimationEnd(Animation myanim) {
+            public void onAnimationEnd(Animation myAnimation) {
                 finish();
-                startActivity(new Intent(LoadingScreen_private.this, PrivateActivity.class));
+                startActivity(new Intent(LoadingScreenPrivate.this, PrivateActivity.class));
             }
 
             @Override
-            public void onAnimationRepeat(Animation myanim) {
+            public void onAnimationRepeat(Animation myAnimation) {
 
             }
         });

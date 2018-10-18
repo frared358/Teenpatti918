@@ -57,10 +57,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     MediaPlayer mediaPlayer;
 
     private static final String TAG = "loginactivity";
-    private ScheduledExecutorService scheduleTaskExecutor;
 
     private static final int PERMISSION_REQUEST_CODE = 200;
-    private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         checkPermission();
         requestPermission();
 
-        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
+        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
             public void run() {
                 WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
@@ -117,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             password = edittextpassword.getText().toString();
             if (username.equals("") || username == null) {
                 edittextusername.setError("Enter User Name");
-            } else if (password.equals("") || password == null) {
+            } else if (password.equals("")) {
                 edittextpassword.setError("Enter Password");
             } else {
                 new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
@@ -319,10 +317,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.balance = key.getString("balance");
                         DataHolder.emailaddress = key.getString("emailaddress");
                         DataHolder.imageURL = key.getString("user_image");
+
                         DataHolder.setData(LoginActivity.this, "user_image", DataHolder.imageURL);
-                        Toast.makeText(LoginActivity.this, "" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
+                        DataHolder.setData(LoginActivity.this, "deskid", key.getString("desk_id"));
                         DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
+
+                        Toast.makeText(LoginActivity.this, key.getString("desk_id")+" \n" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
 
                         Log.i("TAGTAGTAG", " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }

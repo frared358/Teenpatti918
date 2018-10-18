@@ -173,6 +173,8 @@
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
 
+
+
                 <TextView
                     android:id="@+id/user_status2"
                     android:layout_centerHorizontal="true"
@@ -184,6 +186,7 @@
                     android:textColor="@color/Black"
                     android:textSize="12sp"
                     android:layout_marginBottom="5dp"/>
+
 
                 <TextView
                     android:id="@+id/nametext2"
@@ -200,6 +203,13 @@
                     app:layout_heightPercent="20%"
                     app:layout_widthPercent="20%"
                     android:layout_alignParentRight="true"/>
+
+                <ImageView
+                    android:id="@+id/boot_value1"
+                    android:layout_height="20dp"
+                    android:layout_width="75dp"
+                    android:src="@drawable/boot_bg"
+                    android:layout_alignParentBottom="true"/>
 
             </android.support.percent.PercentRelativeLayout>
 

@@ -33,10 +33,8 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.sdsmdg.tastytoast.TastyToast;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -46,7 +44,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,20 +59,17 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     ImageView join_game, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
-    PopupWindow RateuspopupWindow, HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
+    PopupWindow HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
     RelativeLayout RelativeLayoutloader, relativelayout321, relativeLayoutsixpatti, relativeLayout_tourney, yellowchiplayout, orangechipslayout, limechipslayout, darkbluechiplayout, blackchipslayout, cyanchipslayout, ygreenchipslayout;
     TextView txtVUserNameMain;
     Session session;
-    String time_check, local_Time, tableid, table_name, table_time, wait_time;
-    int server_time, system_time;
-    long wait;
+    String time_check, local_Time, tableid, table_name, table_time;
     MediaPlayer mediaPlayer;
     Drawable img;
     ImageView image;
@@ -212,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
     }
-
 
     String AVATAR;
     @Override
@@ -859,7 +852,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 
     private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
 

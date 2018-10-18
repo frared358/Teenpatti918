@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#97960101"
+    android:background="#da020000"
     android:fillViewport="true"
     android:orientation="vertical"
     android:id="@+id/helpusLayout">
@@ -18,7 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="HIGHEST HAND WINS. RANKING FROM HIGH TO LOW IS:"
-            android:textColor="#ffff00"
+            android:textColor="#fff"
             android:textSize="20sp" />
 
         <ImageView
@@ -44,260 +44,74 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1.Trail or Set"
-                android:textColor="#ffffff"
+                android:text="@string/help_one"
+                android:textColor="#fff"
                 android:textSize="20sp" />
 
-            <LinearLayout
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:src="@drawable/help_one"/>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:text="@string/help_two"
+                android:textColor="#fff"
+                android:textSize="20sp" />
 
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/trail1" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:src="@drawable/how_two"/>
 
-                <ImageView
-                    android:layout_width="84dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/trail2" />
-
-                <View
-                    android:layout_width="150dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="35dp"
-                    android:background="@drawable/line_seperator" />
-
-                <ImageView
-                    android:layout_width="80dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="5dp"
-                    android:src="@drawable/trail3" />
-
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="@string/help_three"
+                android:textColor="#fff"
+                android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2. Pure Sequence"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:src="@drawable/how_three"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/pures1" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/pures3" />
-
-                    <View
-                        android:layout_width="150dp"
-                        android:layout_height="20dp"
-                        android:layout_marginTop="35dp"
-                        android:background="@drawable/line_seperator" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/pures2" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="@string/help_four"
+                android:textColor="#fff"
+                android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="3. Sequence (run)"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:src="@drawable/how_four"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/sq1" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/sq3" />
-
-                    <View
-                        android:layout_width="150dp"
-                        android:layout_height="20dp"
-                        android:layout_marginTop="35dp"
-                        android:background="@drawable/line_seperator" />
-
-                    <ImageView
-                        android:layout_width="80dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/sq2" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="@string/help_five"
+                android:textColor="#fff"
+                android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="4. Color"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:src="@drawable/how_five"/>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                    <View
-                        android:layout_width="150dp"
-                        android:layout_height="20dp"
-                        android:layout_marginTop="35dp"
-                        android:background="@drawable/line_seperator" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:text="@string/help_six"
+                android:textColor="#fff"
+                android:textSize="20sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="5. Pair (Two cards of same rank"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                    <View
-                        android:layout_width="150dp"
-                        android:layout_height="20dp"
-                        android:layout_marginTop="35dp"
-                        android:background="@drawable/line_seperator" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="6. High Card"
-                    android:textColor="#ffffff"
-                    android:textSize="20sp" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                    <View
-                        android:layout_width="150dp"
-                        android:layout_height="20dp"
-                        android:layout_marginTop="35dp"
-                        android:background="@drawable/line_seperator" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:layout_margin="5dp"
-                        android:src="@drawable/rateus_star" />
-
-                </LinearLayout>
-            </LinearLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:src="@drawable/how_six"/>
 
         </LinearLayout>
     </ScrollView>

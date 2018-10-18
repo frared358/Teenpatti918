@@ -325,7 +325,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
 
-                        Toast.makeText(LoginActivity.this, key.getString("desk_id")+" \n" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(LoginActivity.this, key.getString("desk_id")+" \n" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
 
                         Log.i("TAGTAGTAG", " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }

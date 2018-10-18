@@ -59,7 +59,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final String TAG = "loginactivity";
 
     private static final int PERMISSION_REQUEST_CODE = 200;
-    private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

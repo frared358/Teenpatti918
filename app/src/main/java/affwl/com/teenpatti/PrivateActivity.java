@@ -571,6 +571,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.blind_btn:
+                maxBlindCount++;
                 chaalBlind();
                 break;
 
@@ -739,7 +740,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //INFO POPUP DATA
-    public void popupLimitedData(String BootValue, String PotLimit, String MaxBlind, String chaalLimit) {
+    public void popupLimitedData(String BootValue, String PotLimit, String mMaxBlind, String chaalLimit) {
 
         LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View customView = layoutInflater.inflate(R.layout.private_gameinfo_popup, null);
@@ -751,7 +752,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         txtVBootValue.setText(BootValue);
         txtVPotlimit.setText(PotLimit);
-        txtVMaxBlind.setText(MaxBlind);
+        txtVMaxBlind.setText(mMaxBlind);
         txtVChaalLimit.setText(chaalLimit);
 
         infoclosebtn = customView.findViewById(R.id.infoclose);
@@ -779,6 +780,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
         int AMOUNT = ChaalAmount + TablelayAmtc;
         txtVTableAmt.setText(String.valueOf(AMOUNT));
+        maxBlindCount =0;
 
         if (AMOUNT >= PotLimitInt) {
             TastyToast.makeText(this, "Pot Limit Exceeded", TastyToast.LENGTH_LONG, TastyToast.INFO);
@@ -865,8 +867,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         protected void onPostExecute(String result) {
 
             Log.i("Check", "" + result);
-            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataString(PrivateActivity.this,"token"), Toast.LENGTH_SHORT).show();
-
             try {
                 JSONObject jsonObjMain = new JSONObject(result);
                 String message = jsonObjMain.getString("message");
@@ -964,6 +964,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<String> arrayListUnPackedUser = new ArrayList<>();
     private boolean sequence = false;
     public static String BootValue, PotLimit, MaxBlind, chaalLimit,DeskId;
+    int maxBlindCount=0;
     int PotLimitInt,ChaalAmount;
 
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
@@ -1272,8 +1273,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             int len = arr.length();
             Log.i("TADAG",""+len);
 
-            //len is zero then add condition
 
+
+            //len is zero then NextChance is exec
             if(len==0){
                 if(DataHolder.getDataString(PrivateActivity.this,"userid").equalsIgnoreCase(arrayListUserIdSequence.get(0))){
                     new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(this, "deskid"));
@@ -1316,6 +1318,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             TIMER_ROTATION=false;
                             simulateProgress();
                             btn_see_cards.setVisibility(View.VISIBLE);
+                            if (maxBlindCount==3){
+                                seeCardOperation();
+                            }
                         }
                         Log.i("CHKIL1",ChaalAmount+"");
                         rl_bottom_caption.setVisibility(View.VISIBLE);
@@ -1593,6 +1598,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            Toast.makeText(PrivateActivity.this, ""+DataHolder.getDataString(PrivateActivity.this, "deskid"), Toast.LENGTH_SHORT).show();
             new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
 
         }
@@ -1607,7 +1613,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(PrivateActivity.this, "orderChanceAyncTas\n\n\n" + result, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("CheckGame", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());

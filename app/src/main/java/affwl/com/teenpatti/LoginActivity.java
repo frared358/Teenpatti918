@@ -330,7 +330,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     if (rememberMeCheckBox.isChecked()) {
                         saveLoginDetails(username, password, avatar);
                     }
-                    startActivity(new Intent(LoginActivity.this, TempActivity.class));
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                 }
                 Log.i("result", " Status " + message);

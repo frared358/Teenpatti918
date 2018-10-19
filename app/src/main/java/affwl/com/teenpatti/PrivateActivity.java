@@ -526,12 +526,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         backPress();
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     /////////// Onclick for Backtolobby /////////////
     public void backtolobby() {
         LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -987,8 +981,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
 
-            //new NextChanceAsyncTaskxx().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
-
             //LAST CHANCES DATA
             Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
             startService(intentService);
@@ -1341,170 +1333,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     boolean TIMER_ROTATION = true;
     boolean STARTING_TURN = true;
 
-    private void getLastChanceData(String result) {
-        try {
-            JSONObject jsonObjMain = new JSONObject(result);
-
-            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
-            int len = arr.length();
-            Log.i("TADAG", "" + len);
-
-            //len is zero then NextChance is exec
-            if (len == 0) {
-                if (DataHolder.getDataString(PrivateActivity.this, "userid").equalsIgnoreCase(arrayListUserIdSequence.get(0))) {
-//                    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(this, "deskid"));
-                    if (STARTING_TURN) {
-                        simulateProgress();
-                        btn_see_cards.setVisibility(View.VISIBLE);
-                        rl_bottom_caption.setVisibility(View.VISIBLE);
-                        Log.i("CHKIL Start", ChaalAmount + "");
-                        STARTING_TURN = false;
-                    }
-                }
-            }
-
-            for (int i = 0; i < len; i++) {
-                JSONObject key = arr.getJSONObject(i);
-
-                lastChanceid = key.getString("chanceid");
-                lastDesk_id = key.getString("desk_id");
-                lastChaal_amount = key.getString("chaal_amount");
-                lastUser_id = key.getString("user_id");
-                lastChance_status = key.getString("chance_status");
-                lastPot_value = key.getString("pot_value");
-                lastShow = key.getString("show");
-                lastSeen_blind = key.getString("seen_blind");
-                lastDealer_id = key.getString("dealer_id");
-                lastTip = key.getString("tip");
-                lastTurn = key.getString("turn");
-                lastNext_user = key.getString("next_user");
-                lastWin_lose = key.getString("win_lose");
-                lastDatetime = key.getString("datetime");
-
-//              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
-                Log.i("CHKIL", storeNextValue + "-" + lastNext_user);
-                if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
-                    try {
-                        viewBlinkCircle.clearAnimation();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                try {
-                    if (DataHolder.getDataString(this, "userid").equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN0", "-" + lastNext_user);
-
-                        if (TIMER_ROTATION) {
-                            TIMER_ROTATION = false;
-                            simulateProgress();
-                            btn_see_cards.setVisibility(View.VISIBLE);
-                            if (maxBlindCount == 3) {
-                                seeCardOperation();
-                            }
-                        }
-                        Log.i("CHKIL1", ChaalAmount + "");
-                        rl_bottom_caption.setVisibility(View.VISIBLE);
-                        ChaalAmount = Integer.parseInt(lastChaal_amount);
-                    } else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN1", "-" + lastNext_user);
-                        viewBlinkCircle = player_blink_circle1;
-                        player_blink_circle1.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status1.setText(lastSeen_blind);
-                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN2", "-" + lastNext_user);
-                        viewBlinkCircle = player_blink_circle2;
-                        player_blink_circle2.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status2.setText(lastSeen_blind);
-                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN3", "-" + lastNext_user);
-                        viewBlinkCircle = player_blink_circle3;
-                        player_blink_circle3.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status3.setText(lastSeen_blind);
-                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN4", "-" + lastNext_user);
-                        viewBlinkCircle = player_blink_circle4;
-                        player_blink_circle4.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status4.setText(lastSeen_blind);
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed")) {
-                            user_status1.setText(lastSeen_blind);
-                        } else {
-                            user_status1.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card2.setVisibility(View.GONE);
-                            card7.setVisibility(View.GONE);
-                            card12.setVisibility(View.GONE);
-                        }
-                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed")) {
-                            user_status2.setText(lastSeen_blind);
-                        } else {
-                            user_status2.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card1.setVisibility(View.GONE);
-                            card6.setVisibility(View.GONE);
-                            card11.setVisibility(View.GONE);
-                        }
-                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed")) {
-                            user_status3.setText(lastSeen_blind);
-                        } else {
-                            user_status3.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card5.setVisibility(View.GONE);
-                            card10.setVisibility(View.GONE);
-                            card15.setVisibility(View.GONE);
-                        }
-                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
-                            user_status4.setText(lastSeen_blind);
-                        } else {
-                            user_status4.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card4.setVisibility(View.GONE);
-                            card9.setVisibility(View.GONE);
-                            card11.setVisibility(View.GONE);
-                        }
-                    }
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-            }
-            txtVTableAmt.setText(lastPot_value);
-
-            if (arrayListUnPackedUser.size() == 2) {
-                show_btn.setVisibility(View.VISIBLE);
-            }
-
-            if (arrayListUnPackedUser.size() == 1) {
-                //ShowData Set Winner
-                new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        storeNextValue = lastNext_user;
-    }
-
     private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1692,7 +1520,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    private class orderChanceAyncTask extends AsyncTask<String, Void, String> {
+
+    String StartBlink;
+    private class orderChanceAyncTask extends AsyncTask<String, Void, String>{
 
         @Override
         protected String doInBackground(String... urls) {
@@ -1719,7 +1549,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     for (int i = 0; i < len; i++) {
 
                         String userid = arr.getString(i);
-                        Log.i("TTYY", "" + userid);
+
+                        StartBlink = arr.getString(0);
+                        Log.i("TTYY",""+userid);
                         if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
                             sequence = true;
                         }
@@ -1743,6 +1575,217 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         }
+    }
+
+    private void getLastChanceData(String result){
+        try {
+            JSONObject jsonObjMain = new JSONObject(result);
+
+            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+            int len = arr.length();
+            Log.i("TADAG",""+len);
+
+            //len is zero then NextChance is exec
+            Log.i("TAGGGi",""+len);
+            if(len==0){
+                try {
+                    if(DataHolder.getDataString(PrivateActivity.this,"userid").equalsIgnoreCase(StartBlink)){
+                        if (STARTING_TURN) {
+                            simulateProgress();
+                            Log.i("TAGGGin",""+arrayListUserIdSequence.get(0));
+                            btn_see_cards.setVisibility(View.VISIBLE);
+                            rl_bottom_caption.setVisibility(View.VISIBLE);
+                            Log.i("CHKIL Start",ChaalAmount+"");
+                            STARTING_TURN=false;
+                        }
+                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(StartBlink)){
+                        viewBlinkCircle = player_blink_circle1;
+                        player_blink_circle1.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status1.setText("online");
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(StartBlink)){
+                        viewBlinkCircle = player_blink_circle2;
+                        player_blink_circle2.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status2.setText("online");
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(StartBlink)){
+                        viewBlinkCircle = player_blink_circle3;
+                        player_blink_circle3.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status3.setText("online");
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(StartBlink)){
+                        viewBlinkCircle = player_blink_circle4;
+                        player_blink_circle4.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status4.setText("online");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            for (int i=0;i<len;i++){
+                JSONObject key = arr.getJSONObject(i);
+
+                lastChanceid = key.getString("chanceid");
+                lastDesk_id = key.getString("desk_id");
+                lastChaal_amount = key.getString("chaal_amount");
+                lastUser_id = key.getString("user_id");
+                lastChance_status = key.getString("chance_status");
+                lastPot_value = key.getString("pot_value");
+                lastShow = key.getString("show");
+                lastSeen_blind = key.getString("seen_blind");
+                lastDealer_id = key.getString("dealer_id");
+                lastTip = key.getString("tip");
+                lastTurn = key.getString("turn");
+                lastNext_user = key.getString("next_user");
+                lastWin_lose = key.getString("win_lose");
+                lastDatetime = key.getString("datetime");
+
+//              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
+                Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
+                if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
+                    try {
+                        viewBlinkCircle.clearAnimation();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                storeNextValue = lastNext_user;
+
+                try {
+                    if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN0","-"+lastNext_user);
+
+                        if (TIMER_ROTATION) {
+                            TIMER_ROTATION=false;
+                            simulateProgress();
+                            if (btn_see_cards.getVisibility() != View.VISIBLE) {
+                                btn_see_cards.setVisibility(View.VISIBLE);
+                            }
+
+                            if (maxBlindCount==Integer.parseInt(MaxBlind)){
+                                seeCardOperation();
+                            }
+                        }
+
+                        rl_bottom_caption.setVisibility(View.VISIBLE);
+                        ChaalAmount = Integer.parseInt(lastChaal_amount);
+                        Log.i("CHKIL1",ChaalAmount+"");
+                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
+
+                        viewBlinkCircle = player_blink_circle1;
+                        player_blink_circle1.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status1.setText(lastSeen_blind);
+                        Log.i("ChkilIN1","-"+lastNext_user);
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
+
+                        viewBlinkCircle = player_blink_circle2;
+                        player_blink_circle2.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status2.setText(lastSeen_blind);
+                        Log.i("ChkilIN2","-"+lastNext_user);
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN3","-"+lastNext_user);
+                        viewBlinkCircle = player_blink_circle3;
+                        player_blink_circle3.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status3.setText(lastSeen_blind);
+                        Log.i("ChkilIN3","-"+lastNext_user);
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
+
+                        viewBlinkCircle = player_blink_circle4;
+                        player_blink_circle4.startAnimation(animBlink);
+                        TIMER_ROTATION=true;
+                        user_status4.setText(lastSeen_blind);
+                        Log.i("ChkilIN4","-"+lastNext_user);
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+
+                try {
+                    if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                            user_status1.setText(lastSeen_blind);
+                        }else {
+                            user_status1.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card2.setVisibility(View.GONE);
+                            card7.setVisibility(View.GONE);
+                            card12.setVisibility(View.GONE);
+                        }
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                            user_status2.setText(lastSeen_blind);
+                        }else {
+                            user_status2.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card1.setVisibility(View.GONE);
+                            card6.setVisibility(View.GONE);
+                            card11.setVisibility(View.GONE);
+                        }
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                            user_status3.setText(lastSeen_blind);
+                        }else {
+                            user_status3.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card5.setVisibility(View.GONE);
+                            card10.setVisibility(View.GONE);
+                            card15.setVisibility(View.GONE);
+                        }
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)){
+                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
+                            user_status4.setText(lastSeen_blind);
+                        }else {
+                            user_status4.setText(lastChance_status);
+                            arrayListUnPackedUser.remove(lastChance_status);
+                            player1.setImageResource(R.drawable.fade_inner_img);
+                            card4.setVisibility(View.GONE);
+                            card9.setVisibility(View.GONE);
+                            card11.setVisibility(View.GONE);
+                        }
+                    }
+
+                    if (chance_Status.equalsIgnoreCase("packed")){
+                        arrayListUnPackedUser.remove(lastChance_status);
+                    }
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
+                }
+            }
+            txtVTableAmt.setText(lastPot_value);
+
+            if (arrayListUnPackedUser.size() == 2){
+                show_btn.setVisibility(View.VISIBLE);
+            }
+
+            if (arrayListUnPackedUser.size() == 1){
+                //ShowData Set Winner
+                Toast.makeText(this, "1 user is left", Toast.LENGTH_SHORT).show();
+                new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
+                stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
+                try {
+                    if (broadcastReceiver != null) {
+                        unregisterReceiver(broadcastReceiver);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

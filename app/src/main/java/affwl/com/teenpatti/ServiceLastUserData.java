@@ -115,7 +115,7 @@ public class ServiceLastUserData extends Service {
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
-                    new GetChanceLastDataAsyncTask().execute("http://213.136.81.137:8081/api/getlastchance");
+                    new GetChanceLastDataAsyncTask().execute("http://213.136.81.137:8081/api/getlastchance?desk_id="+DataHolder.getDataInt(ServiceLastUserData.this, "deskid"));
                     //new GeteLast5ChancAsyncTask().execute("http://213.136.81.137:8081/api/getEachChance?desk_id="+DataHolder.getDataString(ServiceLastUserData.this, "deskid"));
                     //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(ServiceLastUserData.this, "userid"));
                 }

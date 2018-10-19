@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             profile.setImageBitmap(bmp);
         }
-        String name = session.getName();
+
         txtVUserNameMain.setText(DataHolder.first_name + " " + DataHolder.last_name);
 
         //////////////// Popup for Private ////////////////

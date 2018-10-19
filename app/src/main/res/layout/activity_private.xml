@@ -83,7 +83,7 @@
                     android:textAlignment="center"
                     android:textSize="15sp"
                     android:textColor="#fff"
-                    android:text="700"
+                    android:text=""
                     android:layout_alignParentStart="true"
                     android:background="@drawable/boot_bg" />
 
@@ -94,7 +94,7 @@
                     android:textAlignment="center"
                     android:textSize="15sp"
                     android:textColor="#fff"
-                    android:text="700"
+                    android:text=""
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentStart="true"
                     android:background="@drawable/boot_bg" />
@@ -106,7 +106,7 @@
                     android:textAlignment="center"
                     android:textSize="15sp"
                     android:textColor="#fff"
-                    android:text="700"
+                    android:text=""
                     android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/boot_bg" />
@@ -118,7 +118,7 @@
                     android:textAlignment="center"
                     android:textSize="15sp"
                     android:textColor="#fff"
-                    android:text="700"
+                    android:text=""
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/boot_bg" />
@@ -130,7 +130,7 @@
                     android:textAlignment="center"
                     android:textSize="15sp"
                     android:textColor="#fff"
-                    android:text="700"
+                    android:text=""
                     android:layout_alignParentTop="true"
                     android:layout_alignParentEnd="true"
                     android:background="@drawable/boot_bg" />
@@ -140,7 +140,7 @@
                     android:layout_height="37dp"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:text="0"
+                    android:text="5000"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
@@ -158,11 +158,14 @@
                 app:layout_widthPercent="20%"
                 tools:ignore="NotSibling">
 
+
                 <ImageView
                     android:id="@+id/player_blink_circle1"
                     android:src="@drawable/yellow_circle"
                     app:layout_heightPercent="100%"
                     app:layout_widthPercent="100%" />
+
+
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/inner_player_img1"
@@ -199,6 +202,13 @@
                     app:layout_widthPercent="20%"
                     android:layout_alignParentRight="true" />
 
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/blinkergif2"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:src="@drawable/winner_indicator"/>
+
             </android.support.percent.PercentRelativeLayout>
 
             <android.support.percent.PercentRelativeLayout
@@ -219,9 +229,8 @@
                     android:layout_centerInParent="true"
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
-                    app:layout_widthPercent="88%" />
-
-
+                    app:layout_widthPercent="88%"
+                    android:scaleType="centerCrop"/>
 
                 <TextView
                     android:id="@+id/user_status2"
@@ -251,6 +260,13 @@
                     app:layout_heightPercent="20%"
                     app:layout_widthPercent="20%"
                     android:layout_alignParentRight="true"/>
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/blinkergif1"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:src="@drawable/winner_indicator"/>
 
 
             </android.support.percent.PercentRelativeLayout>
@@ -306,6 +322,13 @@
                     app:layout_widthPercent="20%"
                     android:layout_alignParentRight="true" />
 
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/blinkergif5"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:src="@drawable/winner_indicator"/>
+
             </android.support.percent.PercentRelativeLayout>
 
             <android.support.percent.PercentRelativeLayout
@@ -360,6 +383,13 @@
                     app:layout_heightPercent="20%"
                     app:layout_widthPercent="20%"
                     android:layout_alignParentRight="true"/>
+
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/blinkergif4"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:src="@drawable/winner_indicator"/>
 
             </android.support.percent.PercentRelativeLayout>
 
@@ -595,6 +625,13 @@
                     app:layout_widthPercent="20%"
                     android:layout_alignParentRight="true"/>
 
+                <pl.droidsonroids.gif.GifImageView
+                    android:id="@+id/blinkergif3"
+                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:src="@drawable/winner_indicator"/>
+
                 <TextView
                     android:id="@+id/txtVBalanceMainPlayer"
                     android:background="@color/colorYellowGolden"
@@ -631,7 +668,7 @@
             android:layout_alignParentBottom="true"
             android:gravity="center"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_heightPercent="8%"
             app:layout_widthPercent="100%">
 
@@ -671,9 +708,9 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignTop="@+id/amount_bg"
                 android:layout_centerInParent="true"
-                android:layout_toRightOf="@+id/minus_btn"
+                android:layout_toEndOf="@+id/minus_btn"
                 android:padding="1dp"
-                android:text="2"
+                android:text=""
                 android:background="@drawable/empty_btn"
                 android:textAlignment="center"
                 android:textColor="@color/white"

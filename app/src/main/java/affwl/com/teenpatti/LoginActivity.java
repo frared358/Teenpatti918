@@ -81,8 +81,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             edittextusername.setText(DataHolder.getDataString(this, "username"));
             edittextpassword.setText(DataHolder.getDataString(this, "password"));
         }
-
-//        new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         checkPermission();
         requestPermission();
 
@@ -98,7 +96,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 } else {
                     Toast.makeText(LoginActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
                 }
-
             }
         }, 0, 1, TimeUnit.MINUTES);
 

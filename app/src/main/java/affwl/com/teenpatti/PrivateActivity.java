@@ -62,13 +62,13 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
     ImageView player_blink_circle1,player_blink_circle2,player_blink_circle3,player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
     TextView player_balance, player_name, other_player_name, other_player_balance, displayAmount, display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
-    TextView user_status1,user_status2,user_status3,user_status4;
+    TextView user_status1,user_status2,user_status3,user_status4,boot_value_player1, boot_value_player2, boot_value_player3, boot_value_player4, boot_value_player5;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
     Session session;
     LinearLayout below_layout;
 
-    Animation animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
+    Animation bootvalueanimate1, bootvalueanimate2, bootvalueanimate3,bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
     View  viewBlinkCircle;
     Handler handler;
@@ -99,14 +99,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         }, 0, 1, TimeUnit.MINUTES);
-
         new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","online");
-
-
-
         DataHolder.setData(PrivateActivity.this, "userstatus", "online");
-
-
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
@@ -149,16 +143,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
 
-//        code = findViewById(R.id.code);
         session = new Session(this);
-        /*String encodedimage = session.getImage();
-        if (!encodedimage.equalsIgnoreCase("")) {
-            byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
-            Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
-            profile.setImageBitmap(bmp);
-            profile1.setImageBitmap(bmp);
-        }*/
-
+        String name = session.getName();
+        String ID = session.getID();
+        String Image = session.getImage();
 
 
         blind_btn = findViewById(R.id.blind_btn);
@@ -183,6 +171,93 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        Implementation of Pack Button
         pack_btn = findViewById(R.id.pack_btn);
         pack_btn.setOnClickListener(this);
+
+
+        //see myplayer card
+        btn_see_cards = findViewById(R.id.btn_see_cards);
+        btn_see_cards.setOnClickListener(this);
+        show_btn = findViewById(R.id.show_btn);
+        show_btn.setOnClickListener(this);
+
+        //////////////// Popup for Backbutton ///////////////////
+
+        backbtn = findViewById(R.id.back);
+        backbtn.setOnClickListener(this);
+
+        //////////////// Popup for InfoButton ///////////////////
+        imgVInfo = findViewById(R.id.imgVInfo);
+        imgVInfo.setOnClickListener(this);
+
+
+
+        ////////////////Winner Animation////////////////
+        winnerblinker1 = (ImageView) findViewById(R.id.winnerblinker1);
+//      winnerblinker2 = (ImageView) findViewById(R.id.winnerblinker2);
+        myplayer = (ImageView) findViewById(R.id.myplayer);
+
+        // load the animation
+        animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
+
+        // set animation listener
+        animBlink.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (animation == animBlink) {
+                }
+            }
+
+        });
+        onTick(5000);
+        distributeCards();
+    }
+
+
+    public void onTick(long millisUntilFinished) {
+
+        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+        Toast.makeText(getApplicationContext(), "Generating game request in : " + millisUntilFinished/1000, Toast.LENGTH_SHORT).show();
+    }
+
+    public void distributeCards(){
+
+        //card image
+        card1 = findViewById(R.id.card1);
+        card2 = findViewById(R.id.card2);
+        card3 = findViewById(R.id.card3);
+        card4 = findViewById(R.id.card4);
+        card5 = findViewById(R.id.card5);
+        card6 = findViewById(R.id.card6);
+        card7 = findViewById(R.id.card7);
+        card8 = findViewById(R.id.card8);
+        card9 = findViewById(R.id.card9);
+        card10 = findViewById(R.id.card10);
+        card11 = findViewById(R.id.card11);
+        card12 = findViewById(R.id.card12);
+        card13 = findViewById(R.id.card13);
+        card14 = findViewById(R.id.card14);
+        card15 = findViewById(R.id.card15);
+
+        boot_value_player1 = findViewById(R.id.boot_value_player1);
+        boot_value_player2 = findViewById(R.id.boot_value_player2);
+        boot_value_player3 = findViewById(R.id.boot_value_player3);
+        boot_value_player4 = findViewById(R.id.boot_value_player4);
+        boot_value_player5 = findViewById(R.id.boot_value_player5);
+
+
+        card3.bringToFront();
+        card8.bringToFront();
+        card13.bringToFront();
+
         //shuffling card animation
         animatecard1 = AnimationUtils.loadAnimation(this, R.anim.translate_top_left1);
         animatecard2 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_left1);
@@ -203,33 +278,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         animatecard15 = AnimationUtils.loadAnimation(this, R.anim.translate_top_right3);
 
 
-        //card image
-        card1 = findViewById(R.id.card1);
-        card2 = findViewById(R.id.card2);
-        card3 = findViewById(R.id.card3);
-        card4 = findViewById(R.id.card4);
-        card5 = findViewById(R.id.card5);
-        card6 = findViewById(R.id.card6);
-        card7 = findViewById(R.id.card7);
-        card8 = findViewById(R.id.card8);
-        card9 = findViewById(R.id.card9);
-        card10 = findViewById(R.id.card10);
-        card11 = findViewById(R.id.card11);
-        card12 = findViewById(R.id.card12);
-        card13 = findViewById(R.id.card13);
-        card14 = findViewById(R.id.card14);
-        card15 = findViewById(R.id.card15);
+        bootvalueanimate1 = AnimationUtils.loadAnimation(this,R.anim.boot_anim1);
+        bootvalueanimate2 = AnimationUtils.loadAnimation(this,R.anim.boot_anim2);
+        bootvalueanimate3 = AnimationUtils.loadAnimation(this,R.anim.boot_anim3);
+        bootvalueanimate4 = AnimationUtils.loadAnimation(this,R.anim.boot_anim4);
+        bootvalueanimate5 = AnimationUtils.loadAnimation(this,R.anim.boot_anim5);
 
-
-        //see myplayer card
-        btn_see_cards = findViewById(R.id.btn_see_cards);
-        btn_see_cards.setOnClickListener(this);
-        show_btn = findViewById(R.id.show_btn);
-        show_btn.setOnClickListener(this);
-
-        card3.bringToFront();
-        card8.bringToFront();
-        card13.bringToFront();
 
         //animate shuffle cards now here
         card1.startAnimation(animatecard1);
@@ -267,6 +321,22 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card14.startAnimation(animatecard14);
         animatecard15.setStartOffset(2800);
         card15.startAnimation(animatecard15);
+
+        boot_value_player1.startAnimation(bootvalueanimate1);
+        bootvalueanimate1.setStartOffset(3000);
+
+        boot_value_player2.startAnimation(bootvalueanimate2);
+        bootvalueanimate2.setStartOffset(3000);
+
+        boot_value_player3.startAnimation(bootvalueanimate3);
+        bootvalueanimate3.setStartOffset(3000);
+
+        boot_value_player4.startAnimation(bootvalueanimate4);
+        bootvalueanimate4.setStartOffset(3000);
+
+        boot_value_player5.startAnimation(bootvalueanimate5);
+        bootvalueanimate5.setStartOffset(3000);
+
 
         //display cards in position after animation overs
         animatecard15.setAnimationListener(new Animation.AnimationListener() {
@@ -425,56 +495,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 view15.requestLayout();
 
                 btn_see_cards.bringToFront();
-                //btn_see_cards.setVisibility(View.VISIBLE);
-//                rl_bottom_caption.setVisibility(View.VISIBLE);
                 below_layout.setVisibility(View.GONE);
             }
         });
-
-        //////////////// Popup for Backbutton ///////////////////
-
-        backbtn = findViewById(R.id.back);
-        backbtn.setOnClickListener(this);
-
-        //////////////// Popup for InfoButton ///////////////////
-        imgVInfo = findViewById(R.id.imgVInfo);
-        imgVInfo.setOnClickListener(this);
-
-
-
-        ////////////////Winner Animation////////////////
-        winnerblinker1 = (ImageView) findViewById(R.id.winnerblinker1);
-//      winnerblinker2 = (ImageView) findViewById(R.id.winnerblinker2);
-        myplayer = (ImageView) findViewById(R.id.myplayer);
-
-        // load the animation
-        animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
-
-        // set animation listener
-        animBlink.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-                // TODO Auto-generated method stub
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                if (animation == animBlink) {
-                }
-            }
-
-        });
-        //onTick(5000);
-    }
-
-
-    public void onTick(long millisUntilFinished) {
-        Toast.makeText(getApplicationContext(), "Generating game request in : " + millisUntilFinished/1000, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -870,6 +893,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         protected void onPostExecute(String result) {
 
             Log.i("Check", "" + result);
+//            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataString(PrivateActivity.this,"token"), Toast.LENGTH_SHORT).show();
+
             try {
                 JSONObject jsonObjMain = new JSONObject(result);
                 String message = jsonObjMain.getString("message");
@@ -1250,7 +1275,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check123", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1473,7 +1498,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 String message = jsonObjMain.getString("message");
                 if (message.equalsIgnoreCase("Client status successfully changed")){
-                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1650,7 +1675,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(PrivateActivity.this, "orderChanceAyncTas\n\n\n" + result, Toast.LENGTH_SHORT).show();
             Log.i("CheckGame", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());

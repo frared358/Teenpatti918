@@ -54,83 +54,83 @@
         android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile"
-            android:layout_width="50dp"
-            android:layout_height="50dp" />
-
-        <TextView
-            android:id="@+id/txtVUserNameMain"
-            android:layout_width="80dp"
-            android:layout_height="30dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/chip_balance"
-            android:textAlignment="center"
-            android:textColor="@color/colorWhite" />
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:layout_weight="1">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/profile"
+                android:layout_width="50dp"
+                android:layout_height="50dp" />
+
+            <TextView
+                android:id="@+id/txtVUserNameMain"
+                android:layout_width="80dp"
+                android:layout_height="30dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/chip_balance"
+                android:textAlignment="center"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="5dp">
 
 
-                <ImageView
-                    android:id="@+id/avatar1"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar1"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar2"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar2"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar3"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar3"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar4"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar4"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar5"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar5"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar6"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar6"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar7"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
+            <ImageView
+                android:id="@+id/avatar7"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
 
-                <ImageView
-                    android:id="@+id/avatar8"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="5dp" />
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/avatar8"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="5dp" />
+        </LinearLayout>
 
-        </HorizontalScrollView>
     </LinearLayout>
 
     <!--Help Button and Device info-->

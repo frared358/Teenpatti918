@@ -30,6 +30,7 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
@@ -44,6 +45,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,6 +55,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import pl.droidsonroids.gif.GifImageView;
+
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
@@ -60,17 +64,18 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 @SuppressLint("WrongViewCast")
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView player_blink_circle1,player_blink_circle2,player_blink_circle3,player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
+    ImageView player_blink_circle1, player_blink_circle2, player_blink_circle3, player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
     TextView player_balance, player_name, other_player_name, other_player_balance, displayAmount, display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
-    TextView user_status1,user_status2,user_status3,user_status4,boot_value_player1, boot_value_player2, boot_value_player3, boot_value_player4, boot_value_player5;
+    TextView user_status1, user_status2, user_status3, user_status4, boot_value_player1, boot_value_player2, boot_value_player3, boot_value_player4, boot_value_player5;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
     Session session;
     LinearLayout below_layout;
+    GifImageView blinkergif1, blinkergif2, blinkergif3, blinkergif4, blinkergif5;
 
-    Animation bootvalueanimate1, bootvalueanimate2, bootvalueanimate3,bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
+    Animation bootvalueanimate1, bootvalueanimate2, bootvalueanimate3, bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
-    View  viewBlinkCircle;
+    View viewBlinkCircle;
     Handler handler;
     int minteger = 0;
     private CircleProgressBar progressBarChances;
@@ -99,7 +104,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         }, 0, 1, TimeUnit.MINUTES);
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","online");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
         DataHolder.setData(PrivateActivity.this, "userstatus", "online");
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
@@ -109,6 +114,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         below_layout = findViewById(R.id.below_layout);
         relativeLayout = findViewById(R.id.privaterecycler);
         txtVTableAmt = findViewById(R.id.txtVTableAmt);
+        blinkergif1 = findViewById(R.id.blinkergif1);
+        blinkergif2 = findViewById(R.id.blinkergif2);
+        blinkergif3 = findViewById(R.id.blinkergif3);
+        blinkergif4 = findViewById(R.id.blinkergif4);
+        blinkergif5 = findViewById(R.id.blinkergif5);
         progressBarChances = findViewById(R.id.progressBarChances);
         viewBlinkCircle = new View(PrivateActivity.this);
 
@@ -189,7 +199,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         imgVInfo.setOnClickListener(this);
 
 
-
         ////////////////Winner Animation////////////////
         winnerblinker1 = (ImageView) findViewById(R.id.winnerblinker1);
 //      winnerblinker2 = (ImageView) findViewById(R.id.winnerblinker2);
@@ -217,18 +226,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
         });
-        onTick(5000);
-        distributeCards();
+//        onTick(5000);
     }
 
 
     public void onTick(long millisUntilFinished) {
 
-        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
-        Toast.makeText(getApplicationContext(), "Generating game request in : " + millisUntilFinished/1000, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Generating game request in : " + millisUntilFinished / 1000, Toast.LENGTH_SHORT).show();
     }
 
-    public void distributeCards(){
+    public void distributeCards() {
 
         //card image
         card1 = findViewById(R.id.card1);
@@ -246,13 +253,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card13 = findViewById(R.id.card13);
         card14 = findViewById(R.id.card14);
         card15 = findViewById(R.id.card15);
-
-        boot_value_player1 = findViewById(R.id.boot_value_player1);
-        boot_value_player2 = findViewById(R.id.boot_value_player2);
-        boot_value_player3 = findViewById(R.id.boot_value_player3);
-        boot_value_player4 = findViewById(R.id.boot_value_player4);
-        boot_value_player5 = findViewById(R.id.boot_value_player5);
-
 
         card3.bringToFront();
         card8.bringToFront();
@@ -276,14 +276,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         animatecard13 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom3);
         animatecard14 = AnimationUtils.loadAnimation(this, R.anim.translate_bottom_right3);
         animatecard15 = AnimationUtils.loadAnimation(this, R.anim.translate_top_right3);
-
-
-        bootvalueanimate1 = AnimationUtils.loadAnimation(this,R.anim.boot_anim1);
-        bootvalueanimate2 = AnimationUtils.loadAnimation(this,R.anim.boot_anim2);
-        bootvalueanimate3 = AnimationUtils.loadAnimation(this,R.anim.boot_anim3);
-        bootvalueanimate4 = AnimationUtils.loadAnimation(this,R.anim.boot_anim4);
-        bootvalueanimate5 = AnimationUtils.loadAnimation(this,R.anim.boot_anim5);
-
 
         //animate shuffle cards now here
         card1.startAnimation(animatecard1);
@@ -321,22 +313,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card14.startAnimation(animatecard14);
         animatecard15.setStartOffset(2800);
         card15.startAnimation(animatecard15);
-
-        boot_value_player1.startAnimation(bootvalueanimate1);
-        bootvalueanimate1.setStartOffset(3000);
-
-        boot_value_player2.startAnimation(bootvalueanimate2);
-        bootvalueanimate2.setStartOffset(3000);
-
-        boot_value_player3.startAnimation(bootvalueanimate3);
-        bootvalueanimate3.setStartOffset(3000);
-
-        boot_value_player4.startAnimation(bootvalueanimate4);
-        bootvalueanimate4.setStartOffset(3000);
-
-        boot_value_player5.startAnimation(bootvalueanimate5);
-        bootvalueanimate5.setStartOffset(3000);
-
 
         //display cards in position after animation overs
         animatecard15.setAnimationListener(new Animation.AnimationListener() {
@@ -500,6 +476,41 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    public void bootCollection() {
+        boot_value_player1 = findViewById(R.id.boot_value_player1);
+        boot_value_player2 = findViewById(R.id.boot_value_player2);
+        boot_value_player3 = findViewById(R.id.boot_value_player3);
+        boot_value_player4 = findViewById(R.id.boot_value_player4);
+        boot_value_player5 = findViewById(R.id.boot_value_player5);
+
+        bootvalueanimate1 = AnimationUtils.loadAnimation(this, R.anim.boot_anim1);
+        bootvalueanimate2 = AnimationUtils.loadAnimation(this, R.anim.boot_anim2);
+        bootvalueanimate3 = AnimationUtils.loadAnimation(this, R.anim.boot_anim3);
+        bootvalueanimate4 = AnimationUtils.loadAnimation(this, R.anim.boot_anim4);
+        bootvalueanimate5 = AnimationUtils.loadAnimation(this, R.anim.boot_anim5);
+
+        boot_value_player1.startAnimation(bootvalueanimate1);
+        bootvalueanimate1.setStartOffset(3000);
+
+        boot_value_player2.startAnimation(bootvalueanimate2);
+        bootvalueanimate2.setStartOffset(3000);
+
+        boot_value_player3.startAnimation(bootvalueanimate3);
+        bootvalueanimate3.setStartOffset(3000);
+
+        boot_value_player4.startAnimation(bootvalueanimate4);
+        bootvalueanimate4.setStartOffset(3000);
+
+        boot_value_player5.startAnimation(bootvalueanimate5);
+        bootvalueanimate5.setStartOffset(3000);
+
+//        blinkergif1.setVisibility(View.VISIBLE);
+//        blinkergif2.setVisibility(View.VISIBLE);
+//        blinkergif3.setVisibility(View.VISIBLE);
+//        blinkergif4.setVisibility(View.VISIBLE);
+//        blinkergif5.setVisibility(View.VISIBLE);
+    }
+
     @Override
     public void onBackPressed() {
         if (popupWindow != null && popupWindow.isShowing()) {
@@ -548,7 +559,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             public void onClick(View v) {
                 backPress();
                 Intent intent = new Intent(PrivateActivity.this, MainActivity.class);
-                intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP|FLAG_ACTIVITY_SINGLE_TOP);
+                intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP | FLAG_ACTIVITY_SINGLE_TOP);
                 startActivity(intent);
             }
         });
@@ -570,8 +581,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.plus_btn:
                 ChaalAmount = ChaalAmount * 2;
-                displayAmount.setText(String.valueOf(ChaalAmount));
-                displayAmount.setBackgroundResource(R.drawable.emptybtn);
+//                displayAmount.setText(String.valueOf(ChaalAmount));
+                boot_value_player3.setText(String.valueOf(ChaalAmount));
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
                 minus_btn.setImageResource(R.drawable.minus_btn);
@@ -583,14 +594,17 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 plus_btn.setEnabled(true);
                 minus_btn.setEnabled(false);
                 ChaalAmount = ChaalAmount / 2;
-                displayAmount.setText(String.valueOf(ChaalAmount));
-                displayAmount.setBackgroundResource(R.drawable.emptybtn);
+//                displayAmount.setText(String.valueOf(ChaalAmount));
+                boot_value_player3.setText(String.valueOf(ChaalAmount));
                 minus_btn.setImageResource(R.drawable.minus_disabled);
                 break;
 
             case R.id.blind_btn:
                 maxBlindCount++;
                 chaalBlind();
+//                boot_value_player3.setText(String.valueOf(ChaalAmount));
+                bootvalueanimate3 = AnimationUtils.loadAnimation(this, R.anim.boot_anim3);
+                boot_value_player3.startAnimation(bootvalueanimate3);
                 break;
 
             case R.id.chaal_btn:
@@ -637,19 +651,19 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.inner_player_img1:
-                individualUserInfo(customView2,USER_NAME1,BALANCE1,encodedimage);
+                individualUserInfo(customView2, USER_NAME1, BALANCE1, encodedimage);
                 break;
 
             case R.id.inner_player_img2:
-                individualUserInfo(customView2,USER_NAME2,BALANCE2,encodedimage);
+                individualUserInfo(customView2, USER_NAME2, BALANCE2, encodedimage);
                 break;
 
             case R.id.inner_player_img3:
-                individualUserInfo(customView2,USER_NAME3,BALANCE3,encodedimage);
+                individualUserInfo(customView2, USER_NAME3, BALANCE3, encodedimage);
                 break;
 
             case R.id.inner_player_img4:
-                individualUserInfo(customView2,USER_NAME4,BALANCE4,encodedimage);
+                individualUserInfo(customView2, USER_NAME4, BALANCE4, encodedimage);
                 break;
 
             case R.id.back:
@@ -659,9 +673,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //On BackPress
-    public void backPress(){
+    public void backPress() {
         DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","offline");
+        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");
         stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
         try {
             if (broadcastReceiver != null) {
@@ -673,7 +687,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //SHOW Cards
-    public void showCards(){
+    public void showCards() {
         Handler handlerDisp = new Handler();
         //Show_Status = "1";
         new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
@@ -700,7 +714,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //individual User Info
-    public void individualUserInfo(View view,String username,String Balance,String encodedimage){
+    public void individualUserInfo(View view, String username, String Balance, String oencodedimage) {
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mediaPlayer.start();
 
@@ -710,21 +724,23 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         other_player_balance = view.findViewById(R.id.other_player_balance);
         oplayer_status_circle = view.findViewById(R.id.oplayer_status_circle);
 
+//        Glide.with(getApplicationContext()).load(user_image).into(oplayer_status_circle);
+
         other_player_name.setText(username);
         other_player_balance.setText(Balance);
 
         OPlayerStatusWindow.showAtLocation(privatetble, Gravity.CENTER, 0, 0);
 
-        if (!encodedimage.equalsIgnoreCase("")) {
-            byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+        if (!oencodedimage.equalsIgnoreCase("")) {
+            byte[] b = Base64.decode(oencodedimage, Base64.DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             oplayer_status_circle.setImageBitmap(bmp);
         }
     }
 
     //PACK USER
-    public void packOperation(){
-        rl_bottom_caption.setVisibility(View.GONE);
+    public void packOperation() {
+        rl_bottom_caption.setVisibility(View.VISIBLE);
         btn_see_cards.setVisibility(View.GONE);
         below_layout.setVisibility(View.VISIBLE);
         card3.setVisibility(View.GONE);
@@ -734,11 +750,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         chance_Status = "packed";
         CHECK_TIME_OUT = true;
         //new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
-        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
     }
 
     //Seen Card Operation
-    public void seeCardOperation(){
+    public void seeCardOperation() {
         Handler handler = new Handler();
         handler.post(new Runnable() {
             @Override
@@ -752,10 +768,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         //show_btn.setVisibility(View.VISIBLE);
         blind_btn.setVisibility(View.GONE);
         chaal_btn.setVisibility(View.VISIBLE);
-        Seen_Blind="seen";
+        Seen_Blind = "seen";
 
         ChaalAmount = ChaalAmount * 2;
-        displayAmount.setText(String.valueOf(ChaalAmount));
+        boot_value_player3.setText(String.valueOf(ChaalAmount));
+//        displayAmount.setText(String.valueOf(ChaalAmount));
     }
 
     //INFO POPUP DATA
@@ -791,30 +808,28 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
-    //CHAAl & BLIND
+    //CHAAL & BLIND
     public void chaalBlind() {
         Handler handler1 = new Handler();
-        Log.i("ChaalAmountx",String.valueOf(ChaalAmount));
-        display_myplayer_bind.setText(String.valueOf(ChaalAmount));
+        Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
+//        display_myplayer_bind.setText(String.valueOf(ChaalAmount));
         display_myplayer_bind.bringToFront();
         int TablelayAmtc = 0;
         try {
             TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            TablelayAmtc=0;
+            TablelayAmtc = 0;
         }
         int AMOUNT = ChaalAmount + TablelayAmtc;
         txtVTableAmt.setText(String.valueOf(AMOUNT));
-        maxBlindCount =0;
+        maxBlindCount = 0;
 
         if (AMOUNT >= PotLimitInt) {
             TastyToast.makeText(this, "Pot Limit Exceeded", TastyToast.LENGTH_LONG, TastyToast.INFO);
             showCards();
         }
-        animations = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_text_up);
-        display_myplayer_bind.startAnimation(animations);
-        display_myplayer_bind.setVisibility(View.GONE);
+//        display_myplayer_bind.setVisibility(View.GONE);
 
         handler = new Handler();
         handler1 = new Handler();
@@ -822,7 +837,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 //below_layout.setVisibility(View.VISIBLE);
-
             }
         }, 2000);
 
@@ -834,7 +848,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }, 1000);
         CHECK_TIME_OUT = true;
-        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+//        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=121");
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -859,7 +874,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             Httpget.setHeader("Accept", "application/json");
             Httpget.setHeader("Content-type", "application/json");
-            Httpget.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+            Httpget.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
 
             HttpResponse httpResponse = httpclient.execute(Httpget);
             inputStream = httpResponse.getEntity().getContent();
@@ -886,7 +901,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],PrivateActivity.this);
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
         }
 
         @Override
@@ -906,10 +921,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("cardsallocatedusers_id");
-                    Log.i("CHECk", "" + arrayListUserIdSequence.size()+ "  "+key.getString("first_name"));
-                    for (int a=0;a<arrayListUserIdSequence.size();a++){
-                        if (userid.equalsIgnoreCase(arrayListUserIdSequence.get(a))){
-                            if (a==0) {
+                    Log.i("CHECk", "" + arrayListUserIdSequence.size() + "  " + key.getString("first_name"));
+                    for (int a = 0; a < arrayListUserIdSequence.size(); a++) {
+                        if (userid.equalsIgnoreCase(arrayListUserIdSequence.get(a))) {
+                            if (a == 0) {
                                 String Url1 = key.getString("cardone");
                                 String Url2 = key.getString("cardtwo");
                                 String Url3 = key.getString("cardthree");
@@ -920,7 +935,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 Log.i("URL 2", i + " " + Url2);
                                 Log.i("URL 3", i + " " + Url3);
                                 //nametext1.setText(key.getString("first_name"));
-                            } else if (a==1) {
+                            } else if (a == 1) {
                                 String Url4 = key.getString("cardone");
                                 String Url5 = key.getString("cardtwo");
                                 String Url6 = key.getString("cardthree");
@@ -931,7 +946,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 Log.i("URL 5", i + " " + Url5);
                                 Log.i("URL 6", i + " " + Url6);
                                 //nametext2.setText(key.getString("first_name"));
-                            } else if (a==2) {
+                            } else if (a == 2) {
                                 String Url7 = key.getString("cardone");
                                 String Url8 = key.getString("cardtwo");
                                 String Url9 = key.getString("cardthree");
@@ -942,7 +957,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 Log.i("URL 8", i + " " + Url8);
                                 Log.i("URL 9", i + " " + Url9);
                                 //nametext.setText(key.getString("first_name"));
-                            } else if (a==3) {
+                            } else if (a == 3) {
                                 String Url10 = key.getString("cardone");
                                 String Url11 = key.getString("cardtwo");
                                 String Url12 = key.getString("cardthree");
@@ -953,7 +968,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 Log.i("URL 11", i + " " + Url11);
                                 Log.i("URL 12", i + " " + Url12);
                                 //nametext3.setText(key.getString("first_name"));
-                            } else if (a==4) {
+                            } else if (a == 4) {
                                 String Url13 = key.getString("cardone");
                                 String Url14 = key.getString("cardtwo");
                                 String Url15 = key.getString("cardthree");
@@ -977,7 +992,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             //LAST CHANCES DATA
             Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
             startService(intentService);
-            DataHolder.setData(PrivateActivity.this,"CHECK_SERVICE",true);
+            DataHolder.setData(PrivateActivity.this, "CHECK_SERVICE", true);
 
             //BroadcastReceiver LAST DATA
             broadcastReceiver = new BroadcastReceiverDATA();
@@ -992,14 +1007,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<String> arrayListUnPackedUser = new ArrayList<>();
     private boolean sequence = false;
     public static String BootValue, PotLimit, MaxBlind, chaalLimit;
-    int maxBlindCount=0;
-    int PotLimitInt,ChaalAmount;
+    int maxBlindCount = 0;
+    int PotLimitInt, ChaalAmount;
 
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],PrivateActivity.this);
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
         }
 
         @Override
@@ -1014,9 +1029,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
                 chaalLimit = jsonObjMain.getString("chaal_limit");
-                Log.i("ChaalAmountx",String.valueOf(ChaalAmount));
+                Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
                 displayAmount.setText(String.valueOf(ChaalAmount));
+
+
+                boot_value_player1.setText(String.valueOf(ChaalAmount));
+                boot_value_player2.setText(String.valueOf(ChaalAmount));
+                boot_value_player3.setText(String.valueOf(ChaalAmount));
+                boot_value_player4.setText(String.valueOf(ChaalAmount));
+                boot_value_player5.setText(String.valueOf(ChaalAmount));
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
@@ -1051,11 +1073,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     String user_status = key.getString("user_status");
                     String user_image = key.getString("user_image");
 
-                    for (int a=0;a<arrayListUserIdSequence.size();a++){
+                    for (int a = 0; a < arrayListUserIdSequence.size(); a++) {
                         try {
-                            Log.i("arrayListSequencex",arrayListUserIdSequence.get(a));
+                            Log.i("arrayListSequencex", arrayListUserIdSequence.get(a));
                             if (userid.equals(arrayListUserIdSequence.get(a))) {
-                                if (a==0) {
+                                if (a == 0) {
                                     nametext.setText(user_name);
                                     USER_NAME = user_name;
                                     BALANCE = key.getString("balance");
@@ -1063,7 +1085,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     txtVBalanceMainPlayer.setText(key.getString("balance"));
                                     arrayListUnPackedUser.add(userid);
                                     Glide.with(getApplicationContext()).load(user_image).into(profile);
-                                }else if (a==1) {
+                                } else if (a == 1) {
                                     USER_NAME1 = user_name;
                                     BALANCE1 = key.getString("balance");
                                     nametext1.setText(user_name);
@@ -1074,10 +1096,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status1.setTextColor(Color.GREEN);
-                                    }else if (user_status.equalsIgnoreCase("offline")){
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
                                         user_status1.setTextColor(Color.RED);
                                     }
-                                } else if (a==2) {
+                                } else if (a == 2) {
                                     USER_NAME2 = user_name;
                                     BALANCE2 = key.getString("balance");
                                     nametext2.setText(user_name);
@@ -1087,10 +1109,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status2.setTextColor(Color.GREEN);
-                                    }else if (user_status.equalsIgnoreCase("offline")){
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
                                         user_status2.setTextColor(Color.RED);
                                     }
-                                } else if (a==3) {
+                                } else if (a == 3) {
                                     USER_NAME3 = user_name;
                                     BALANCE3 = key.getString("balance");
                                     nametext3.setText(user_name);
@@ -1100,10 +1122,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status3.setTextColor(Color.GREEN);
-                                    }else if (user_status.equalsIgnoreCase("offline")){
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
                                         user_status3.setTextColor(Color.RED);
                                     }
-                                } else if (a==4) {
+                                } else if (a == 4) {
                                     USER_NAME4 = user_name;
                                     BALANCE4 = key.getString("balance");
                                     nametext4.setText(user_name);
@@ -1113,7 +1135,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status4.setTextColor(Color.GREEN);
-                                    }else if (user_status.equalsIgnoreCase("offline")){
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
                                         user_status4.setTextColor(Color.RED);
                                     }
                                 }
@@ -1127,7 +1149,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
 
-            new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+            new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
         }
     }
 
@@ -1142,15 +1164,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int progress = (int) animation.getAnimatedValue();
-                progressBarChances.setProgress(progress+1);
-                Log.i("TAGTAGA","hi "+progress);
-                if (CHECK_TIME_OUT){
+                progressBarChances.setProgress(progress + 1);
+                Log.i("TAGTAGA", "hi " + progress);
+                if (CHECK_TIME_OUT) {
                     animator.cancel();
                     CHECK_TIME_OUT = false;
                     progressBarChances.setVisibility(View.GONE);
                 }
 
-                if (99==progress){
+                if (99 == progress) {
                     animator.cancel();
                     packOperation();
                     progressBarChances.setVisibility(View.GONE);
@@ -1158,15 +1180,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         });
-        Log.i("TAGTAGA1","hello");
+        Log.i("TAGTAGA1", "hello");
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setDuration(20000);
         animator.start();
     }
 
-    String Seen_Blind="blind",chance_Status="active",Show_Status="0",Next_User;
+    String Seen_Blind = "blind", chance_Status = "active", Show_Status = "0", Next_User;
 
-    public String chanceApi(String url,String mSeen_Blind,String mchance_Status) {
+    public String chanceApi(String url, String mSeen_Blind, String mchance_Status) {
         InputStream inputStream = null;
         String result = "";
         try {
@@ -1178,8 +1200,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             JSONObject jsonObject = new JSONObject();
 
             jsonObject.accumulate("deskid", DataHolder.getDataInt(this, "deskid"));
-            Log.i("useridx",DataHolder.getDataString(PrivateActivity.this,"userid"));
-            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
+            Log.i("useridx", DataHolder.getDataString(PrivateActivity.this, "userid"));
+            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
             jsonObject.accumulate("chaalamount", ChaalAmount);
             jsonObject.accumulate("chance_status", mchance_Status);
             jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());
@@ -1196,7 +1218,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             httpPost.setEntity(new StringEntity(json));
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
 
             HttpResponse httpResponse = httpclient.execute(httpPost);
             inputStream = httpResponse.getEntity().getContent();
@@ -1221,7 +1243,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return chanceApi(urls[0],Seen_Blind,chance_Status);
+            return chanceApi(urls[0], Seen_Blind, chance_Status);
         }
 
         @Override
@@ -1231,9 +1253,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 JSONObject jsonObjMain = new JSONObject(result);
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
-                for (int i=0; i<arr.length(); i++){
+                for (int i = 0; i < arr.length(); i++) {
                     String s = arr.getString(i);
-                    Log.i("TTYY",""+s);
+                    Log.i("TTYY", "" + s);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1246,7 +1268,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return chanceApi(urls[0],Seen_Blind,chance_Status);
+            return chanceApi(urls[0], Seen_Blind, chance_Status);
         }
 
         @Override
@@ -1256,9 +1278,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 JSONObject jsonObjMain = new JSONObject(result);
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
-                for (int i=0; i<arr.length(); i++){
+                for (int i = 0; i < arr.length(); i++) {
                     String s = arr.getString(i);
-                    Log.i("TTYYp",""+s);
+                    Log.i("TTYYp", "" + s);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1270,7 +1292,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],PrivateActivity.this);
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
         }
 
         @Override
@@ -1284,7 +1306,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 int len = arr.length();
 
-                for (int i=0;i<len;i++){
+                for (int i = 0; i < len; i++) {
                     JSONObject key = arr.getJSONObject(i);
 
                     String chanceid = key.getString("chanceid");
@@ -1304,7 +1326,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     String win_lose = key.getString("win_lose");
                     String datetime = key.getString("datetime");
 
-                    Log.i("CHANCESID",""+chanceid);
+                    Log.i("CHANCESID", "" + chanceid);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1312,37 +1334,37 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    String lastChanceid,lastDesk_id,lastChaal_amount,lastUser_id,lastChance_status,lastPot_value,lastBalance, lastShow,lastSeen_blind,lastDealer_id,lastTip,lastTurn,lastNext_user,lastWin_lose,lastDatetime;
+    String lastChanceid, lastDesk_id, lastChaal_amount, lastUser_id, lastChance_status, lastPot_value, lastBalance, lastShow, lastSeen_blind, lastDealer_id, lastTip, lastTurn, lastNext_user, lastWin_lose, lastDatetime;
 
-    String storeNextValue="";
+    String storeNextValue = "";
 
-    boolean TIMER_ROTATION=true;
+    boolean TIMER_ROTATION = true;
     boolean STARTING_TURN = true;
 
-    private void getLastChanceData(String result){
+    private void getLastChanceData(String result) {
         try {
             JSONObject jsonObjMain = new JSONObject(result);
 
             JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
             int len = arr.length();
-            Log.i("TADAG",""+len);
+            Log.i("TADAG", "" + len);
 
             //len is zero then NextChance is exec
-            if(len==0){
-                if(DataHolder.getDataString(PrivateActivity.this,"userid").equalsIgnoreCase(arrayListUserIdSequence.get(0))){
+            if (len == 0) {
+                if (DataHolder.getDataString(PrivateActivity.this, "userid").equalsIgnoreCase(arrayListUserIdSequence.get(0))) {
 //                    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(this, "deskid"));
                     if (STARTING_TURN) {
                         simulateProgress();
                         btn_see_cards.setVisibility(View.VISIBLE);
                         rl_bottom_caption.setVisibility(View.VISIBLE);
-                        Log.i("CHKIL Start",ChaalAmount+"");
-                        STARTING_TURN=false;
+                        Log.i("CHKIL Start", ChaalAmount + "");
+                        STARTING_TURN = false;
                     }
                 }
             }
 
-            for (int i=0;i<len;i++){
+            for (int i = 0; i < len; i++) {
                 JSONObject key = arr.getJSONObject(i);
 
                 lastChanceid = key.getString("chanceid");
@@ -1361,7 +1383,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 lastDatetime = key.getString("datetime");
 
 //              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
-                Log.i("CHKIL",storeNextValue+"-"+lastNext_user);
+                Log.i("CHKIL", storeNextValue + "-" + lastNext_user);
                 if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
                     try {
                         viewBlinkCircle.clearAnimation();
@@ -1371,44 +1393,43 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 try {
-                    if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN0","-"+lastNext_user);
+                    if (DataHolder.getDataString(this, "userid").equalsIgnoreCase(lastNext_user)) {
+                        Log.i("ChkilIN0", "-" + lastNext_user);
 
                         if (TIMER_ROTATION) {
-                            TIMER_ROTATION=false;
+                            TIMER_ROTATION = false;
                             simulateProgress();
                             btn_see_cards.setVisibility(View.VISIBLE);
-                            if (maxBlindCount==3){
+                            if (maxBlindCount == 3) {
                                 seeCardOperation();
                             }
                         }
-
-                        Log.i("CHKIL1",ChaalAmount+"");
+                        Log.i("CHKIL1", ChaalAmount + "");
                         rl_bottom_caption.setVisibility(View.VISIBLE);
                         ChaalAmount = Integer.parseInt(lastChaal_amount);
-                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN1","-"+lastNext_user);
+                    } else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)) {
+                        Log.i("ChkilIN1", "-" + lastNext_user);
                         viewBlinkCircle = player_blink_circle1;
                         player_blink_circle1.startAnimation(animBlink);
-                        TIMER_ROTATION=true;
+                        TIMER_ROTATION = true;
                         user_status1.setText(lastSeen_blind);
-                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN2","-"+lastNext_user);
+                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)) {
+                        Log.i("ChkilIN2", "-" + lastNext_user);
                         viewBlinkCircle = player_blink_circle2;
                         player_blink_circle2.startAnimation(animBlink);
-                        TIMER_ROTATION=true;
+                        TIMER_ROTATION = true;
                         user_status2.setText(lastSeen_blind);
-                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN3","-"+lastNext_user);
+                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)) {
+                        Log.i("ChkilIN3", "-" + lastNext_user);
                         viewBlinkCircle = player_blink_circle3;
                         player_blink_circle3.startAnimation(animBlink);
-                        TIMER_ROTATION=true;
+                        TIMER_ROTATION = true;
                         user_status3.setText(lastSeen_blind);
-                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN4","-"+lastNext_user);
+                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)) {
+                        Log.i("ChkilIN4", "-" + lastNext_user);
                         viewBlinkCircle = player_blink_circle4;
                         player_blink_circle4.startAnimation(animBlink);
-                        TIMER_ROTATION=true;
+                        TIMER_ROTATION = true;
                         user_status4.setText(lastSeen_blind);
                     }
                 } catch (IndexOutOfBoundsException e) {
@@ -1416,10 +1437,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 try {
-                    if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)){
+                    if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)) {
                         if (!lastChance_status.equalsIgnoreCase("packed")) {
                             user_status1.setText(lastSeen_blind);
-                        }else {
+                        } else {
                             user_status1.setText(lastChance_status);
                             arrayListUnPackedUser.remove(lastChance_status);
                             player1.setImageResource(R.drawable.fade_inner_img);
@@ -1427,10 +1448,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             card7.setVisibility(View.GONE);
                             card12.setVisibility(View.GONE);
                         }
-                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)){
+                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)) {
                         if (!lastChance_status.equalsIgnoreCase("packed")) {
                             user_status2.setText(lastSeen_blind);
-                        }else {
+                        } else {
                             user_status2.setText(lastChance_status);
                             arrayListUnPackedUser.remove(lastChance_status);
                             player1.setImageResource(R.drawable.fade_inner_img);
@@ -1438,10 +1459,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             card6.setVisibility(View.GONE);
                             card11.setVisibility(View.GONE);
                         }
-                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)){
+                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)) {
                         if (!lastChance_status.equalsIgnoreCase("packed")) {
                             user_status3.setText(lastSeen_blind);
-                        }else {
+                        } else {
                             user_status3.setText(lastChance_status);
                             arrayListUnPackedUser.remove(lastChance_status);
                             player1.setImageResource(R.drawable.fade_inner_img);
@@ -1449,10 +1470,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             card10.setVisibility(View.GONE);
                             card15.setVisibility(View.GONE);
                         }
-                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)){
+                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)) {
                         if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
                             user_status4.setText(lastSeen_blind);
-                        }else {
+                        } else {
                             user_status4.setText(lastChance_status);
                             arrayListUnPackedUser.remove(lastChance_status);
                             player1.setImageResource(R.drawable.fade_inner_img);
@@ -1467,11 +1488,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
             txtVTableAmt.setText(lastPot_value);
 
-            if (arrayListUnPackedUser.size() == 2){
+            if (arrayListUnPackedUser.size() == 2) {
                 show_btn.setVisibility(View.VISIBLE);
             }
 
-            if (arrayListUnPackedUser.size() == 1){
+            if (arrayListUnPackedUser.size() == 1) {
                 //ShowData Set Winner
                 new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
             }
@@ -1488,7 +1509,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.updateUserStatusApi(urls[0],PrivateActivity.this,urls[1]);
+            return DataHolder.updateUserStatusApi(urls[0], PrivateActivity.this, urls[1]);
         }
 
         @Override
@@ -1497,7 +1518,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
-                if (message.equalsIgnoreCase("Client status successfully changed")){
+                if (message.equalsIgnoreCase("Client status successfully changed")) {
 //                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
@@ -1511,7 +1532,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.setApi(urls[0],PrivateActivity.this);
+            return DataHolder.setApi(urls[0], PrivateActivity.this);
         }
 
         @Override
@@ -1521,20 +1542,21 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     BroadcastReceiverDATA broadcastReceiver;
+
     public class BroadcastReceiverDATA extends BroadcastReceiver {
         @Override
-        public void onReceive(Context context,final Intent intent) {
+        public void onReceive(Context context, final Intent intent) {
             String action = intent.getAction();
             if (action.equalsIgnoreCase(DataHolder.ACTION_USER_LAST_DATA)) {
                 String result = intent.getStringExtra(DataHolder.KEY_USER_LAST_DATA);
                 getLastChanceData(result);
-                Log.i("TAG124 result",result);
-            }else if(action.equalsIgnoreCase(DataHolder.ACTION_USER_DATA)){
+                Log.i("TAG124 result", result);
+            } else if (action.equalsIgnoreCase(DataHolder.ACTION_USER_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_USER_DATA);
-                Log.i("TAG124 result",resultDATA);
-            }else if(action.equalsIgnoreCase(DataHolder.ACTION_LAST_5_DATA)){
+                Log.i("TAG124 result", resultDATA);
+            } else if (action.equalsIgnoreCase(DataHolder.ACTION_LAST_5_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_LAST_5_DATA);
-                Log.i("TAG124 result",resultDATA);
+                Log.i("TAG124 result", resultDATA);
             }
         }
     }
@@ -1559,7 +1581,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             httpPost.setEntity(new StringEntity(json));
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
 
             HttpResponse httpResponse = httpclient.execute(httpPost);
             inputStream = httpResponse.getEntity().getContent();
@@ -1579,6 +1601,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         return result;
     }
+
     private class showDeskCardsAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1591,8 +1614,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("Check123545", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
-                if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")){
-                    new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")) {
+                    new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+//                    blinkergif2.setVisibility(View.VISIBLE);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1611,9 +1635,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            Log.i("KARAN",DataHolder.getDataInt(PrivateActivity.this, "deskid")+"\n"+DataHolder.getDataString(PrivateActivity.this, "userid"));
+            Log.i("KARAN", DataHolder.getDataInt(PrivateActivity.this, "deskid") + "\n" + DataHolder.getDataString(PrivateActivity.this, "userid"));
             jsonObject.accumulate("desk_id", DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
+            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
             jsonObject.accumulate("request_next", "next");//pev
 
             json = jsonObject.toString();
@@ -1623,7 +1647,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             httpPost.setEntity(new StringEntity(json));
             httpPost.setHeader("Accept", "application/json");
             httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this,"token"));
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
 
             HttpResponse httpResponse = httpclient.execute(httpPost);
             inputStream = httpResponse.getEntity().getContent();
@@ -1643,7 +1667,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         return result;
     }
-    private class GameRequestAyncTask extends AsyncTask<String, Void, String>{
+
+    private class GameRequestAyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -1655,22 +1680,23 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("CheckGame", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
-                if (jsonObjMain.getString("message").equalsIgnoreCase("Cards generated sucessfully")){
+                if (jsonObjMain.getString("message").equalsIgnoreCase("Cards generated sucessfully")) {
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Toast.makeText(PrivateActivity.this, ""+DataHolder.getDataInt(PrivateActivity.this, "deskid"), Toast.LENGTH_SHORT).show();
-            new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataInt(PrivateActivity.this, "deskid"), Toast.LENGTH_SHORT).show();
+            new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+            bootCollection();
 
         }
     }
 
-    private class orderChanceAyncTask extends AsyncTask<String, Void, String>{
+    private class orderChanceAyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],PrivateActivity.this);
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
         }
 
         @Override
@@ -1679,21 +1705,21 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("CheckGame", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
-                if (jsonObjMain.getString("message").equalsIgnoreCase("Sucessfully")){
+                if (jsonObjMain.getString("message").equalsIgnoreCase("Sucessfully")) {
 
                     JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                     int len = arr.length();
 
-                    for (int i=0; i<len; i++){
+                    for (int i = 0; i < len; i++) {
                         String s = arr.getString(i);
-                        Log.i("TTYY",""+s);
+                        Log.i("TTYY", "" + s);
                     }
 
 
                     for (int i = 0; i < len; i++) {
 
                         String userid = arr.getString(i);
-                        Log.i("TTYY",""+userid);
+                        Log.i("TTYY", "" + userid);
                         if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
                             sequence = true;
                         }
@@ -1711,6 +1737,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
                 new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(PrivateActivity.this, "userid"));
+                distributeCards();
             } catch (JSONException e) {
                 e.printStackTrace();
             }

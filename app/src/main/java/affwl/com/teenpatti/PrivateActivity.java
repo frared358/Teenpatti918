@@ -76,7 +76,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private CircleProgressBar progressBarChances;
     ScheduledExecutorService scheduleTaskExecutor;
     MediaPlayer mediaPlayer;
-    RoundCornerProgressBar progressChaalTimer;
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
 
     @Override
@@ -100,11 +99,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             }
         }, 0, 1, TimeUnit.MINUTES);
-
-
-        DataHolder.setData(PrivateActivity.this, "userstatus", "online");
         new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status","online");
-
+        DataHolder.setData(PrivateActivity.this, "userstatus", "online");
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
@@ -502,7 +498,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 below_layout.setVisibility(View.GONE);
             }
         });
-
     }
 
     @Override
@@ -594,6 +589,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.blind_btn:
+                maxBlindCount++;
                 chaalBlind();
                 break;
 
@@ -603,7 +599,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.pack_btn:
                 packOperation();
-                new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
                 break;
 
             case R.id.show_btn:
@@ -738,6 +733,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         profile.setImageResource(R.drawable.fade_inner_img);
         chance_Status = "packed";
         CHECK_TIME_OUT = true;
+        //new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
+        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
     }
 
     //Seen Card Operation
@@ -762,7 +759,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     //INFO POPUP DATA
-    public void popupLimitedData(String BootValue, String PotLimit, String MaxBlind, String chaalLimit) {
+    public void popupLimitedData(String BootValue, String PotLimit, String mMaxBlind, String chaalLimit) {
 
         LayoutInflater layoutInflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View customView = layoutInflater.inflate(R.layout.private_gameinfo_popup, null);
@@ -774,7 +771,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         txtVBootValue.setText(BootValue);
         txtVPotlimit.setText(PotLimit);
-        txtVMaxBlind.setText(MaxBlind);
+        txtVMaxBlind.setText(mMaxBlind);
         txtVChaalLimit.setText(chaalLimit);
 
         infoclosebtn = customView.findViewById(R.id.infoclose);
@@ -797,11 +794,19 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     //CHAAl & BLIND
     public void chaalBlind() {
         Handler handler1 = new Handler();
+        Log.i("ChaalAmountx",String.valueOf(ChaalAmount));
         display_myplayer_bind.setText(String.valueOf(ChaalAmount));
         display_myplayer_bind.bringToFront();
-        int TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
+        int TablelayAmtc = 0;
+        try {
+            TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            TablelayAmtc=0;
+        }
         int AMOUNT = ChaalAmount + TablelayAmtc;
         txtVTableAmt.setText(String.valueOf(AMOUNT));
+        maxBlindCount =0;
 
         if (AMOUNT >= PotLimitInt) {
             TastyToast.makeText(this, "Pot Limit Exceeded", TastyToast.LENGTH_LONG, TastyToast.INFO);
@@ -829,7 +834,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }, 1000);
         CHECK_TIME_OUT = true;
-        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
+        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -986,7 +991,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private ArrayList<String> arrayListUserIdSequence = new ArrayList<>();
     private ArrayList<String> arrayListUnPackedUser = new ArrayList<>();
     private boolean sequence = false;
-    public static String BootValue, PotLimit, MaxBlind, chaalLimit,DeskId;
+    public static String BootValue, PotLimit, MaxBlind, chaalLimit;
+    int maxBlindCount=0;
     int PotLimitInt,ChaalAmount;
 
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
@@ -1008,11 +1014,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
                 chaalLimit = jsonObjMain.getString("chaal_limit");
+                Log.i("ChaalAmountx",String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
                 displayAmount.setText(String.valueOf(ChaalAmount));
-                DeskId = jsonObjMain.getString("desk_id");
-                displayAmount.setText(String.valueOf(ChaalAmount));
-                DataHolder.setData(PrivateActivity.this, "deskid",DeskId);
+
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
 
                 int len = arr.length();
@@ -1048,6 +1053,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     for (int a=0;a<arrayListUserIdSequence.size();a++){
                         try {
+                            Log.i("arrayListSequencex",arrayListUserIdSequence.get(a));
                             if (userid.equals(arrayListUserIdSequence.get(a))) {
                                 if (a==0) {
                                     nametext.setText(user_name);
@@ -1121,7 +1127,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
 
-            new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id="+DeskId);
+            new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
         }
     }
 
@@ -1171,7 +1177,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            jsonObject.accumulate("deskid", DeskId);
+            jsonObject.accumulate("deskid", DataHolder.getDataInt(this, "deskid"));
+            Log.i("useridx",DataHolder.getDataString(PrivateActivity.this,"userid"));
             jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
             jsonObject.accumulate("chaalamount", ChaalAmount);
             jsonObject.accumulate("chance_status", mchance_Status);
@@ -1234,6 +1241,31 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+    private class ChanceAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return chanceApi(urls[0],Seen_Blind,chance_Status);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Check123ssp", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                for (int i=0; i<arr.length(); i++){
+                    String s = arr.getString(i);
+                    Log.i("TTYYp",""+s);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private class GetChanceAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1285,6 +1317,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     String storeNextValue="";
 
     boolean TIMER_ROTATION=true;
+    boolean STARTING_TURN = true;
 
     private void getLastChanceData(String result){
         try {
@@ -1295,11 +1328,17 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             int len = arr.length();
             Log.i("TADAG",""+len);
 
-            //len is zero then add condition
-
+            //len is zero then NextChance is exec
             if(len==0){
                 if(DataHolder.getDataString(PrivateActivity.this,"userid").equalsIgnoreCase(arrayListUserIdSequence.get(0))){
-                    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataString(this, "deskid"));
+//                    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DataHolder.getDataInt(this, "deskid"));
+                    if (STARTING_TURN) {
+                        simulateProgress();
+                        btn_see_cards.setVisibility(View.VISIBLE);
+                        rl_bottom_caption.setVisibility(View.VISIBLE);
+                        Log.i("CHKIL Start",ChaalAmount+"");
+                        STARTING_TURN=false;
+                    }
                 }
             }
 
@@ -1334,14 +1373,19 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 try {
                     if (DataHolder.getDataString(this,"userid").equalsIgnoreCase(lastNext_user)){
                         Log.i("ChkilIN0","-"+lastNext_user);
-                        ChaalAmount = Integer.parseInt(lastChaal_amount);
+
                         if (TIMER_ROTATION) {
                             TIMER_ROTATION=false;
                             simulateProgress();
                             btn_see_cards.setVisibility(View.VISIBLE);
+                            if (maxBlindCount==3){
+                                seeCardOperation();
+                            }
                         }
+
                         Log.i("CHKIL1",ChaalAmount+"");
                         rl_bottom_caption.setVisibility(View.VISIBLE);
+                        ChaalAmount = Integer.parseInt(lastChaal_amount);
                     }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
                         Log.i("ChkilIN1","-"+lastNext_user);
                         viewBlinkCircle = player_blink_circle1;
@@ -1459,9 +1503,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+            new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
         }
     }
-
 
     private class setWinnersAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -1506,7 +1550,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            jsonObject.accumulate("deskid", DeskId);
+            jsonObject.accumulate("deskid", DataHolder.getDataInt(this, "deskid"));
 
             json = jsonObject.toString();
             StringEntity se = new StringEntity(json);
@@ -1548,7 +1592,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")){
-                    new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
+                    new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1567,8 +1611,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            Log.i("KARAN",DataHolder.getDataString(PrivateActivity.this, "deskid")+"\n"+DataHolder.getDataString(PrivateActivity.this, "userid"));
-            jsonObject.accumulate("desk_id", DataHolder.getDataString(PrivateActivity.this, "deskid"));
+            Log.i("KARAN",DataHolder.getDataInt(PrivateActivity.this, "deskid")+"\n"+DataHolder.getDataString(PrivateActivity.this, "userid"));
+            jsonObject.accumulate("desk_id", DataHolder.getDataInt(PrivateActivity.this, "deskid"));
             jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this,"userid"));
             jsonObject.accumulate("request_next", "next");//pev
 
@@ -1616,7 +1660,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id="+DataHolder.getDataString(PrivateActivity.this, "deskid"));
+            Toast.makeText(PrivateActivity.this, ""+DataHolder.getDataInt(PrivateActivity.this, "deskid"), Toast.LENGTH_SHORT).show();
+            new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id="+DataHolder.getDataInt(PrivateActivity.this, "deskid"));
 
         }
     }
@@ -1674,14 +1719,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
 }
-
-
-
-
-
-
-
-
 
 
 /*private void getLast5UsersChanceData(String result){

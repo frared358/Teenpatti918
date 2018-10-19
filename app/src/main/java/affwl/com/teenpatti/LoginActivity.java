@@ -73,8 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         rememberMeCheckBox.setOnClickListener(this);
         session = new Session(this);
 
-
-
         if (DataHolder.getDataBoolean(this, "remember_me") && DataHolder.getDataLong(this, "ExpiredDate") > System.currentTimeMillis()) {
 
             rememberMeCheckBox.setChecked(true);
@@ -316,11 +314,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.imageURL = key.getString("user_image");
 
                         DataHolder.setData(LoginActivity.this, "user_image", DataHolder.imageURL);
-                        DataHolder.setData(LoginActivity.this, "deskid", key.getString("desk_id"));
+                        DataHolder.setData(LoginActivity.this, "deskid", Integer.parseInt(key.getString("desk_id")));
                         DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
 
-                        Toast.makeText(LoginActivity.this, key.getString("desk_id")+" \n" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(LoginActivity.this, key.getString("desk_id")+" \n" + DataHolder.imageURL, Toast.LENGTH_SHORT).show();
 
                         Log.i("TAGTAGTAG", " " + DataHolder.first_name + " " + DataHolder.last_name + " " + DataHolder.mobile_no + " " + DataHolder.balance + " " + DataHolder.emailaddress);
                     }

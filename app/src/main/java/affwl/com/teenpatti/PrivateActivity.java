@@ -761,8 +761,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         profile.setImageResource(R.drawable.fade_inner_img);
         chance_Status = "packed";
         CHECK_TIME_OUT = true;
-        //new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
-        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
+        //new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
     }
 
     //Seen Card Operation
@@ -857,7 +857,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }, 1000);
         CHECK_TIME_OUT = true;
-        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
+        //new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -994,6 +995,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
 
             //LAST CHANCES DATA
             Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
@@ -1168,6 +1170,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+            new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
         }
     }
 
@@ -1222,11 +1226,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
             jsonObject.accumulate("chaalamount", ChaalAmount);
             jsonObject.accumulate("chance_status", mchance_Status);
-            jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());
             jsonObject.accumulate("seen_blind", mSeen_Blind);
             jsonObject.accumulate("dealer_id", 1);
             //jsonObject.accumulate("show", mShow_Status);//user count
             //jsonObject.accumulate("next_user", mNext_User);
+            //jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());
 
 
             json = jsonObject.toString();
@@ -1373,22 +1377,22 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 String message = jsonObjMain.getString("message");
                 if (message.equalsIgnoreCase("Client status successfully changed")) {
-//                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
+            new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+
                     final AlertDialog dialog = new AlertDialog.Builder(PrivateActivity.this).create();
                     dialog.setMessage("15");
                     dialog.show();   //
 
-                    new CountDownTimer(15000, 1000) {
+                    new CountDownTimer(10000, 1000) {
                         @Override
                         public void onTick(long millisUntilFinished) {
                             dialog.setMessage("Generating game request, Please wait for 00:" + (millisUntilFinished / 1000));
@@ -1704,30 +1708,23 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         player_blink_circle1.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status1.setText("online");
-
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(StartBlink)){
+                        }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(StartBlink)){
                         viewBlinkCircle = player_blink_circle2;
                         player_blink_circle2.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status2.setText("online");
-
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(StartBlink)){
+                        }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(StartBlink)){
 
                         viewBlinkCircle = player_blink_circle3;
                         player_blink_circle3.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status3.setText("online");
-
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(StartBlink)){
+                        }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(StartBlink)){
 
                         viewBlinkCircle = player_blink_circle4;
                         player_blink_circle4.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status4.setText("online");
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1793,7 +1790,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         TIMER_ROTATION = true;
                         user_status1.setText(lastSeen_blind);
                         Log.i("ChkilIN1","-"+lastNext_user);
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                     }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
                         viewBlinkCircle = player_blink_circle2;
                         player_blink_circle2.startAnimation(animBlink);
@@ -1801,7 +1797,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         user_status2.setText(lastSeen_blind);
 
                         Log.i("ChkilIN2","-"+lastNext_user);
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                     }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
                         Log.i("ChkilIN3","-"+lastNext_user);
                         viewBlinkCircle = player_blink_circle3;
@@ -1809,7 +1804,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         TIMER_ROTATION = true;
                         user_status3.setText(lastSeen_blind);
                         Log.i("ChkilIN3","-"+lastNext_user);
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                     }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
 
                         viewBlinkCircle = player_blink_circle4;
@@ -1817,7 +1811,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         TIMER_ROTATION = true;
                         user_status4.setText(lastSeen_blind);
                         Log.i("ChkilIN4","-"+lastNext_user);
-                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
 
                     }
                 } catch (IndexOutOfBoundsException e) {

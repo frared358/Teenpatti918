@@ -38,6 +38,7 @@ import android.widget.Toast;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.dinuscxj.progressbar.CircleProgressBar;
+import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpResponse;
@@ -70,7 +71,7 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
     ImageView player_blink_circle1, player_blink_circle2, player_blink_circle3, player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
-    TextView player_balance, player_name, other_player_name, other_player_balance, displayAmount, display_myplayer_bind, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
+    TextView player_balance, player_name, other_player_name, other_player_balance, displayAmount, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
     TextView user_status1, user_status2, user_status3, user_status4, boot_value_player1, boot_value_player2, boot_value_player3, boot_value_player4, boot_value_player5;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
@@ -114,7 +115,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
-        display_myplayer_bind = findViewById(R.id.display_myplayer_bind);
+
         rl_bottom_caption = findViewById(R.id.rl_bottom_caption);
         below_layout = findViewById(R.id.below_layout);
         relativeLayout = findViewById(R.id.privaterecycler);
@@ -127,7 +128,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         progressBarChances = findViewById(R.id.progressBarChances);
         viewBlinkCircle = new View(PrivateActivity.this);
 
-        //  implemention of user profile pic
+        //  implemention of user Profile pic
         profile = findViewById(R.id.inner_player_img);
         profile.setOnClickListener(this);
         profile1 = findViewById(R.id.inner_player_img1);
@@ -158,10 +159,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         txtVBalanceMainPlayer = findViewById(R.id.txtVBalanceMainPlayer);
 
-        session = new Session(this);
-        String name = session.getName();
-        String ID = session.getID();
-        String Image = session.getImage();
 
 
         blind_btn = findViewById(R.id.blind_btn);
@@ -575,12 +572,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    String encodedimage0 ,encodedimage1, encodedimage2, encodedimage3, encodedimage4;
     @Override
     public void onClick(View v) {
-        String sub;
-        Handler handler = new Handler();
-        session = new Session(this);
-        String encodedimage = session.getImage();
 
         privatetble = findViewById(R.id.privatetble);
         LayoutInflater inflater = (LayoutInflater) PrivateActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -652,28 +646,28 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 player_balance.setText(BALANCE);
 
                 PlayerStatusWindow.showAtLocation(privatetble, Gravity.CENTER, 0, 0);
-
-                if (!encodedimage.equalsIgnoreCase("")) {
-                    byte[] b = Base64.decode(encodedimage, Base64.DEFAULT);
+                Glide.with(getApplicationContext()).load(encodedimage0).into(player_status_circle);
+                /*if (!encodedimage0.equalsIgnoreCase("")) {
+                    byte[] b = Base64.decode(encodedimage0, Base64.DEFAULT);
                     Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
                     player_status_circle.setImageBitmap(bmp);
-                }
+                }*/
                 break;
 
             case R.id.inner_player_img1:
-                individualUserInfo(customView2, USER_NAME1, BALANCE1, encodedimage);
+                individualUserInfo(customView2, USER_NAME1, BALANCE1, encodedimage1);
                 break;
 
             case R.id.inner_player_img2:
-                individualUserInfo(customView2, USER_NAME2, BALANCE2, encodedimage);
+                individualUserInfo(customView2, USER_NAME2, BALANCE2, encodedimage2);
                 break;
 
             case R.id.inner_player_img3:
-                individualUserInfo(customView2, USER_NAME3, BALANCE3, encodedimage);
+                individualUserInfo(customView2, USER_NAME3, BALANCE3, encodedimage3);
                 break;
 
             case R.id.inner_player_img4:
-                individualUserInfo(customView2, USER_NAME4, BALANCE4, encodedimage);
+                individualUserInfo(customView2, USER_NAME4, BALANCE4, encodedimage4);
                 break;
 
             case R.id.back:
@@ -721,6 +715,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
             }
         });
+        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
+        try {
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     //individual User Info
@@ -740,17 +742,17 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         other_player_balance.setText(Balance);
 
         OPlayerStatusWindow.showAtLocation(privatetble, Gravity.CENTER, 0, 0);
-
-        if (!oencodedimage.equalsIgnoreCase("")) {
+        Glide.with(getApplicationContext()).load(oencodedimage).into(oplayer_status_circle);
+        /*if (!oencodedimage.equalsIgnoreCase("")) {
             byte[] b = Base64.decode(oencodedimage, Base64.DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
             oplayer_status_circle.setImageBitmap(bmp);
-        }
+        }*/
     }
 
     //PACK USER
     public void packOperation() {
-        rl_bottom_caption.setVisibility(View.VISIBLE);
+        rl_bottom_caption.setVisibility(View.GONE);
         btn_see_cards.setVisibility(View.GONE);
         below_layout.setVisibility(View.VISIBLE);
         card3.setVisibility(View.GONE);
@@ -822,8 +824,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     public void chaalBlind() {
         Handler handler1 = new Handler();
         Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
-//        display_myplayer_bind.setText(String.valueOf(ChaalAmount));
-        display_myplayer_bind.bringToFront();
+
         int TablelayAmtc = 0;
         try {
             TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
@@ -839,8 +840,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             TastyToast.makeText(this, "Pot Limit Exceeded", TastyToast.LENGTH_LONG, TastyToast.INFO);
             showCards();
         }
-//        display_myplayer_bind.setVisibility(View.GONE);
-
         handler = new Handler();
         handler1 = new Handler();
         handler.postDelayed(new Runnable() {
@@ -859,7 +858,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }, 1000);
         CHECK_TIME_OUT = true;
         new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-//        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=121");
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -1098,13 +1096,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     user_id.setText(userid);
                                     txtVBalanceMainPlayer.setText(key.getString("balance"));
                                     arrayListUnPackedUser.add(userid);
+                                    encodedimage0 = user_image;
                                     Glide.with(getApplicationContext()).load(user_image).into(profile);
+
                                 } else if (a == 1) {
                                     USER_NAME1 = user_name;
                                     BALANCE1 = key.getString("balance");
                                     nametext1.setText(user_name);
                                     user_id1.setText(userid);
                                     user_status1.setText(user_status);
+                                    encodedimage1 = user_image;
                                     Glide.with(getApplicationContext()).load(user_image).into(profile1);
                                     //Next_User = userid;
                                     if (user_status.equalsIgnoreCase("online")) {
@@ -1119,6 +1120,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext2.setText(user_name);
                                     user_id2.setText(userid);
                                     user_status2.setText(user_status);
+                                    encodedimage2 = user_image;
                                     Glide.with(getApplicationContext()).load(user_image).into(profile2);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
@@ -1132,6 +1134,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext3.setText(user_name);
                                     user_id3.setText(userid);
                                     user_status3.setText(user_status);
+                                    encodedimage3 = user_image;
                                     Glide.with(getApplicationContext()).load(user_image).into(profile3);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
@@ -1145,6 +1148,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext4.setText(user_name);
                                     user_id4.setText(userid);
                                     user_status4.setText(user_status);
+                                    encodedimage4 = user_image;
                                     Glide.with(getApplicationContext()).load(user_image).into(profile4);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
@@ -1411,6 +1415,32 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(String result) {
             Log.i("Check123545", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                JSONArray array = jsonObjMain.getJSONArray("WinnerTeenpatti");
+                for (int r=0;r<array.length();r++){
+                    JSONObject key = array.getJSONObject(r);
+                    String user_id = key.getString("user_id");
+                    String winner_type = key.getString("winner_type");
+                    String winner_rank = key.getString("winner_rank");
+
+                    if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(0))){
+                        blinkergif1.setVisibility(View.VISIBLE);
+                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(1))){
+                        blinkergif2.setVisibility(View.VISIBLE);
+                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(2))){
+                        blinkergif3.setVisibility(View.VISIBLE);
+                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(3))){
+                        blinkergif4.setVisibility(View.VISIBLE);
+                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(4))){
+                        blinkergif5.setVisibility(View.VISIBLE);
+                    }
+
+                    TastyToast.makeText(PrivateActivity.this,winner_type,5000,TastyToast.INFO);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -1434,7 +1464,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
-    public String showDeskCardsApi(String url) {
+    //Single parametere DESK_ID
+    public String setDeskIdApi(String url) {
         InputStream inputStream = null;
         String result = "";
         try {
@@ -1479,7 +1510,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected String doInBackground(String... urls) {
-            return showDeskCardsApi(urls[0]);
+            return setDeskIdApi(urls[0]);
         }
 
         @Override
@@ -1490,6 +1521,27 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")) {
                     new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
 //                    blinkergif2.setVisibility(View.VISIBLE);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private class getBootValueAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return setDeskIdApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Check123545", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")) {
+//
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1614,6 +1666,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 }
+                new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
                 new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(PrivateActivity.this, "userid"));
                 distributeCards();
             } catch (JSONException e) {
@@ -1625,6 +1678,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     private void getLastChanceData(String result) {
         try {
+            Log.e("TADAG==::",""+result);
             JSONObject jsonObjMain = new JSONObject(result);
 
             JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
@@ -1650,21 +1704,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         player_blink_circle1.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status1.setText("online");
-                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(StartBlink)) {
+
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(StartBlink)){
                         viewBlinkCircle = player_blink_circle2;
                         player_blink_circle2.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status2.setText("online");
-                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(StartBlink)) {
+
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(StartBlink)){
+
                         viewBlinkCircle = player_blink_circle3;
                         player_blink_circle3.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status3.setText("online");
-                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(StartBlink)) {
+
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(StartBlink)){
+
                         viewBlinkCircle = player_blink_circle4;
                         player_blink_circle4.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status4.setText("online");
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1689,8 +1752,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 lastWin_lose = key.getString("win_lose");
                 lastDatetime = key.getString("datetime");
 
+
 //              Toast.makeText(this, DataHolder.getDataString(this,"userid")+" "+lastUser_id, Toast.LENGTH_SHORT).show();
                 Log.i("CHKIL", storeNextValue + "-" + lastNext_user);
+
                 if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
                     try {
                         viewBlinkCircle.clearAnimation();
@@ -1719,35 +1784,41 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                         rl_bottom_caption.setVisibility(View.VISIBLE);
                         ChaalAmount = Integer.parseInt(lastChaal_amount);
-                        Log.i("CHKIL1", ChaalAmount + "");
-                    } else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)) {
+
+                        Log.i("CHKIL1",ChaalAmount+"");
+                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
 
                         viewBlinkCircle = player_blink_circle1;
                         player_blink_circle1.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status1.setText(lastSeen_blind);
-                        Log.i("ChkilIN1", "-" + lastNext_user);
-                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)) {
-
+                        Log.i("ChkilIN1","-"+lastNext_user);
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
                         viewBlinkCircle = player_blink_circle2;
                         player_blink_circle2.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status2.setText(lastSeen_blind);
-                        Log.i("ChkilIN2", "-" + lastNext_user);
-                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN3", "-" + lastNext_user);
+
+                        Log.i("ChkilIN2","-"+lastNext_user);
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                        Log.i("ChkilIN3","-"+lastNext_user);
                         viewBlinkCircle = player_blink_circle3;
                         player_blink_circle3.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status3.setText(lastSeen_blind);
-                        Log.i("ChkilIN3", "-" + lastNext_user);
-                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)) {
+                        Log.i("ChkilIN3","-"+lastNext_user);
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
 
                         viewBlinkCircle = player_blink_circle4;
                         player_blink_circle4.startAnimation(animBlink);
                         TIMER_ROTATION = true;
                         user_status4.setText(lastSeen_blind);
-                        Log.i("ChkilIN4", "-" + lastNext_user);
+                        Log.i("ChkilIN4","-"+lastNext_user);
+                        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
                     }
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
@@ -1815,16 +1886,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             if (arrayListUnPackedUser.size() == 1) {
                 //ShowData Set Winner
+                showCards();
                 Toast.makeText(this, "1 user is left", Toast.LENGTH_SHORT).show();
-                new showDeskCardsAsyncTask().execute("http://213.136.81.137:8081/api/showDeskCards");
-                stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
-                try {
-                    if (broadcastReceiver != null) {
-                        unregisterReceiver(broadcastReceiver);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

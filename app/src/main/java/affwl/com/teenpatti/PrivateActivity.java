@@ -736,7 +736,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         other_player_balance = view.findViewById(R.id.other_player_balance);
         oplayer_status_circle = view.findViewById(R.id.oplayer_status_circle);
 
-//        Glide.with(getApplicationContext()).load(user_image).into(oplayer_status_circle);
+//         Glide.with(getApplicationContext()).load(user_image).into(oplayer_status_circle);
 
         other_player_name.setText(username);
         other_player_balance.setText(Balance);

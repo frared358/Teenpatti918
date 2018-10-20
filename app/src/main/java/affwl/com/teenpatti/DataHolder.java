@@ -117,53 +117,6 @@ public class DataHolder {
         return result;
     }
 
-    public static String  setApiToken(String url,Context context){
-
-        InputStream inputStream = null;
-
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-
-            HttpPost httpPost = new HttpPost(url);
-
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", getDataString(context,"token"));
-            Log.e("Check","rtuyty");
-
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-            Log.e("Check","tjhttjj");
-
-            inputStream = httpResponse.getEntity().getContent();
-
-            if(inputStream != null){
-                try {
-                    result = convertInputStreamToString(inputStream);
-                    Log.e("Check","hey");
-
-                }
-                catch (Exception e){
-                    Log.e("ERROR ",""+e);
-                }
-            }
-            else
-                result = "Did not work!";
-            Log.e("Check","how "+result);
-
-
-
-        } catch (Exception e) {
-
-            Log.d("ERROR ", ""+e);
-        }
-
-        Log.e("result",result+"");
-        //Toast.makeText(MainActivity.this, ""+result, Toast.LENGTH_SHORT).show();
-        return result;
-    }
-
     public static String getApi(String url, Context context) {
         InputStream inputStream = null;
         String result = "";

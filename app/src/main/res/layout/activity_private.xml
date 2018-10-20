@@ -232,8 +232,7 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
-                    app:layout_widthPercent="88%"
-                    android:scaleType="centerCrop"/>
+                    app:layout_widthPercent="88%"/>
 
                 <TextView
                     android:id="@+id/user_status2"

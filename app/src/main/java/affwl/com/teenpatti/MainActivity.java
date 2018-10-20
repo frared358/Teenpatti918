@@ -15,6 +15,7 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -33,8 +34,10 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.bumptech.glide.Glide;
 import com.sdsmdg.tastytoast.TastyToast;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -44,6 +47,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -59,10 +63,11 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     ImageView join_game, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
     PopupWindow HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
@@ -73,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     MediaPlayer mediaPlayer;
     Drawable img;
     ImageView image;
+    Date sdate, current_time;
 
 
     private TextView user_id;
@@ -158,7 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         avatar8.setOnClickListener(this);
         showPopupBtn.setOnClickListener(this);
 
-        Glide.with(getApplicationContext()).load(DataHolder.getDataString(this,"user_image")).into(profile);
+        Glide.with(getApplicationContext()).load(DataHolder.getDataString(this, "user_image")).into(profile);
         txtVUserNameMain = findViewById(R.id.txtVUserNameMain);
 
         RelativeLayoutloader = findViewById(R.id.linearLayoutloader);
@@ -183,13 +189,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.join_game).startAnimation(animation);
         animation.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {}
+            public void onAnimationStart(Animation animation) {
+            }
 
             @Override
-            public void onAnimationEnd(Animation animation) {}
+            public void onAnimationEnd(Animation animation) {
+            }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {}
+            public void onAnimationRepeat(Animation animation) {
+            }
         });
 
         getUUID();
@@ -204,9 +213,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
         new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+
+//        new Handler().postDelayed(mLaunchTask, delay_time);
+
     }
 
     String AVATAR;
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -318,7 +331,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
                 break;
-
         }
     }
 
@@ -640,21 +652,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                         JSONObject key = array.getJSONObject(i);
 
-                        tableid = key.getString("tableid");
-                        table_name = key.getString("table_name");
-                        table_time = key.getString("table_time");
+                        DataHolder.tableid = key.getString("tableid");
+                        DataHolder.table_name = key.getString("table_name");
+                        DataHolder.table_time = key.getString("table_time");
+                        Log.i("CURRENTTIME", "" + DataHolder.table_time);
 
                         {
                             try {
                                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
-                                Date date = format.parse(table_time);
+                                sdate = format.parse(DataHolder.table_time);
                                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.US);
-                                Date current_time = Calendar.getInstance().getTime();
+                                current_time = Calendar.getInstance().getTime();
                                 local_Time = sdf.format(current_time);
-                                time_check = sdf.format(date);
+                                time_check = sdf.format(sdate);
 
                                 Log.i("CurrentTime", "" + local_Time);
                                 Log.i("ServerTime", "" + time_check);
+
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -679,6 +693,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     AlertDialog alert = builder.create();
                                     alert.show();
                                 }
+                                long delaytime = current_time.getTime() - sdate.getTime();
+
+                                Log.i("Delay_time", "" + delaytime);
+
+                                Handler h = new Handler();
+                                h.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (local_Time.equals(time_check)) {
+                                            startActivity(new Intent(getApplicationContext(), LoadingScreenPrivate.class));
+                                        }
+                                    }
+                                }, delaytime);
                             }
                         }
                     }
@@ -783,6 +810,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
     ArrayList<String> arrayListAvatar = new ArrayList<>();
+
     private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -857,7 +885,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected String doInBackground(String... urls) {
             DataHolder.setData(MainActivity.this, "userstatus", "offline");
-            return DataHolder.updateUserStatusApi(urls[0],MainActivity.this,"offline");
+            return DataHolder.updateUserStatusApi(urls[0], MainActivity.this, "offline");
         }
 
         @Override
@@ -866,7 +894,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
-                if (message.equalsIgnoreCase("Client status successfully changed")){
+                if (message.equalsIgnoreCase("Client status successfully changed")) {
                     Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {

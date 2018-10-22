@@ -38,6 +38,8 @@ public class ServiceLastUserData extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(this, "deskid"));
+        Log.i("GITA","hiiiiiiiiiiii");
         if (mTimer != null) // Cancel if already existed
             mTimer.cancel();
         else
@@ -125,6 +127,28 @@ public class ServiceLastUserData extends Service {
 
 //    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DeskId);
 
+    private class NextChanceAsyncTask extends AsyncTask<String, Void, String> {
 
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.setApi(urls[0],ServiceLastUserData.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Check123next", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                for (int i = 0; i < arr.length(); i++) {
+                    String s = arr.getString(i);
+                    Log.i("TTYY", "" + s);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

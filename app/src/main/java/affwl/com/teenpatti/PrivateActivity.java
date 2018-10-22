@@ -179,7 +179,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         player_blink_circle4 = findViewById(R.id.player_blink_circle4);
 
 
-//        Implementation of Pack Button
+//       Implementation of Pack Button
         pack_btn = findViewById(R.id.pack_btn);
         pack_btn.setOnClickListener(this);
 

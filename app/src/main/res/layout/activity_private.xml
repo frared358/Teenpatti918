@@ -137,6 +137,7 @@
 
                 <TextView
                     android:id="@+id/txtVTableAmt"
+                    android:layout_height="37dp"
                     android:layout_centerInParent="true"
                     android:gravity="center"
                     android:text="0"
@@ -168,11 +169,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/inner_player_img1"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:src="@drawable/inner_img_profile"
-                    android:layout_height="100dp"
-                    android:layout_width="100dp"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
 
@@ -228,8 +226,7 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/inner_player_img2"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%"/>
@@ -290,8 +287,7 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/inner_player_img3"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
@@ -353,8 +349,7 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/inner_player_img4"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:src="@drawable/inner_img_profile"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
@@ -547,6 +542,18 @@
                 android:visibility="gone"
                 app:layout_marginTopPercent="10%" />
 
+            <TextView
+                android:id="@+id/display_myplayer_bind"
+                android:layout_alignParentLeft="true"
+                android:text="PACKED"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                app:layout_heightPercent="10%"
+                app:layout_marginLeftPercent="42%"
+                app:layout_marginTopPercent="70%"
+                app:layout_widthPercent="15%"
+                tools:ignore="NotSibling" />
+
             <android.support.percent.PercentRelativeLayout
                 android:id="@+id/rl_myplayer"
                 android:layout_alignTop="@+id/table"
@@ -570,8 +577,6 @@
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/inner_img_profile"
-                    android:layout_height="100dp"
-                    android:layout_width="100dp"
                     app:layout_heightPercent="88%"
                     app:layout_widthPercent="88%" />
 
@@ -588,12 +593,12 @@
                     app:layout_widthPercent="89%"  />
 
 
-                <ImageView
+              <!--  <ImageView
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:src="@drawable/stars"
                     android:id="@+id/winnerblinker1"
-                    android:visibility="gone"/>
+                    android:visibility="gone"/>-->
 
                 <!--<ImageView-->
                 <!--android:layout_height="wrap_content"-->
@@ -782,7 +787,7 @@
             android:background="#e9250400"
             android:gravity="center"
             android:padding="5dp"
-            android:visibility="visible">
+            android:visibility="gone">
 
             <TextView
                 android:id="@+id/boot"

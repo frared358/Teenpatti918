@@ -38,11 +38,29 @@ public class ServiceLastUserData extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (mTimer != null) // Cancel if already existed
-            mTimer.cancel();
-        else
-            mTimer = new Timer();   //recreate new
-        mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, notify);   //Schedule task
+        Log.i("GITA","hiiiiiiiiiiii");
+
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(ServiceLastUserData.this, "deskid"));
+            }
+        });
+
+
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (mTimer != null) // Cancel if already existed
+                    mTimer.cancel();
+                else
+                    mTimer = new Timer();   //recreate new
+                mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, notify);   //Schedule task
+            }
+        });
+        thread2.start();
+        thread1.start();
+
     }
 
     @Override
@@ -61,6 +79,7 @@ public class ServiceLastUserData extends Service {
 
         @Override
         protected String doInBackground(String... urls) {
+            Log.i("GITA","1hiiiiiiiiiiii");
             return DataHolder.getApi(urls[0],ServiceLastUserData.this);
         }
 
@@ -125,6 +144,29 @@ public class ServiceLastUserData extends Service {
 
 //    new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id="+DeskId);
 
+    private class NextChanceAsyncTask extends AsyncTask<String, Void, String> {
 
+        @Override
+        protected String doInBackground(String... urls) {
+            Log.i("APIRUN",""+urls[0]);
+            return DataHolder.setApi(urls[0],ServiceLastUserData.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Check123nextx", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+
+                for (int i = 0; i < arr.length(); i++) {
+                    String s = arr.getString(i);
+                    Log.i("TTYY", "" + s);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
 }

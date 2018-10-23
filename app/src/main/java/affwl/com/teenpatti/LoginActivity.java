@@ -301,7 +301,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token").toString());
 
-                if (message.equalsIgnoreCase("successfully authenticated")) {
+                if (message.equalsIgnoreCase("Login Successful")) {
                     TastyToast.makeText(LoginActivity.this, "Login Successful", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
                     for (int i = 0; i < array.length(); i++) {

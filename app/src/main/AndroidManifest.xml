@@ -34,7 +34,7 @@
         <activity
             android:name=".MainActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name=".Splash2Activity"
             android:screenOrientation="landscape"
@@ -42,16 +42,18 @@
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name=".PrivateActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
-        <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.MAIN" />-->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
 
-            <!--<category android:name="android.intent.category.LAUNCHER" />-->
-        <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.MAIN" /> -->
+
+
+            <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".LoadingScreenPrivate"
@@ -62,7 +64,14 @@
             android:name=".ServiceLastUserData"
             android:enabled="true"
             android:exported="true" />
-
+        <service
+            android:name=".ServiceUserInfo"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".ServiceNextChance"
+            android:enabled="true"
+            android:exported="true"></service>
     </application>
 
 </manifest>

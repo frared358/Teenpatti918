@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else if (password.equals("")) {
                 edittextpassword.setError("Enter Password");
             } else {
-                new LoginAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
+                new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
 
         } else if (v.getId() == R.id.rememberMeCheckBox) {
@@ -284,7 +284,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return result;
     }
 
-    private class LoginAsyncTask extends AsyncTask<String, Void, String> {
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -299,10 +299,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                 String message = jsonObjMain.getString("message");
 
-                DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token"));
+                DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token").toString());
 
                 if (message.equalsIgnoreCase("Login Successful")) {
-                    TastyToast.makeText(LoginActivity.this, ""+message, TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                    TastyToast.makeText(LoginActivity.this, "Login Successful", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject key = array.getJSONObject(i);

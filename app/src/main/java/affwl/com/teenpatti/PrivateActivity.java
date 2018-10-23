@@ -37,6 +37,7 @@ import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -1629,6 +1630,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
 
             new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
         }
     }
 
@@ -1695,8 +1697,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 txtVBalanceMainPlayer.setText(key.getString("balance"));
                                 arrayListUnPackedUser.add(userid);
                                 encodedimage0 = user_image;
-                                Glide.with(getApplicationContext()).load(user_image).into(profile);
-
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile);
                                 String Url1 = key.getString("cardone");
                                 String Url2 = key.getString("cardtwo");
                                 String Url3 = key.getString("cardthree");
@@ -1714,7 +1715,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 nametext1.setText(user_name);
                                 user_status1.setText(user_status);
                                 encodedimage1 = user_image;
-                                Glide.with(getApplicationContext()).load(user_image).into(profile1);
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile1);
                                 if (user_status.equalsIgnoreCase("online")) {
                                     arrayListUnPackedUser.add(userid);
                                     user_status1.setTextColor(Color.GREEN);
@@ -1739,7 +1740,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 nametext2.setText(user_name);
                                 user_status2.setText(user_status);
                                 encodedimage2 = user_image;
-                                Glide.with(getApplicationContext()).load(user_image).into(profile2);
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile2);
                                 if (user_status.equalsIgnoreCase("online")) {
                                     arrayListUnPackedUser.add(userid);
                                     user_status2.setTextColor(Color.GREEN);
@@ -1764,7 +1765,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 nametext3.setText(user_name);
                                 user_status3.setText(user_status);
                                 encodedimage3 = user_image;
-                                Glide.with(getApplicationContext()).load(user_image).into(profile3);
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile3);
                                 if (user_status.equalsIgnoreCase("online")) {
                                     arrayListUnPackedUser.add(userid);
                                     user_status3.setTextColor(Color.GREEN);
@@ -1789,7 +1790,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 nametext4.setText(user_name);
                                 user_status4.setText(user_status);
                                 encodedimage4 = user_image;
-                                Glide.with(getApplicationContext()).load(user_image).into(profile4);
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile4);
                                 if (user_status.equalsIgnoreCase("online")) {
                                     arrayListUnPackedUser.add(userid);
                                     user_status4.setTextColor(Color.GREEN);
@@ -1904,6 +1905,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")) {
                     new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
 //                    blinkergif2.setVisibility(View.VISIBLE);
                 }
             } catch (JSONException e) {

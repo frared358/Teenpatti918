@@ -1,6 +1,7 @@
 package affwl.com.teenpatti;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -11,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -63,7 +66,6 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
@@ -213,8 +215,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
         new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
-
-//        new Handler().postDelayed(mLaunchTask, delay_time);
 
     }
 
@@ -602,8 +602,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void OpenPrivateTable(View view) {
-        startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
-//        new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+//        startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
+        new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mediaPlayer.start();
     }

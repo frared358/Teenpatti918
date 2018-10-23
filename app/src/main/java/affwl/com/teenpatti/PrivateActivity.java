@@ -231,11 +231,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void distributeCards() {
-
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
                 //card image
                 card1 = findViewById(R.id.card1);
                 card2 = findViewById(R.id.card2);
@@ -473,16 +468,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         below_layout.setVisibility(View.GONE);
                     }
                 });
-            }
-        }, 20000);
     }
 
     public void bootCollection() {
-
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
                 boot_value_player1 = findViewById(R.id.boot_value_player1);
                 boot_value_player2 = findViewById(R.id.boot_value_player2);
                 boot_value_player3 = findViewById(R.id.boot_value_player3);
@@ -520,8 +508,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //        blinkergif3.setVisibility(View.VISIBLE);
 //        blinkergif4.setVisibility(View.VISIBLE);
 //        blinkergif5.setVisibility(View.VISIBLE);
-            }
-        }, 15000);
     }
 
     @Override
@@ -1378,31 +1364,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
-                    final AlertDialog dialog = new AlertDialog.Builder(PrivateActivity.this).create();
-                    dialog.setMessage("15");
-                    dialog.show();   //
-
-                    new CountDownTimer(15000, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            dialog.setMessage("Generating game request, Please wait for 00:" + (millisUntilFinished / 1000));
-                        }
-
-                        @Override
-                        public void onFinish() {
-                            dialog.dismiss();
-                        }
-                    }.start();
-                }
-            }, 100);
-
-        }
+            new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+            }
     }
 
     private class setWinnersAsyncTask extends AsyncTask<String, Void, String> {
@@ -1616,7 +1579,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         }
     }
-
 
     String StartBlink;
 
@@ -1896,7 +1858,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
 
     }
-
 }
 
 

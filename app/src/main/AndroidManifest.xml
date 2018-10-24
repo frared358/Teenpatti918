@@ -46,6 +46,7 @@
         <activity
             android:name=".PrivateActivity"
             android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
 
             <!-- <intent-filter> -->
@@ -58,6 +59,7 @@
         <activity
             android:name=".LoadingScreenPrivate"
             android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
 
         <service

@@ -56,8 +56,6 @@ public class ServiceLastUserData extends Service {
             mTimer = new Timer();   //recreate new
         mTimer.scheduleAtFixedRate(new TimeDisplay(), 0, notify);   //Schedule task
 
-
-
     }
 
     @Override
@@ -93,21 +91,7 @@ public class ServiceLastUserData extends Service {
         }
     }
 
-    private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 
-        @Override
-        protected String doInBackground(String... urls) {
-            return DataHolder.getApi(urls[0],ServiceLastUserData.this);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("Check123", "" + result);
-            Intent intent = new Intent(DataHolder.ACTION_USER_DATA);
-            intent.putExtra(DataHolder.KEY_USER_DATA, result);
-            sendBroadcast(intent);
-        }
-    }
 
     private class GeteLast5ChancAsyncTask extends AsyncTask<String, Void, String> {
 

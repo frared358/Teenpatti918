@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int value6 = 0;
     int value7 = 0;
 
-
+    DataHolder dataHolder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -214,11 +214,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getImsi();
         new DevicePost().execute("http://213.136.81.137:8081/api/adevice");
         new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status");
+        dataHolder = new DataHolder();
+        dataHolder.setContext(this);
 
     }
 
-    String AVATAR;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");
+    }
 
     @Override
     public void onClick(View v) {
@@ -777,44 +782,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public String getApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet Httpget = new HttpGet(url);
-
-            Httpget.setHeader("Accept", "application/json");
-            Httpget.setHeader("Content-type", "application/json");
-            Httpget.setHeader("Authorization", DataHolder.getDataString(MainActivity.this, "token"));
-
-            HttpResponse httpResponse = httpclient.execute(Httpget);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-            Log.e("Check", "how " + result);
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-        return result;
-    }
-
     String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
-    ArrayList<String> arrayListAvatar = new ArrayList<>();
 
     private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... urls) {
-            return getApi(urls[0]);
+            return DataHolder.getApi(urls[0],MainActivity.this);
         }
 
         @Override
@@ -880,27 +853,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            DataHolder.setData(MainActivity.this, "userstatus", "offline");
-            return DataHolder.updateUserStatusApi(urls[0], MainActivity.this, "offline");
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-
-                String message = jsonObjMain.getString("message");
-                if (message.equalsIgnoreCase("Client status successfully changed")) {
-                    Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }
 

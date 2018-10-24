@@ -61,6 +61,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.saeid.fabloading.LoadingView;
 import pl.droidsonroids.gif.GifImageView;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -87,13 +88,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     ScheduledExecutorService scheduleTaskExecutor;
     MediaPlayer mediaPlayer;
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
-
+    private LoadingView mLoadViewLong;
+    DataHolder dataHolder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
 
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
+
+        mLoadViewLong = (LoadingView) findViewById(R.id.loading_view_repeat);
+        mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar1, LoadingView.FROM_TOP);
+        mLoadViewLong.addAnimation(Color.parseColor("#C7E7FB"), R.drawable.avatar2, LoadingView.FROM_BOTTOM);
+        mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar3, LoadingView.FROM_TOP);
+        mLoadViewLong.addAnimation(Color.parseColor("#C7E7FB"), R.drawable.avatar4, LoadingView.FROM_BOTTOM);
+
+
+        /*mLoadViewLong.startAnimation();
+        mLoadViewLong.resumeAnimation();
+        mLoadViewLong.resumeAnimation();
+        mLoadViewLong.resumeAnimation();
+        mLoadViewLong.resumeAnimation();*/
+
+        dataHolder =new DataHolder();
+        dataHolder.setContext(this);
+
 
         scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
@@ -203,8 +221,21 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         // load the animation
         animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
 
+        boot_value_player1 = findViewById(R.id.boot_value_player1);
+        boot_value_player2 = findViewById(R.id.boot_value_player2);
+        boot_value_player3 = findViewById(R.id.boot_value_player3);
+        boot_value_player4 = findViewById(R.id.boot_value_player4);
+        boot_value_player5 = findViewById(R.id.boot_value_player5);
 
-        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
+                new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                bootCollection();
+            }
+        },5000);
 
 
     }
@@ -683,11 +714,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void bootCollection() {
-                boot_value_player1 = findViewById(R.id.boot_value_player1);
-                boot_value_player2 = findViewById(R.id.boot_value_player2);
-                boot_value_player3 = findViewById(R.id.boot_value_player3);
-                boot_value_player4 = findViewById(R.id.boot_value_player4);
-                boot_value_player5 = findViewById(R.id.boot_value_player5);
 
                 bootvalueanimate1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim1);
                 bootvalueanimate2 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim2);
@@ -877,8 +903,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     //On BackPress
     public void backPress() {
         DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");
-        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
+        new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
         try {
             if (broadcastReceiver != null) {
                 unregisterReceiver(broadcastReceiver);
@@ -896,6 +921,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         handlerDisp.post(new Runnable() {
             @Override
             public void run() {
+
                 Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
                 Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
                 Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
@@ -969,6 +995,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         handler.post(new Runnable() {
             @Override
             public void run() {
+                Log.i("TAG_GLIDE",""+cardUrl1+" - "+cardUrl2+" - "+cardUrl3);
                 Glide.with(PrivateActivity.this).load(cardUrl1).into(card3);
                 Glide.with(PrivateActivity.this).load(cardUrl2).into(card8);
                 Glide.with(PrivateActivity.this).load(cardUrl3).into(card13);
@@ -1273,98 +1300,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     boolean TIMER_ROTATION = true;
     boolean STARTING_TURN = true;
 
-    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return DataHolder.updateUserStatusApi(urls[0], PrivateActivity.this, urls[1]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-
-                String message = jsonObjMain.getString("message");
-                DataHolder.setData(PrivateActivity.this, "userstatus", "online");
-                if (message.equalsIgnoreCase("Client status successfully changed")) {
-//                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    public String gameRequestApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
-
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
-
-            Log.i("KARAN", DataHolder.getDataInt(PrivateActivity.this, "deskid") + "\n" + DataHolder.getDataString(PrivateActivity.this, "userid"));
-            jsonObject.accumulate("desk_id", DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
-            jsonObject.accumulate("request_next", "next");//pev
-
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
-
-            httpPost.setEntity(new StringEntity(json));
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
-
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-
-        return result;
-    }
-    private class GameRequestAyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return gameRequestApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("CheckGamex", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                if (jsonObjMain.getString("message").equalsIgnoreCase("Cards generated sucessfully")) {
-                }
-                //Toast.makeText(PrivateActivity.this, "Please Wait till boot amount is collected", Toast.LENGTH_SHORT).show();
-                new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
-                new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                bootCollection();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
     public String setBootValueApi(String url) {
         InputStream inputStream = null;
         String result = "";
@@ -1659,13 +1594,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 chaalLimit = jsonObjMain.getString("chaal_limit");
                 Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
-                displayAmount.setText(String.valueOf(ChaalAmount));
-
-                boot_value_player1 = findViewById(R.id.boot_value_player1);
-                boot_value_player2 = findViewById(R.id.boot_value_player2);
-                boot_value_player3 = findViewById(R.id.boot_value_player3);
-                boot_value_player4 = findViewById(R.id.boot_value_player4);
-                boot_value_player5 = findViewById(R.id.boot_value_player5);
+                //displayAmount.setText(String.valueOf(ChaalAmount));
 
                 boot_value_player1.setText(String.valueOf(ChaalAmount));
                 boot_value_player2.setText(String.valueOf(ChaalAmount));
@@ -1812,25 +1741,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
 
-
-                /*Thread thread1 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //NEXT CHANCES DATA
-                        Intent intentnext = new Intent(PrivateActivity.this, ServiceNextChance.class);
-                        startService(intentnext);
-                    }
-                });
-                thread1.start();*/
-
-                /*Thread thread2 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                    }
-                });
-                thread2.start();*/
-
                 //LAST CHANCES DATA
                 Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
                 startService(intentService);
@@ -1951,6 +1861,119 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+    private void refreshUserInfo(String result){
+
+        try {
+            JSONObject jsonObjMain = new JSONObject(result);
+            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+            int len = arr.length();
+            for (int a = 0; a < len; a++) {
+
+                JSONObject key = arr.getJSONObject(a);
+                String userid = key.getString("user_id");
+                String user_name = key.getString("user_name");
+                String user_image = key.getString("user_image");
+                String bal = key.getString("balance");
+
+                if (a == 0) {
+                    nametext.setText(user_name);
+                    USER_NAME = user_name;
+                    BALANCE = bal;
+                    user_id.setText(userid);
+                    txtVBalanceMainPlayer.setText(key.getString("balance"));
+                    encodedimage0 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile);
+
+                    String Url1 = key.getString("cardone");
+                    String Url2 = key.getString("cardtwo");
+                    String Url3 = key.getString("cardthree");
+                    cardUrl1 = Url1;
+                    cardUrl2 = Url2;
+                    cardUrl3 = Url3;
+                    Log.i("URLx 1", a + " " + Url1);
+                    Log.i("URLx 2", a + " " + Url2);
+                    Log.i("URLx 3", a + " " + Url3);
+                    //nametext1.setText(key.getString("first_name"));
+                } else if (a == 1) {
+
+                    USER_NAME1 = user_name;
+                    BALANCE1 = bal;
+                    nametext1.setText(user_name);
+                    encodedimage1 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile1);
+
+                    String Url4 = key.getString("cardone");
+                    String Url5 = key.getString("cardtwo");
+                    String Url6 = key.getString("cardthree");
+                    cardUrl4 = Url4;
+                    cardUrl5 = Url5;
+                    cardUrl6 = Url6;
+                    Log.i("URLx 4", a + " " + Url4);
+                    Log.i("URLx 5", a + " " + Url5);
+                    Log.i("URLx 6", a + " " + Url6);
+                    //nametext2.setText(key.getString("first_name"));
+                } else if (a == 2) {
+
+                    USER_NAME2 = user_name;
+                    BALANCE2 = bal;
+                    nametext2.setText(user_name);
+                    encodedimage2 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile2);
+
+                    String Url7 = key.getString("cardone");
+                    String Url8 = key.getString("cardtwo");
+                    String Url9 = key.getString("cardthree");
+                    cardUrl7 = Url7;
+                    cardUrl8 = Url8;
+                    cardUrl9 = Url9;
+                    Log.i("URLx 7", a + " " + Url7);
+                    Log.i("URLx 8", a + " " + Url8);
+                    Log.i("URLx 9", a + " " + Url9);
+                    //nametext.setText(key.getString("first_name"));
+                } else if (a == 3) {
+
+                    USER_NAME3 = user_name;
+                    BALANCE3 = bal;
+                    nametext3.setText(user_name);
+                    encodedimage3 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile3);
+
+                    String Url10 = key.getString("cardone");
+                    String Url11 = key.getString("cardtwo");
+                    String Url12 = key.getString("cardthree");
+                    cardUrl10 = Url10;
+                    cardUrl11 = Url11;
+                    cardUrl12 = Url12;
+                    Log.i("URLx 10", a + " " + Url10);
+                    Log.i("URLx 11", a + " " + Url11);
+                    Log.i("URLx 12", a + " " + Url12);
+                    //nametext3.setText(key.getString("first_name"));
+                } else if (a == 4) {
+
+                    USER_NAME4 = user_name;
+                    BALANCE4 = key.getString("balance");
+                    nametext4.setText(user_name);
+                    encodedimage4 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile4);
+
+                    String Url13 = key.getString("cardone");
+                    String Url14 = key.getString("cardtwo");
+                    String Url15 = key.getString("cardthree");
+                    cardUrl13 = Url13;
+                    cardUrl14 = Url14;
+                    cardUrl15 = Url15;
+                    Log.i("URLx 13", a + " " + Url13);
+                    Log.i("URLx 14", a + " " + Url14);
+                    Log.i("URLx 15", a + " " + Url15);
+                    //nametext4.setText(key.getString("first_name"));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     BroadcastReceiverDATA broadcastReceiver;
     public class BroadcastReceiverDATA extends BroadcastReceiver {
         @Override
@@ -1960,9 +1983,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 String result = intent.getStringExtra(DataHolder.KEY_USER_LAST_DATA);
                 getLastChanceData(result);
                 Log.i("TAG124 result", result);
+                refreshUserInfo(result);
             } else if (action.equalsIgnoreCase(DataHolder.ACTION_USER_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_USER_DATA);
-                Log.i("TAG124 result", resultDATA);
+                Log.i("TAG123 UserInforesult", resultDATA);
             } else if (action.equalsIgnoreCase(DataHolder.ACTION_LAST_5_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_LAST_5_DATA);
                 Log.i("TAG124 result", resultDATA);

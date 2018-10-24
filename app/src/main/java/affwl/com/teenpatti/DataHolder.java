@@ -3,7 +3,9 @@ package affwl.com.teenpatti;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -81,39 +83,6 @@ public class DataHolder {
         }
 
         inputStream.close();
-        return result;
-    }
-
-    public static String  getApi(String url){
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet Httpget = new HttpGet(url);
-
-            Httpget.setHeader("Accept", "application/json");
-            Httpget.setHeader("Content-type", "application/json");
-            //Httpget.setHeader("Token", DataHolder.LOGIN_TOKEN);
-
-            HttpResponse httpResponse = httpclient.execute(Httpget);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if(inputStream != null){
-                try {
-                    result = convertInputStreamToString(inputStream);
-                }
-                catch (Exception e){
-                    Log.e("ERROR ",""+e);
-                }
-            }
-            else
-                result = "Did not work!";
-
-
-        } catch (Exception e) {
-            Log.d("ERROR ", ""+e);
-        }
         return result;
     }
 
@@ -220,6 +189,14 @@ public class DataHolder {
     public static String ACTION_NEXT_CHANCE_DATA="affwl.com.teenpatti.NEXT_CHANCE_DATA";
     public static String KEY_NEXT_CHANCE_DATA="teenpatti.NEXT_CHANCE_DATA";
 
+    public static Context context;
+    public static Context getContext(){
+        return context;
+    }
+    public void setContext(Context context){
+        this.context = context;
+    }
+
     public static String updateUserStatusApi(String url,Context context,String status) {
         InputStream inputStream = null;
         String result = "";
@@ -261,6 +238,31 @@ public class DataHolder {
 
         return result;
     }
+    public static class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        String STATUS;
+        @Override
+        protected String doInBackground(String... urls) {
+            STATUS = urls[1];
+            return updateUserStatusApi(urls[0], getContext(), urls[1]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+
+                String message = jsonObjMain.getString("message");
+                DataHolder.setData(getContext(), "userstatus", STATUS);
+                if (message.equalsIgnoreCase("Client status successfully changed")) {
+                    //Toast.makeText(getContext(), message+"\n"+STATUS, Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     public static String setApi(String url,Context context) {
         InputStream inputStream = null;
@@ -298,4 +300,6 @@ public class DataHolder {
     static String Url6;
     static String Url7;
     static String Url8;
+
+    public static int USERS_COUNT=0;
 }

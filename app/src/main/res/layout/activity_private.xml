@@ -140,12 +140,25 @@
                     android:layout_height="37dp"
                     android:layout_centerInParent="true"
                     android:gravity="center"
-                    android:text="0"
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_heightPercent="45%"
                     app:layout_widthPercent="80%" />
+
+                <io.saeid.fabloading.LoadingView
+                    android:id="@+id/loading_view_repeat"
+                    android:layout_weight="1"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:visibility="gone"
+                    android:layout_centerInParent="true"
+                    app:mfl_duration="400"
+                    app:mfl_repeat="1"
+                    app:layout_heightPercent="20%"
+                    app:layout_widthPercent="20%"
+                    />
+
             </android.support.percent.PercentRelativeLayout>
 
 

@@ -27,7 +27,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
@@ -35,11 +34,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.dinuscxj.progressbar.CircleProgressBar;
-import com.google.gson.JsonObject;
 import com.sdsmdg.tastytoast.TastyToast;
 
 import org.apache.http.HttpResponse;
@@ -57,11 +54,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.saeid.fabloading.LoadingView;
 import pl.droidsonroids.gif.GifImageView;
 
 import static android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP;
@@ -88,13 +85,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     ScheduledExecutorService scheduleTaskExecutor;
     MediaPlayer mediaPlayer;
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
-
+    private LoadingView mLoadViewLong;
+    DataHolder dataHolder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
 
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
+
+        mLoadViewLong = (LoadingView) findViewById(R.id.loading_view_repeat);
+        mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar1, LoadingView.FROM_TOP);
+        mLoadViewLong.addAnimation(Color.parseColor("#C7E7FB"), R.drawable.avatar2, LoadingView.FROM_BOTTOM);
+        mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar3, LoadingView.FROM_TOP);
+        mLoadViewLong.addAnimation(Color.parseColor("#C7E7FB"), R.drawable.avatar4, LoadingView.FROM_BOTTOM);
+
+
+        /*mLoadViewLong.startAnimation();
+        mLoadViewLong.resumeAnimation();
+        mLoadViewLong.resumeAnimation();
+        mLoadViewLong.resumeAnimation();
+        mLoadViewLong.resumeAnimation();*/
+
+        dataHolder =new DataHolder();
+        dataHolder.setContext(this);
+
 
         scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
         scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
@@ -204,91 +218,104 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         // load the animation
         animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
 
+        boot_value_player1 = findViewById(R.id.boot_value_player1);
+        boot_value_player2 = findViewById(R.id.boot_value_player2);
+        boot_value_player3 = findViewById(R.id.boot_value_player3);
+        boot_value_player4 = findViewById(R.id.boot_value_player4);
+        boot_value_player5 = findViewById(R.id.boot_value_player5);
 
-        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable(){
+            @Override
+            public void run() {
+                new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
+                new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                bootCollection();
+            }
+        },5000);
 
 
     }
 
     public void distributeCards() {
-        //card image
-        card1 = findViewById(R.id.card1);
-        card2 = findViewById(R.id.card2);
-        card3 = findViewById(R.id.card3);
-        card4 = findViewById(R.id.card4);
-        card5 = findViewById(R.id.card5);
-        card6 = findViewById(R.id.card6);
-        card7 = findViewById(R.id.card7);
-        card8 = findViewById(R.id.card8);
-        card9 = findViewById(R.id.card9);
-        card10 = findViewById(R.id.card10);
-        card11 = findViewById(R.id.card11);
-        card12 = findViewById(R.id.card12);
-        card13 = findViewById(R.id.card13);
-        card14 = findViewById(R.id.card14);
-        card15 = findViewById(R.id.card15);
+                //card image
+                card1 = findViewById(R.id.card1);
+                card2 = findViewById(R.id.card2);
+                card3 = findViewById(R.id.card3);
+                card4 = findViewById(R.id.card4);
+                card5 = findViewById(R.id.card5);
+                card6 = findViewById(R.id.card6);
+                card7 = findViewById(R.id.card7);
+                card8 = findViewById(R.id.card8);
+                card9 = findViewById(R.id.card9);
+                card10 = findViewById(R.id.card10);
+                card11 = findViewById(R.id.card11);
+                card12 = findViewById(R.id.card12);
+                card13 = findViewById(R.id.card13);
+                card14 = findViewById(R.id.card14);
+                card15 = findViewById(R.id.card15);
 
-        card3.bringToFront();
-        card8.bringToFront();
-        card13.bringToFront();
+                card3.bringToFront();
+                card8.bringToFront();
+                card13.bringToFront();
 
-        //shuffling card animation
-        animatecard1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left1);
-        animatecard2 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_left1);
-        animatecard3 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom1);
-        animatecard4 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_right1);
-        animatecard5 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_right1);
+                //shuffling card animation
+                animatecard1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left1);
+                animatecard2 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_left1);
+                animatecard3 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom1);
+                animatecard4 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_right1);
+                animatecard5 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_right1);
 
-        animatecard6 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left2);
-        animatecard7 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_left2);
-        animatecard8 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom2);
-        animatecard9 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_right2);
-        animatecard10 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_right2);
+                animatecard6 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left2);
+                animatecard7 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_left2);
+                animatecard8 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom2);
+                animatecard9 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_right2);
+                animatecard10 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_right2);
 
-        animatecard11 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left3);
-        animatecard12 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_left3);
-        animatecard13 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom3);
-        animatecard14 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_right3);
-        animatecard15 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_right3);
+                animatecard11 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left3);
+                animatecard12 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_left3);
+                animatecard13 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom3);
+                animatecard14 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_bottom_right3);
+                animatecard15 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_right3);
 
-        //animate shuffle cards now here
-        card1.startAnimation(animatecard1);
-        animatecard2.setStartOffset(200);
-        card2.startAnimation(animatecard2);
-        animatecard3.setStartOffset(400);
-        card3.startAnimation(animatecard3);
-        animatecard4.setStartOffset(600);
-        animatecard4.setFillAfter(true);
-        card4.startAnimation(animatecard4);
-        animatecard5.setStartOffset(800);
-        card5.startAnimation(animatecard5);
+                //animate shuffle cards now here
+                card1.startAnimation(animatecard1);
+                animatecard2.setStartOffset(200);
+                card2.startAnimation(animatecard2);
+                animatecard3.setStartOffset(400);
+                card3.startAnimation(animatecard3);
+                animatecard4.setStartOffset(600);
+                animatecard4.setFillAfter(true);
+                card4.startAnimation(animatecard4);
+                animatecard5.setStartOffset(800);
+                card5.startAnimation(animatecard5);
 
-        animatecard6.setStartOffset(1000);
-        card6.startAnimation(animatecard6);
-        animatecard7.setStartOffset(1200);
-        card7.startAnimation(animatecard7);
-        animatecard8.setStartOffset(1400);
-        card8.startAnimation(animatecard8);
-        animatecard9.setStartOffset(1600);
-        animatecard9.setFillAfter(true);
-        card9.startAnimation(animatecard9);
-        animatecard10.setStartOffset(1800);
-        card10.startAnimation(animatecard10);
+                animatecard6.setStartOffset(1000);
+                card6.startAnimation(animatecard6);
+                animatecard7.setStartOffset(1200);
+                card7.startAnimation(animatecard7);
+                animatecard8.setStartOffset(1400);
+                card8.startAnimation(animatecard8);
+                animatecard9.setStartOffset(1600);
+                animatecard9.setFillAfter(true);
+                card9.startAnimation(animatecard9);
+                animatecard10.setStartOffset(1800);
+                card10.startAnimation(animatecard10);
 
 
-        animatecard11.setStartOffset(2000);
-        card11.startAnimation(animatecard11);
-        animatecard12.setStartOffset(2200);
-        card12.startAnimation(animatecard12);
-        animatecard13.setStartOffset(2400);
-        card13.startAnimation(animatecard13);
-        animatecard14.setStartOffset(2600);
-        animatecard14.setFillAfter(true);
-        card14.startAnimation(animatecard14);
-        animatecard15.setStartOffset(2800);
-        card15.startAnimation(animatecard15);
+                animatecard11.setStartOffset(2000);
+                card11.startAnimation(animatecard11);
+                animatecard12.setStartOffset(2200);
+                card12.startAnimation(animatecard12);
+                animatecard13.setStartOffset(2400);
+                card13.startAnimation(animatecard13);
+                animatecard14.setStartOffset(2600);
+                animatecard14.setFillAfter(true);
+                card14.startAnimation(animatecard14);
+                animatecard15.setStartOffset(2800);
+                card15.startAnimation(animatecard15);
 
-        //display cards in position after animation overs
+                //display cards in position after animation overs
 
         animatecard3.setAnimationListener(new Animation.AnimationListener() {
             @Override
@@ -527,13 +554,17 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     public void onAnimationStart(Animation animation) {
                         // TODO Auto-generated method stub
                     }
+
                     @Override
                     public void onAnimationRepeat(Animation animation) {
                         // TODO Auto-generated method stub
                     }
+
                     @Override
                     public void onAnimationEnd(Animation animation) {
+
                         // Pass the Intent to switch to other Activity
+
                         View view1 = findViewById(R.id.card1);
                         PercentRelativeLayout.LayoutParams params1 = (PercentRelativeLayout.LayoutParams) view1.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info1 = params1.getPercentLayoutInfo();
@@ -542,6 +573,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view1.requestLayout();
                         view1.layout(300, 0, view1.getWidth() + 300, view1.getHeight());
                         view1.setRotation(-30.0f);
+
                         View view2 = findViewById(R.id.card2);
                         PercentRelativeLayout.LayoutParams params2 = (PercentRelativeLayout.LayoutParams) view2.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info2 = params2.getPercentLayoutInfo();
@@ -550,14 +582,17 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view2.layout(300, 0, view2.getWidth() + 300, view2.getHeight());
                         view2.setRotation(-30.0f);
                         view2.requestLayout();
+
                         View view3 = findViewById(R.id.card3);
                         PercentRelativeLayout.LayoutParams params3 = (PercentRelativeLayout.LayoutParams) view3.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info3 = params3.getPercentLayoutInfo();
+
                         info3.widthPercent = 0.18f;
                         info3.heightPercent = 0.18f;
                         view3.layout(300, 0, view3.getWidth() + 300, view3.getHeight());
                         view3.setRotation(-30.0f);
                         view3.requestLayout();
+
                         View view4 = findViewById(R.id.card4);
                         PercentRelativeLayout.LayoutParams params4 = (PercentRelativeLayout.LayoutParams) view4.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info4 = params4.getPercentLayoutInfo();
@@ -566,6 +601,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view4.layout(300, 0, view4.getWidth() + 300, view4.getHeight());
                         view4.setRotation(-30.0f);
                         view4.requestLayout();
+
                         View view5 = findViewById(R.id.card5);
                         PercentRelativeLayout.LayoutParams params5 = (PercentRelativeLayout.LayoutParams) view5.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info5 = params5.getPercentLayoutInfo();
@@ -574,6 +610,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view5.layout(300, 0, view5.getWidth() + 300, view5.getHeight());
                         view5.setRotation(-30.0f);
                         view5.requestLayout();
+
                         View view6 = findViewById(R.id.card6);
                         PercentRelativeLayout.LayoutParams params6 = (PercentRelativeLayout.LayoutParams) view6.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info6 = params6.getPercentLayoutInfo();
@@ -582,6 +619,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view6.layout(200, 0, view6.getWidth() + 200, view6.getHeight());
                         view6.setRotation(-10.0f);
                         view6.requestLayout();
+
                         View view7 = findViewById(R.id.card7);
                         PercentRelativeLayout.LayoutParams params7 = (PercentRelativeLayout.LayoutParams) view7.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info7 = params7.getPercentLayoutInfo();
@@ -590,6 +628,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view7.layout(200, 0, view7.getWidth() + 200, view7.getHeight());
                         view7.setRotation(-10.0f);
                         view7.requestLayout();
+
                         View view8 = findViewById(R.id.card8);
                         PercentRelativeLayout.LayoutParams params8 = (PercentRelativeLayout.LayoutParams) view8.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info8 = params8.getPercentLayoutInfo();
@@ -598,6 +637,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view8.layout(200, 0, view8.getWidth() + 200, view8.getHeight());
                         view8.setRotation(-10.0f);
                         view8.requestLayout();
+
                         View view9 = findViewById(R.id.card9);
                         PercentRelativeLayout.LayoutParams params9 = (PercentRelativeLayout.LayoutParams) view9.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info9 = params9.getPercentLayoutInfo();
@@ -606,6 +646,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view9.layout(200, 0, view9.getWidth() + 200, view9.getHeight());
                         view9.setRotation(-10.0f);
                         view9.requestLayout();
+
                         View view10 = findViewById(R.id.card10);
                         PercentRelativeLayout.LayoutParams params10 = (PercentRelativeLayout.LayoutParams) view10.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info10 = params10.getPercentLayoutInfo();
@@ -614,6 +655,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view10.layout(200, 0, view10.getWidth() + 200, view10.getHeight());
                         view10.setRotation(-10.0f);
                         view10.requestLayout();
+
                         View view11 = findViewById(R.id.card11);
                         PercentRelativeLayout.LayoutParams params11 = (PercentRelativeLayout.LayoutParams) view11.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info11 = params11.getPercentLayoutInfo();
@@ -622,6 +664,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view11.layout(100, 0, view11.getWidth() + 100, view11.getHeight());
                         view11.setRotation(10.0f);
                         view11.requestLayout();
+
                         View view12 = findViewById(R.id.card12);
                         PercentRelativeLayout.LayoutParams params12 = (PercentRelativeLayout.LayoutParams) view12.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info12 = params12.getPercentLayoutInfo();
@@ -630,6 +673,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view12.layout(100, 0, view12.getWidth() + 100, view12.getHeight());
                         view12.setRotation(10.0f);
                         view12.requestLayout();
+
+
                         View view13 = findViewById(R.id.card13);
                         PercentRelativeLayout.LayoutParams params13 = (PercentRelativeLayout.LayoutParams) view13.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info13 = params13.getPercentLayoutInfo();
@@ -638,6 +683,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view13.layout(100, 0, view13.getWidth() + 100, view13.getHeight());
                         view13.setRotation(10.0f);
                         view13.requestLayout();
+
+
                         View view14 = findViewById(R.id.card14);
                         PercentRelativeLayout.LayoutParams params14 = (PercentRelativeLayout.LayoutParams) view14.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info14 = params14.getPercentLayoutInfo();
@@ -647,6 +694,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 //                params14.setMargins(-60, 350, 0, 0);
                         view14.setRotation(10.0f);
                         view14.requestLayout();
+
                         View view15 = findViewById(R.id.card15);
                         PercentRelativeLayout.LayoutParams params15 = (PercentRelativeLayout.LayoutParams) view15.getLayoutParams();
                         PercentLayoutHelper.PercentLayoutInfo info15 = params15.getPercentLayoutInfo();
@@ -655,6 +703,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         view15.layout(100, 0, view15.getWidth() + 100, view15.getHeight());
                         view15.setRotation(10.0f);
                         view15.requestLayout();
+
                         btn_see_cards.bringToFront();
                         //below_layout.setVisibility(View.GONE);
                     }
@@ -662,37 +711,32 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     public void bootCollection() {
-        boot_value_player1 = findViewById(R.id.boot_value_player1);
-        boot_value_player2 = findViewById(R.id.boot_value_player2);
-        boot_value_player3 = findViewById(R.id.boot_value_player3);
-        boot_value_player4 = findViewById(R.id.boot_value_player4);
-        boot_value_player5 = findViewById(R.id.boot_value_player5);
 
-        bootvalueanimate1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim1);
-        bootvalueanimate2 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim2);
-        bootvalueanimate3 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim3);
-        bootvalueanimate4 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim4);
-        bootvalueanimate5 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim5);
+                bootvalueanimate1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim1);
+                bootvalueanimate2 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim2);
+                bootvalueanimate3 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim3);
+                bootvalueanimate4 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim4);
+                bootvalueanimate5 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim5);
 
-        boot_value_player1.startAnimation(bootvalueanimate1);
-        bootvalueanimate1.setStartOffset(3000);
-        boot_value_player1.setVisibility(View.INVISIBLE);
+                boot_value_player1.startAnimation(bootvalueanimate1);
+                bootvalueanimate1.setStartOffset(3000);
+                boot_value_player1.setVisibility(View.INVISIBLE);
 
-        boot_value_player2.startAnimation(bootvalueanimate2);
-        bootvalueanimate2.setStartOffset(3000);
-        boot_value_player2.setVisibility(View.INVISIBLE);
+                boot_value_player2.startAnimation(bootvalueanimate2);
+                bootvalueanimate2.setStartOffset(3000);
+                boot_value_player2.setVisibility(View.INVISIBLE);
 
-        boot_value_player3.startAnimation(bootvalueanimate3);
-        bootvalueanimate3.setStartOffset(3000);
-        boot_value_player3.setVisibility(View.INVISIBLE);
+                boot_value_player3.startAnimation(bootvalueanimate3);
+                bootvalueanimate3.setStartOffset(3000);
+                boot_value_player3.setVisibility(View.INVISIBLE);
 
-        boot_value_player4.startAnimation(bootvalueanimate4);
-        bootvalueanimate4.setStartOffset(3000);
-        boot_value_player4.setVisibility(View.INVISIBLE);
+                boot_value_player4.startAnimation(bootvalueanimate4);
+                bootvalueanimate4.setStartOffset(3000);
+                boot_value_player4.setVisibility(View.INVISIBLE);
 
-        boot_value_player5.startAnimation(bootvalueanimate5);
-        bootvalueanimate5.setStartOffset(3000);
-        boot_value_player5.setVisibility(View.INVISIBLE);
+                boot_value_player5.startAnimation(bootvalueanimate5);
+                bootvalueanimate5.setStartOffset(3000);
+                boot_value_player5.setVisibility(View.INVISIBLE);
 
 //        blinkergif1.setVisibility(View.VISIBLE);
 //        blinkergif2.setVisibility(View.VISIBLE);
@@ -856,8 +900,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     //On BackPress
     public void backPress() {
         DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
-        new updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");
-        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
+        new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
         try {
             if (broadcastReceiver != null) {
                 unregisterReceiver(broadcastReceiver);
@@ -875,6 +918,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         handlerDisp.post(new Runnable() {
             @Override
             public void run() {
+
                 Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
                 Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
                 Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
@@ -948,6 +992,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         handler.post(new Runnable() {
             @Override
             public void run() {
+                Log.i("TAG_GLIDE",""+cardUrl1+" - "+cardUrl2+" - "+cardUrl3);
                 Glide.with(PrivateActivity.this).load(cardUrl1).into(card3);
                 Glide.with(PrivateActivity.this).load(cardUrl2).into(card8);
                 Glide.with(PrivateActivity.this).load(cardUrl3).into(card13);
@@ -1252,98 +1297,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     boolean TIMER_ROTATION = true;
     boolean STARTING_TURN = true;
 
-    private class updateUserStatusAsyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return DataHolder.updateUserStatusApi(urls[0], PrivateActivity.this, urls[1]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-
-                String message = jsonObjMain.getString("message");
-                DataHolder.setData(PrivateActivity.this, "userstatus", "online");
-                if (message.equalsIgnoreCase("Client status successfully changed")) {
-//                    Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    public String gameRequestApi(String url) {
-        InputStream inputStream = null;
-        String result = "";
-        try {
-
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpPost httpPost = new HttpPost(url);
-
-            String json = "";
-            JSONObject jsonObject = new JSONObject();
-
-            Log.i("KARAN", DataHolder.getDataInt(PrivateActivity.this, "deskid") + "\n" + DataHolder.getDataString(PrivateActivity.this, "userid"));
-            jsonObject.accumulate("desk_id", DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-            jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
-            jsonObject.accumulate("request_next", "next");//pev
-
-            json = jsonObject.toString();
-            StringEntity se = new StringEntity(json);
-            se.setContentType("application/json");
-
-            httpPost.setEntity(new StringEntity(json));
-            httpPost.setHeader("Accept", "application/json");
-            httpPost.setHeader("Content-type", "application/json");
-            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
-
-            HttpResponse httpResponse = httpclient.execute(httpPost);
-            inputStream = httpResponse.getEntity().getContent();
-
-            if (inputStream != null) {
-                try {
-                    result = convertInputStreamToString(inputStream);
-                } catch (Exception e) {
-                    Log.e("Check", "" + e);
-                }
-            } else
-                result = "Did not work!";
-
-        } catch (Exception e) {
-            Log.d("InputStream", "" + e);
-        }
-
-        return result;
-    }
-    private class GameRequestAyncTask extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... urls) {
-            return gameRequestApi(urls[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.i("CheckGamex", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                if (jsonObjMain.getString("message").equalsIgnoreCase("Cards generated sucessfully")) {
-                }
-                //Toast.makeText(PrivateActivity.this, "Please Wait till boot amount is collected", Toast.LENGTH_SHORT).show();
-                new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
-                new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                bootCollection();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
     public String setBootValueApi(String url) {
         InputStream inputStream = null;
         String result = "";
@@ -1484,11 +1437,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
                 displayAmount.setText(String.valueOf(ChaalAmount));
+
                 boot_value_player1 = findViewById(R.id.boot_value_player1);
                 boot_value_player2 = findViewById(R.id.boot_value_player2);
                 boot_value_player3 = findViewById(R.id.boot_value_player3);
                 boot_value_player4 = findViewById(R.id.boot_value_player4);
                 boot_value_player5 = findViewById(R.id.boot_value_player5);
+
                 boot_value_player1.setText(String.valueOf(ChaalAmount));
                 boot_value_player2.setText(String.valueOf(ChaalAmount));
                 boot_value_player3.setText(String.valueOf(ChaalAmount));
@@ -1500,6 +1455,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 int len = arr.length();
 
                 /*for (int i = 0; i < len; i++) {
+
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
                     if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
@@ -1511,6 +1467,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         arrayListUserId.add(userid);
                     }
                 }
+
                 if (arrayListUserId.size() > 0) {
                     for (int j = 0; j < arrayListUserId.size(); j++) {
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
@@ -1519,11 +1476,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 //arrayListUnPackedUser = arrayListUserIdSequence;
 
                 /*for (int i = 0; i < len; i++) {
+
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
                     String user_name = key.getString("user_name");
                     String user_status = key.getString("user_status");
                     String user_image = key.getString("user_image");
+
                     for (int a = 0; a < arrayListUserIdSequence.size(); a++) {
                         try {
                             Log.i("arrayListSequencex", arrayListUserIdSequence.get(a));
@@ -1537,6 +1496,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     arrayListUnPackedUser.add(userid);
                                     encodedimage0 = user_image;
                                     Glide.with(getApplicationContext()).load(user_image).into(profile);
+
                                 } else if (a == 1) {
                                     USER_NAME1 = user_name;
                                     BALANCE1 = key.getString("balance");
@@ -1632,13 +1592,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 chaalLimit = jsonObjMain.getString("chaal_limit");
                 Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
-                displayAmount.setText(String.valueOf(ChaalAmount));
-
-                boot_value_player1 = findViewById(R.id.boot_value_player1);
-                boot_value_player2 = findViewById(R.id.boot_value_player2);
-                boot_value_player3 = findViewById(R.id.boot_value_player3);
-                boot_value_player4 = findViewById(R.id.boot_value_player4);
-                boot_value_player5 = findViewById(R.id.boot_value_player5);
+                //displayAmount.setText(String.valueOf(ChaalAmount));
 
                 boot_value_player1.setText(String.valueOf(ChaalAmount));
                 boot_value_player2.setText(String.valueOf(ChaalAmount));
@@ -1784,24 +1738,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
 
-
-                /*Thread thread1 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //NEXT CHANCES DATA
-                        Intent intentnext = new Intent(PrivateActivity.this, ServiceNextChance.class);
-                        startService(intentnext);
-                    }
-                });
-                thread1.start();*/
-
-                /*Thread thread2 = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
-                thread2.start();*/
-
                 //LAST CHANCES DATA
                 Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
                 startService(intentService);
@@ -1923,6 +1859,119 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+
+    private void refreshUserInfo(String result){
+
+        try {
+            JSONObject jsonObjMain = new JSONObject(result);
+            JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+            int len = arr.length();
+            for (int a = 0; a < len; a++) {
+
+                JSONObject key = arr.getJSONObject(a);
+                String userid = key.getString("user_id");
+                String user_name = key.getString("user_name");
+                String user_image = key.getString("user_image");
+                String bal = key.getString("balance");
+
+                if (a == 0) {
+                    nametext.setText(user_name);
+                    USER_NAME = user_name;
+                    BALANCE = bal;
+                    user_id.setText(userid);
+                    txtVBalanceMainPlayer.setText(key.getString("balance"));
+                    encodedimage0 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile);
+
+                    String Url1 = key.getString("cardone");
+                    String Url2 = key.getString("cardtwo");
+                    String Url3 = key.getString("cardthree");
+                    cardUrl1 = Url1;
+                    cardUrl2 = Url2;
+                    cardUrl3 = Url3;
+                    Log.i("URLx 1", a + " " + Url1);
+                    Log.i("URLx 2", a + " " + Url2);
+                    Log.i("URLx 3", a + " " + Url3);
+                    //nametext1.setText(key.getString("first_name"));
+                } else if (a == 1) {
+
+                    USER_NAME1 = user_name;
+                    BALANCE1 = bal;
+                    nametext1.setText(user_name);
+                    encodedimage1 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile1);
+
+                    String Url4 = key.getString("cardone");
+                    String Url5 = key.getString("cardtwo");
+                    String Url6 = key.getString("cardthree");
+                    cardUrl4 = Url4;
+                    cardUrl5 = Url5;
+                    cardUrl6 = Url6;
+                    Log.i("URLx 4", a + " " + Url4);
+                    Log.i("URLx 5", a + " " + Url5);
+                    Log.i("URLx 6", a + " " + Url6);
+                    //nametext2.setText(key.getString("first_name"));
+                } else if (a == 2) {
+
+                    USER_NAME2 = user_name;
+                    BALANCE2 = bal;
+                    nametext2.setText(user_name);
+                    encodedimage2 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile2);
+
+                    String Url7 = key.getString("cardone");
+                    String Url8 = key.getString("cardtwo");
+                    String Url9 = key.getString("cardthree");
+                    cardUrl7 = Url7;
+                    cardUrl8 = Url8;
+                    cardUrl9 = Url9;
+                    Log.i("URLx 7", a + " " + Url7);
+                    Log.i("URLx 8", a + " " + Url8);
+                    Log.i("URLx 9", a + " " + Url9);
+                    //nametext.setText(key.getString("first_name"));
+                } else if (a == 3) {
+
+                    USER_NAME3 = user_name;
+                    BALANCE3 = bal;
+                    nametext3.setText(user_name);
+                    encodedimage3 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile3);
+
+                    String Url10 = key.getString("cardone");
+                    String Url11 = key.getString("cardtwo");
+                    String Url12 = key.getString("cardthree");
+                    cardUrl10 = Url10;
+                    cardUrl11 = Url11;
+                    cardUrl12 = Url12;
+                    Log.i("URLx 10", a + " " + Url10);
+                    Log.i("URLx 11", a + " " + Url11);
+                    Log.i("URLx 12", a + " " + Url12);
+                    //nametext3.setText(key.getString("first_name"));
+                } else if (a == 4) {
+
+                    USER_NAME4 = user_name;
+                    BALANCE4 = key.getString("balance");
+                    nametext4.setText(user_name);
+                    encodedimage4 = user_image;
+                    Glide.with(getApplicationContext()).load(user_image).into(profile4);
+
+                    String Url13 = key.getString("cardone");
+                    String Url14 = key.getString("cardtwo");
+                    String Url15 = key.getString("cardthree");
+                    cardUrl13 = Url13;
+                    cardUrl14 = Url14;
+                    cardUrl15 = Url15;
+                    Log.i("URLx 13", a + " " + Url13);
+                    Log.i("URLx 14", a + " " + Url14);
+                    Log.i("URLx 15", a + " " + Url15);
+                    //nametext4.setText(key.getString("first_name"));
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     BroadcastReceiverDATA broadcastReceiver;
     public class BroadcastReceiverDATA extends BroadcastReceiver {
         @Override
@@ -1932,9 +1981,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 String result = intent.getStringExtra(DataHolder.KEY_USER_LAST_DATA);
                 getLastChanceData(result);
                 Log.i("TAG124 result", result);
+                refreshUserInfo(result);
             } else if (action.equalsIgnoreCase(DataHolder.ACTION_USER_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_USER_DATA);
-                Log.i("TAG124 result", resultDATA);
+                Log.i("TAG123 UserInforesult", resultDATA);
             } else if (action.equalsIgnoreCase(DataHolder.ACTION_LAST_5_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_LAST_5_DATA);
                 Log.i("TAG124 result", resultDATA);

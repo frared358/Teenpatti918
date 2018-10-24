@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else if (password.equals("")) {
                 edittextpassword.setError("Enter Password");
             } else {
-                new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
+                new LoginAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
 
         } else if (v.getId() == R.id.rememberMeCheckBox) {
@@ -284,7 +284,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return result;
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+    private class LoginAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {

@@ -30,44 +30,16 @@ public class LoadingScreenPrivate extends AppCompatActivity {
         dataHolder = new DataHolder();
         dataHolder.setContext(LoadingScreenPrivate.this);
 
+        new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
+        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.splash2);
         findViewById(R.id.loadingouter).startAnimation(animation);
-        animation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
-                new GameRequestAsyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
 
         Animation myAnimation;
         myAnimation = AnimationUtils.loadAnimation(this, R.anim.inner_load);
         findViewById(R.id.loadinginner).startAnimation(myAnimation);
-        myAnimation.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation myAnimation) {
 
-            }
-
-            @Override
-            public void onAnimationEnd(Animation myAnimation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation myAnimation) {
-
-            }
-        });
     }
 
     public String gameRequestApi(String url) {

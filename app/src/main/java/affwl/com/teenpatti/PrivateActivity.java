@@ -235,16 +235,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         boot_value_player4 = findViewById(R.id.boot_value_player4);
         boot_value_player5 = findViewById(R.id.boot_value_player5);
 
+        new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
+
         Handler handler = new Handler();
         handler.postDelayed(new Runnable(){
             @Override
             public void run() {
-                new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
-                new orderChanceAyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                distributeCards();
                 bootCollection();
             }
         },5000);
+      
+      /*if (!isTaskRoot()) {
+            final Intent intent = getIntent();
+            if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())) {
+                Log.w("INTENTCHECK", "Main Activity is not the root.  Finishing Main Activity instead of launching.");
+                Toast.makeText(this, "yjoimmmmmmmmmhnmmgjmj", Toast.LENGTH_SHORT).show();
+                finish();
+                return;
+            }
+        }*/
     }
+  
+          
 
     private void waitTimer(){
         timerDialog = new Dialog(this);
@@ -934,7 +948,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     //On BackPress
     public void backPress() {
         DataHolder.setData(PrivateActivity.this, "userstatus", "offline");
-        new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
+        new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "offline");
+        stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
         try {
             if (broadcastReceiver != null) {
                 unregisterReceiver(broadcastReceiver);
@@ -1449,6 +1464,75 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    boolean ONE_TIME_LAST_CHANCES=true;
+    private class orderChance2AyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Toast.makeText(PrivateActivity.this, "orderChanceAyncTas\n\n\n" + result, Toast.LENGTH_SHORT).show();
+            Log.i("CheckGameOrderChance2", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                if (jsonObjMain.getString("message").equalsIgnoreCase("Sucessfully")) {
+
+                    JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+                    int len = arr.length();
+
+                    for (int i = 0; i < len; i++) {
+                        String s = arr.getString(i);
+                        Log.i("TTYY", "" + s);
+                    }
+
+
+                    for (int i = 0; i < len; i++) {
+
+                        String userid = arr.getString(i);
+
+                        StartBlink = arr.getString(0);
+                        Log.i("TTYY", "" + userid);
+                        if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
+                            sequence = true;
+                        }
+                        if (sequence) {
+                            arrayListUserIdSequence.add(userid);
+                        } else {
+                            arrayListUserId.add(userid);
+                        }
+                    }
+
+                    if (arrayListUserId.size() > 0) {
+                        for (int j = 0; j < arrayListUserId.size(); j++) {
+                            arrayListUserIdSequence.add(arrayListUserId.get(j));
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            if (ONE_TIME_LAST_CHANCES) {
+                //LAST CHANCES DATA
+                Toast.makeText(PrivateActivity.this, "ONE LAST LAST CHANCES", Toast.LENGTH_SHORT).show();
+                Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
+                startService(intentService);
+                DataHolder.setData(PrivateActivity.this, "CHECK_SERVICE", true);
+                Log.i("GITA","Hellooooooooooooooo");
+
+                //BroadcastReceiver LAST DATA
+                broadcastReceiver = new BroadcastReceiverDATA();
+                IntentFilter intentFilter = new IntentFilter(DataHolder.ACTION_USER_LAST_DATA);
+                intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
+                registerReceiver(broadcastReceiver, intentFilter);
+                ONE_TIME_LAST_CHANCES = false;
+            }
+        }
+    }
+
     private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -1636,6 +1720,33 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                 int len = arr.length();
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+
+                    JSONObject key1 = arr.getJSONObject(0);
+                    StartBlink = key1.getString("user_id");
+
+                    Log.i("TTYY", "" + userid);
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
+                        sequence = true;
+                    }
+                    if (sequence) {
+                        arrayListUserIdSequence.add(userid);
+                    } else {
+                        arrayListUserId.add(userid);
+                    }
+                }
+
+                if (arrayListUserId.size() > 0) {
+                    for (int j = 0; j < arrayListUserId.size(); j++) {
+                        arrayListUserIdSequence.add(arrayListUserId.get(j));
+                    }
+                }
+
+
                 for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
@@ -1772,17 +1883,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 }
 
-                //LAST CHANCES DATA
-                Intent intentService = new Intent(PrivateActivity.this, ServiceLastUserData.class);
-                startService(intentService);
-                DataHolder.setData(PrivateActivity.this, "CHECK_SERVICE", true);
-                Log.i("GITA","Hellooooooooooooooo");
-
-                //BroadcastReceiver LAST DATA
-                broadcastReceiver = new BroadcastReceiverDATA();
-                IntentFilter intentFilter = new IntentFilter(DataHolder.ACTION_USER_LAST_DATA);
-                intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-                registerReceiver(broadcastReceiver, intentFilter);
+                new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -2027,7 +2128,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     String StartBlink;
-
+    boolean RAVI  = true;
     private void getLastChanceData(String result) {
         try {
             Log.e("TADAG==::",""+result);
@@ -2210,6 +2311,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     if (chance_Status.equalsIgnoreCase("packed")) {
                         arrayListUnPackedUser.remove(lastChance_status);
+                    }
+
+                    if (lastChance_status.equalsIgnoreCase("Timeout") && RAVI){
+                        new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                        RAVI = false;
                     }
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();

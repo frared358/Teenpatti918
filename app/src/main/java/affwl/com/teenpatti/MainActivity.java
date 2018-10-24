@@ -783,6 +783,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
+    ArrayList<String> arrayListAvatar = new ArrayList<>();
 
     private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
         @Override

@@ -41,7 +41,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
             @Override
             public void onAnimationEnd(Animation animation) {
                 new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
-                new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+                new GameRequestAsyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
             }
 
             @Override
@@ -113,7 +113,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
 
         return result;
     }
-    private class GameRequestAyncTask extends AsyncTask<String, Void, String> {
+    private class GameRequestAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {

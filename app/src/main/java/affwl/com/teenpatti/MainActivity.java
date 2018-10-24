@@ -66,6 +66,7 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
@@ -216,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new AvatarAsyncTask().execute("http://213.136.81.137:8081/api/getallavatar");
         dataHolder = new DataHolder();
         dataHolder.setContext(this);
+
+//        new Handler().postDelayed(mLaunchTask, delay_time);
 
     }
 
@@ -783,6 +786,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     String avatar_1, avatar_2, avatar_3, avatar_4, avatar_5, avatar_6, avatar_7, avatar_8;
+    ArrayList<String> arrayListAvatar = new ArrayList<>();
 
     private class AvatarAsyncTask extends AsyncTask<String, Void, String> {
         @Override

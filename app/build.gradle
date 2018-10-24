@@ -84,4 +84,8 @@ dependencies {
     implementation 'com.sdsmdg.tastytoast:tastytoast:0.1.1'
 
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
+
+    //Progress bar
+    implementation 'io.saeid:fab-loading:1.0.0'
+
 }

@@ -85,7 +85,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
 
         return result;
     }
-    private class GameRequestAyncTask extends AsyncTask<String, Void, String> {
+    private class GameRequestAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {

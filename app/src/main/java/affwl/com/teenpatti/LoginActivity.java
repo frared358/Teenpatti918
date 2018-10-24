@@ -113,7 +113,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else if (password.equals("")) {
                 edittextpassword.setError("Enter Password");
             } else {
-                new HttpAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
+                new LoginAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
 
         } else if (v.getId() == R.id.rememberMeCheckBox) {
@@ -168,8 +168,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         tv_alert_cancel.setVisibility(View.GONE);
         myAlertDialog.show();
-
     }
+
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
@@ -284,7 +284,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         return result;
     }
 
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+    private class LoginAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -346,6 +346,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+//        displayAlertMessage("","");
         MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mp.start();
         finish();

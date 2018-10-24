@@ -2,6 +2,7 @@ package affwl.com.teenpatti;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +26,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
@@ -58,6 +60,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.github.erehmi.countdown.CountDownTask;
+import io.github.erehmi.countdown.CountDownTimers;
 import io.saeid.fabloading.LoadingView;
 import pl.droidsonroids.gif.GifImageView;
 
@@ -83,6 +87,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     Handler handler;
     private CircleProgressBar progressBarChances;
     ScheduledExecutorService scheduleTaskExecutor;
+
+    private TextView timer;
+    private long mDeadlineMillis;
+
+    private CountDownTask mCountDownTask;
+    Dialog timerDialog;
     MediaPlayer mediaPlayer;
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
     private LoadingView mLoadViewLong;
@@ -92,6 +102,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_private);
 
+        waitTimer();
 
         mLoadViewLong = (LoadingView) findViewById(R.id.loading_view_repeat);
         mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar1, LoadingView.FROM_TOP);
@@ -233,8 +244,31 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 bootCollection();
             }
         },5000);
+    }
 
+    private void waitTimer(){
+        timerDialog = new Dialog(this);
+        timerDialog.setCanceledOnTouchOutside(false);
+        timerDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        timerDialog.setContentView(R.layout.wait_counter);
 
+        timer = timerDialog.findViewById(R.id.timer);
+
+        final CountDownTask countDownTask = CountDownTask.create();
+        mDeadlineMillis = CountDownTask.elapsedRealtime() + 1000 * 3;
+
+        countDownTask.until(timer, mDeadlineMillis, 1000, new CountDownTimers.OnCountDownListener() {
+            @Override
+            public void onTick(View view, long millisUntilFinished) {
+                timer.setText(String.valueOf(millisUntilFinished / 1000));
+            }
+
+            @Override
+            public void onFinish(View view) {
+                timerDialog.dismiss();
+            }
+        });
+        timerDialog.show();
     }
 
     public void distributeCards() {

@@ -168,8 +168,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         tv_alert_cancel.setVisibility(View.GONE);
         myAlertDialog.show();
-
     }
+
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(), ACCESS_FINE_LOCATION);
@@ -346,6 +346,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+//        displayAlertMessage("","");
         MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mp.start();
         finish();

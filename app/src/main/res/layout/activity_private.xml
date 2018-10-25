@@ -148,7 +148,7 @@
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_heightPercent="45%"
-                    app:layout_widthPercent="80%" />
+                    app:layout_widthPercent="80%"/>
 
                 <io.saeid.fabloading.LoadingView
                     android:id="@+id/loading_view_repeat"

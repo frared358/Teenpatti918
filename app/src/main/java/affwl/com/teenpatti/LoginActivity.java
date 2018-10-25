@@ -105,6 +105,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.playNow) {
+            mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+            mediaPlayer.start();
             //get USERNAME and PASSWORD
             username = edittextusername.getText().toString();
             password = edittextpassword.getText().toString();
@@ -115,6 +117,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else {
                 new LoginAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
+            Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
 
         } else if (v.getId() == R.id.rememberMeCheckBox) {
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
@@ -295,7 +298,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onPostExecute(String result) {
             Log.i("CheckLogin", "" + result);
             try {
-                JSONObject jsonObjMain = new JSONObject(result);
+                JSONObject jsonObjMain = new JSONObject(result.toString());
 
                 String message = jsonObjMain.getString("message");
 

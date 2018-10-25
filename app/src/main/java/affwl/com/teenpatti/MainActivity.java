@@ -609,7 +609,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void OpenPrivateTable(View view) {
         startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
 //        new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
-        mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
+        mediaPlayer = MediaPlayer.create(this, R.raw.click);
         mediaPlayer.start();
     }
 
@@ -775,7 +775,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONObject jsonObjMain = new JSONObject(s);
 
                 String message = jsonObjMain.getString("message");
-                Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+                TastyToast.makeText(MainActivity.this,"Profile Picture Changed Successfully",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

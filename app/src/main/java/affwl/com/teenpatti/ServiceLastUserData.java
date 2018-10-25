@@ -40,16 +40,6 @@ public class ServiceLastUserData extends Service {
         super.onCreate();
         Log.i("GITA","hiiiiiiiiiiii");
 
-//        Thread thread1 = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.i("GITAGOVINDAM1","hiiiiiiiiiiii");
-//                new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(ServiceLastUserData.this, "deskid"));
-//            }
-//        });
-        //thread1.start();
-
-
         if (mTimer != null) // Cancel if already existed
             mTimer.cancel();
         else
@@ -82,9 +72,6 @@ public class ServiceLastUserData extends Service {
         protected void onPostExecute(String result) {
             Log.i("Check1235", "" + result);
 
-                /*if (DataHolder.getDataBoolean(ServiceLastUserData.this,"CHECK_SERVICE")){
-
-                }*/
             Intent intent = new Intent(DataHolder.ACTION_USER_LAST_DATA);
             intent.putExtra(DataHolder.KEY_USER_LAST_DATA, result);
             sendBroadcast(intent);

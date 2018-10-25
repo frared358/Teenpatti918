@@ -31,7 +31,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
         dataHolder.setContext(LoadingScreenPrivate.this);
 
         new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
-        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+        new GameRequestAsyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
 
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.splash2);
         findViewById(R.id.loadingouter).startAnimation(animation);

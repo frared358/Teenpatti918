@@ -854,7 +854,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         switch (v.getId()) {
             case R.id.plus_btn:
                 ChaalAmount = ChaalAmount * 2;
-//                displayAmount.setText(String.valueOf(ChaalAmount));
+                displayAmount.setText(String.valueOf(ChaalAmount));
                 boot_value_player3.setText(String.valueOf(ChaalAmount));
                 plus_btn.setEnabled(false);
                 plus_btn.setImageResource(R.drawable.disabled);
@@ -867,7 +867,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 plus_btn.setEnabled(true);
                 minus_btn.setEnabled(false);
                 ChaalAmount = ChaalAmount / 2;
-//                displayAmount.setText(String.valueOf(ChaalAmount));
+                displayAmount.setText(String.valueOf(ChaalAmount));
                 boot_value_player3.setText(String.valueOf(ChaalAmount));
                 minus_btn.setImageResource(R.drawable.minus_disabled);
                 break;
@@ -876,8 +876,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 maxBlindCount++;
                 chaalBlind();
 //                boot_value_player3.setText(String.valueOf(ChaalAmount));
-                bootvalueanimate3 = AnimationUtils.loadAnimation(this, R.anim.boot_anim3);
-                boot_value_player3.startAnimation(bootvalueanimate3);
                 break;
 
             case R.id.chaal_btn:
@@ -968,21 +966,32 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
 
-                Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
-                Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
-                Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
+                try {
+                    Glide.with(PrivateActivity.this).load(cardUrl7).into(card1);
+                    Glide.with(PrivateActivity.this).load(cardUrl8).into(card6);
+                    Glide.with(PrivateActivity.this).load(cardUrl9).into(card11);
 
-                Glide.with(PrivateActivity.this).load(cardUrl4).into(card2);
-                Glide.with(PrivateActivity.this).load(cardUrl5).into(card7);
-                Glide.with(PrivateActivity.this).load(cardUrl6).into(card12);
+                    Glide.with(PrivateActivity.this).load(cardUrl4).into(card2);
+                    Glide.with(PrivateActivity.this).load(cardUrl5).into(card7);
+                    Glide.with(PrivateActivity.this).load(cardUrl6).into(card12);
 
-                Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
-                Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
-                Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
+                    Glide.with(PrivateActivity.this).load(cardUrl13).into(card4);
+                    Glide.with(PrivateActivity.this).load(cardUrl14).into(card9);
+                    Glide.with(PrivateActivity.this).load(cardUrl15).into(card14);
 
-                Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
-                Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
-                Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
+                    Glide.with(PrivateActivity.this).load(cardUrl10).into(card5);
+                    Glide.with(PrivateActivity.this).load(cardUrl11).into(card10);
+                    Glide.with(PrivateActivity.this).load(cardUrl12).into(card15);
+
+                    if(btn_see_cards.getVisibility() == View.VISIBLE){
+                        btn_see_cards.setVisibility(View.GONE);
+                        Glide.with(PrivateActivity.this).load(cardUrl1).into(card3);
+                        Glide.with(PrivateActivity.this).load(cardUrl2).into(card8);
+                        Glide.with(PrivateActivity.this).load(cardUrl3).into(card13);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
         stopService(new Intent(PrivateActivity.this, ServiceLastUserData.class));
@@ -1022,6 +1031,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     //PACK USER
     public void packOperation() {
+        animator.cancel();
+        animator.end();
+
         rl_bottom_caption.setVisibility(View.GONE);
         btn_see_cards.setVisibility(View.GONE);
         //below_layout.setVisibility(View.VISIBLE);
@@ -1030,9 +1042,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card13.setVisibility(View.GONE);
         profile.setImageResource(R.drawable.fade_inner_img);
         chance_Status = "packed";
-        CHECK_TIME_OUT = true;
+//        CHECK_TIME_OUT = true;
+        progressBarChances.setVisibility(View.GONE);
         new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
-        //new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
     }
 
     //Seen Card Operation
@@ -1052,10 +1064,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         blind_btn.setVisibility(View.GONE);
         chaal_btn.setVisibility(View.VISIBLE);
         Seen_Blind = "seen";
-
+        ONE_TIME_SEEN = true;
         ChaalAmount = ChaalAmount * 2;
         boot_value_player3.setText(String.valueOf(ChaalAmount));
-//        displayAmount.setText(String.valueOf(ChaalAmount));
+        displayAmount.setText(String.valueOf(ChaalAmount));
     }
 
     //INFO POPUP DATA
@@ -1096,6 +1108,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         Handler handler1 = new Handler();
         Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
 
+        bootvalueanimate3 = AnimationUtils.loadAnimation(this, R.anim.boot_anim3);
+        boot_value_player3.startAnimation(bootvalueanimate3);
+        blind_btn.setEnabled(false);
+//        CHECK_TIME_OUT = true;
+        animator.cancel();
+        animator.end();
+        progressBarChances.setVisibility(View.GONE);
         int TablelayAmtc = 0;
         try {
             TablelayAmtc = Integer.parseInt(txtVTableAmt.getText().toString().replace(" ", ""));
@@ -1104,13 +1123,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             TablelayAmtc = 0;
         }
         int AMOUNT = ChaalAmount + TablelayAmtc;
-        txtVTableAmt.setText(String.valueOf(AMOUNT));
-        maxBlindCount = 0;
+        //txtVTableAmt.setText(String.valueOf(AMOUNT));
 
         if (AMOUNT >= PotLimitInt) {
             TastyToast.makeText(this, "Pot Limit Exceeded", TastyToast.LENGTH_LONG, TastyToast.INFO);
             showCards();
+            txtVTableAmt.setText(String.valueOf(AMOUNT));
         }
+
+        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
+
         handler = new Handler();
         handler1 = new Handler();
         handler.postDelayed(new Runnable() {
@@ -1124,12 +1146,16 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 rl_bottom_caption.setVisibility(View.GONE);
-                blind_btn.setEnabled(false);
+                blind_btn.setEnabled(true);
             }
         }, 1000);
-        CHECK_TIME_OUT = true;
-        new ChanceAsyncTask().execute("http://213.136.81.137:8081/api/insertChance");
-        //new NextChanceAsyncTask().execute("http://213.136.81.137:8081/api/deskNextChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
+        minus_btn.setEnabled(false);
+        minus_btn.setImageResource(R.drawable.minus_disabled);
+        plus_btn.setImageResource(R.drawable.plus_btn);
+        plus_btn.setEnabled(true);
+
+
     }
 
     private static String convertInputStreamToString(InputStream inputStream) throws IOException {
@@ -1190,34 +1216,39 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private void simulateProgress() {
         progressBarChances.setVisibility(View.VISIBLE);
         animator = ValueAnimator.ofInt(0, 100);
+
+        if (btn_see_cards.getVisibility() != View.VISIBLE && Seen_Blind.equalsIgnoreCase("blind")) {
+            btn_see_cards.setVisibility(View.VISIBLE);
+        }
+
+        if (maxBlindCount == Integer.parseInt(MaxBlind)) {
+            seeCardOperation();
+        }
+        rl_bottom_caption.setVisibility(View.VISIBLE);
+
+        ChaalAmount = Integer.parseInt(lastChaal_amount);
+        displayAmount.setText(String.valueOf(ChaalAmount));
+
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 int progress = (int) animation.getAnimatedValue();
                 progressBarChances.setProgress(progress + 1);
-                Log.i("TAGTAGA", "hi " + progress);
-                if (CHECK_TIME_OUT) {
-                    animator.cancel();
-                    CHECK_TIME_OUT = false;
-                    progressBarChances.setVisibility(View.GONE);
-                }
+                Log.i("TAGTAG", "hi " + progress);
 
-                if (99 == progress) {
-                    animator.cancel();
+                if (99 == progress ) {
                     packOperation();
-                    progressBarChances.setVisibility(View.GONE);
                 }
-
             }
         });
         Log.i("TAGTAGA1", "hello");
-        animator.setRepeatCount(ValueAnimator.INFINITE);
+        animator.setRepeatCount(0);
         animator.setDuration(20000);
         animator.start();
     }
 
     String Seen_Blind = "blind", chance_Status = "active", Show_Status = "0", Next_User;
-
+    boolean ONE_TIME_SEEN=false;
     public String chanceApi(String url, String mSeen_Blind, String mchance_Status) {
         InputStream inputStream = null;
         String result = "";
@@ -1230,12 +1261,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             JSONObject jsonObject = new JSONObject();
 
             jsonObject.accumulate("deskid", DataHolder.getDataInt(this, "deskid"));
-            Log.i("useridx", DataHolder.getDataString(PrivateActivity.this, "userid"));
             jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
             jsonObject.accumulate("chaalamount", ChaalAmount);
             jsonObject.accumulate("chance_status", mchance_Status);
-            jsonObject.accumulate("seen_blind", mSeen_Blind);
-            jsonObject.accumulate("dealer_id", 1);
+            if (ONE_TIME_SEEN) {
+                jsonObject.accumulate("seen_blind", mSeen_Blind);
+                ONE_TIME_SEEN = false;
+            }
+            //jsonObject.accumulate("dealer_id", 1);
             //jsonObject.accumulate("show", mShow_Status);//user count
             //jsonObject.accumulate("next_user", mNext_User);
             //jsonObject.accumulate("potvalue", txtVTableAmt.getText().toString());
@@ -1265,7 +1298,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         } catch (Exception e) {
             Log.d("InputStream", "" + e);
         }
-
+        Log.e("CheckINSERT", "" + result);
         return result;
     }
 
@@ -1279,16 +1312,19 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(String result) {
             Log.i("Check123ssp", "" + result);
+
             try {
                 JSONObject jsonObjMain = new JSONObject(result);
-                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
-                for (int i = 0; i < arr.length(); i++) {
-                    String s = arr.getString(i);
-                    Log.i("TTYYp", "" + s);
+                String msg = jsonObjMain.getString("message");
+                if (msg.equalsIgnoreCase("Insufficient balance")){
+                    TastyToast.makeText(PrivateActivity.this, msg, Toast.LENGTH_SHORT,TastyToast.WARNING).show();
                 }
+
+                new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.i("Check123ssp", "" + e);
             }
         }
     }
@@ -1545,34 +1581,29 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
             Log.i("Check123", "" + result);
             try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
+                JSONObject jsonObjMain = new JSONObject(result);
+                String message = jsonObjMain.getString("message");
+                Log.i("TAG", "" + message);
 
-                /*BootValue = jsonObjMain.getString("boot_value");
+                BootValue = jsonObjMain.getString("boot_value");
                 MaxBlind = jsonObjMain.getString("max_no_blinds");
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
                 chaalLimit = jsonObjMain.getString("chaal_limit");
-                Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
+                Log.i("ChaalAmountxc", String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
                 displayAmount.setText(String.valueOf(ChaalAmount));
-
-                boot_value_player1 = findViewById(R.id.boot_value_player1);
-                boot_value_player2 = findViewById(R.id.boot_value_player2);
-                boot_value_player3 = findViewById(R.id.boot_value_player3);
-                boot_value_player4 = findViewById(R.id.boot_value_player4);
-                boot_value_player5 = findViewById(R.id.boot_value_player5);
 
                 boot_value_player1.setText(String.valueOf(ChaalAmount));
                 boot_value_player2.setText(String.valueOf(ChaalAmount));
                 boot_value_player3.setText(String.valueOf(ChaalAmount));
                 boot_value_player4.setText(String.valueOf(ChaalAmount));
-                boot_value_player5.setText(String.valueOf(ChaalAmount));*/
+                boot_value_player5.setText(String.valueOf(ChaalAmount));
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
-
                 int len = arr.length();
 
-                /*for (int i = 0; i < len; i++) {
+                for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
@@ -1590,10 +1621,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     for (int j = 0; j < arrayListUserId.size(); j++) {
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
-                }*/
+                }
                 //arrayListUnPackedUser = arrayListUserIdSequence;
 
-                /*for (int i = 0; i < len; i++) {
+                for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
@@ -1673,7 +1704,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             e.printStackTrace();
                         }
                     }
-                }*/
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -1708,9 +1739,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
                 chaalLimit = jsonObjMain.getString("chaal_limit");
-                Log.i("ChaalAmountx", String.valueOf(ChaalAmount));
+                Log.i("ChaalAmountxc", String.valueOf(ChaalAmount));
                 ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
-                //displayAmount.setText(String.valueOf(ChaalAmount));
+                displayAmount.setText(String.valueOf(ChaalAmount));
 
                 boot_value_player1.setText(String.valueOf(ChaalAmount));
                 boot_value_player2.setText(String.valueOf(ChaalAmount));
@@ -1941,7 +1972,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Log.i("Check123545", "" + result);
+            Log.i("Check1235451", "" + result);
+            Toast.makeText(PrivateActivity.this, ""+result, Toast.LENGTH_LONG).show();
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")) {
@@ -2116,7 +2148,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 String result = intent.getStringExtra(DataHolder.KEY_USER_LAST_DATA);
                 getLastChanceData(result);
                 Log.i("TAG124 result", result);
-                refreshUserInfo(result);
+                //refreshUserInfo(result);
             } else if (action.equalsIgnoreCase(DataHolder.ACTION_USER_DATA)) {
                 String resultDATA = intent.getStringExtra(DataHolder.KEY_USER_DATA);
                 Log.i("TAG123 UserInforesult", resultDATA);
@@ -2128,58 +2160,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     }
 
     String StartBlink;
-    boolean RAVI  = true;
+    boolean TIMEOUT_USER  = true;
+    boolean PACKED_USER = true;
     private void getLastChanceData(String result) {
         try {
             Log.e("TADAG==::",""+result);
             JSONObject jsonObjMain = new JSONObject(result);
             JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
             int len = arr.length();
-
-            Log.i("TAGGGi", "" + len);
-//            if (len == 0) {
-//                try {
-//                    if (DataHolder.getDataString(PrivateActivity.this, "userid").equalsIgnoreCase(StartBlink)) {
-//                        if (STARTING_TURN) {
-//                            simulateProgress();
-//                            Log.i("TAGGGin", "" + arrayListUserIdSequence.get(0));
-//                            btn_see_cards.setVisibility(View.VISIBLE);
-//                            rl_bottom_caption.setVisibility(View.VISIBLE);
-//                            Log.i("CHKIL Start", ChaalAmount + "");
-//                            STARTING_TURN = false;
-//                            Log.i("CHKIL Start", DataHolder.getDataString(PrivateActivity.this, "userid") + "");
-//                        }
-//                    } else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(StartBlink)) {
-//                        viewBlinkCircle = player_blink_circle1;
-//                        player_blink_circle1.startAnimation(animBlink);
-//                        TIMER_ROTATION = true;
-//                        user_status1.setText("online");
-//                        Log.i("CHKIL Start", arrayListUserIdSequence.get(1) + "");
-//                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(StartBlink)){
-//                        viewBlinkCircle = player_blink_circle2;
-//                        player_blink_circle2.startAnimation(animBlink);
-//                        TIMER_ROTATION = true;
-//                        user_status2.setText("online");
-//                        Log.i("CHKIL Start", arrayListUserIdSequence.get(2) + "");
-//                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(StartBlink)){
-//
-//                        viewBlinkCircle = player_blink_circle3;
-//                        player_blink_circle3.startAnimation(animBlink);
-//                        TIMER_ROTATION = true;
-//                        user_status3.setText("online");
-//                        Log.i("CHKIL Start", arrayListUserIdSequence.get(3) + "");
-//                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(StartBlink)){
-//
-//                        viewBlinkCircle = player_blink_circle4;
-//                        player_blink_circle4.startAnimation(animBlink);
-//                        TIMER_ROTATION = true;
-//                        user_status4.setText("online");
-//                        Log.i("CHKIL Start", arrayListUserIdSequence.get(4) + "");
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
 
             for (int i = 0; i < len; i++) {
                 JSONObject key = arr.getJSONObject(i);
@@ -2217,16 +2205,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         if (TIMER_ROTATION) {
                             TIMER_ROTATION = false;
                             simulateProgress();
-                            if (btn_see_cards.getVisibility() != View.VISIBLE) {
-                                btn_see_cards.setVisibility(View.VISIBLE);
-                            }
-
-                            if (maxBlindCount == Integer.parseInt(MaxBlind)) {
-                                seeCardOperation();
-                            }
-                            rl_bottom_caption.setVisibility(View.VISIBLE);
-                            ChaalAmount = Integer.parseInt(lastChaal_amount);
-
                             Log.i("CHKIL1",ChaalAmount+"");
                         }
                     }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
@@ -2264,7 +2242,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                 try {
                     if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
                             user_status1.setText(lastSeen_blind);
                         } else {
                             user_status1.setText(lastChance_status);
@@ -2275,7 +2253,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             card12.setVisibility(View.GONE);
                         }
                     } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
                             user_status2.setText(lastSeen_blind);
                         } else {
                             user_status2.setText(lastChance_status);
@@ -2286,7 +2264,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                             card11.setVisibility(View.GONE);
                         }
                     } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed")) {
+                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
                             user_status3.setText(lastSeen_blind);
                         } else {
                             user_status3.setText(lastChance_status);
@@ -2309,29 +2287,45 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
 
-                    if (chance_Status.equalsIgnoreCase("packed")) {
-                        arrayListUnPackedUser.remove(lastChance_status);
-                    }
-
-                    if (lastChance_status.equalsIgnoreCase("Timeout") && RAVI){
-                        new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                        RAVI = false;
-                    }
                 } catch (IndexOutOfBoundsException e) {
                     e.printStackTrace();
                 }
             }
             txtVTableAmt.setText(lastPot_value);
 
+            if (chance_Status.equalsIgnoreCase("packed")) {
+                arrayListUnPackedUser.remove(lastChance_status);
+            }
+
+            if (lastChance_status.equalsIgnoreCase("Timeout")){
+                if (TIMEOUT_USER) {
+                    TIMEOUT_USER = false;
+                    Toast.makeText(this, "TIMEOUT_USER "+TIMEOUT_USER, Toast.LENGTH_SHORT).show();
+                    new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                }
+            }else {
+                TIMEOUT_USER = true;
+            }
+
+            if (lastChance_status.equalsIgnoreCase("Packed") && !DataHolder.getDataString(this, "userid").equalsIgnoreCase(lastChanceid)){
+                if (PACKED_USER) {
+                    PACKED_USER = false;
+                    Toast.makeText(this, "PACKED_USER "+PACKED_USER, Toast.LENGTH_SHORT).show();
+                    new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                }
+            }else {
+                PACKED_USER = true;
+            }
+
             if (arrayListUnPackedUser.size() == 2) {
                 show_btn.setVisibility(View.VISIBLE);
             }
 
-            /*if (arrayListUnPackedUser.size() == 1) {
+            if (arrayListUnPackedUser.size() == 1) {
                 //ShowData Set Winner
                 showCards();
                 Toast.makeText(this, "1 user is left", Toast.LENGTH_SHORT).show();
-            }*/
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {

@@ -314,7 +314,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.imageURL = key.getString("user_image");
 
                         DataHolder.setData(LoginActivity.this, "user_image", DataHolder.imageURL);
-                        DataHolder.setData(LoginActivity.this, "deskid", Integer.parseInt(key.getString("desk_id")));
+                        DataHolder.setData(LoginActivity.this, "deskid", Integer.parseInt(key.getString("deskid")));
                         DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
 

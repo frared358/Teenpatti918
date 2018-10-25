@@ -1584,13 +1584,11 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     CHECK_TIME_OUT = false;
                     progressBarChances.setVisibility(View.GONE);
                 }
-
                 if (99 == progress) {
                     animator.cancel();
                     packOperation();
                     progressBarChances.setVisibility(View.GONE);
                 }
-
             }
         });
         Log.i("TAGTAGA1", "hello");
@@ -2329,7 +2327,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 if (jsonObjMain.getString("message").equalsIgnoreCase("Updated sucessfully")) {
                     new setWinnersAsyncTask().execute("http://213.136.81.137:8081/api/setWinners?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-
 //                    blinkergif2.setVisibility(View.VISIBLE);
                 }
             } catch (JSONException e) {
@@ -2357,26 +2354,29 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     String winner_type = key.getString("winner_type");
                     String winner_rank = key.getString("winner_rank");
 
-                    if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(0))){
-                        blinkergif1.setVisibility(View.VISIBLE);
-                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(1))){
-                        blinkergif2.setVisibility(View.VISIBLE);
-                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(2))){
-                        blinkergif3.setVisibility(View.VISIBLE);
-                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(3))){
-                        blinkergif4.setVisibility(View.VISIBLE);
-                    }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(4))){
-                        blinkergif5.setVisibility(View.VISIBLE);
+                    try {
+                        if (user_id.equals((arrayListUserIdSequence).get(1))){
+                            blinkergif1.setVisibility(View.VISIBLE);
+                        }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(1))){
+                            blinkergif2.setVisibility(View.VISIBLE);
+                        }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(2))){
+                            blinkergif3.setVisibility(View.VISIBLE);
+                        }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(3))){
+                            blinkergif4.setVisibility(View.VISIBLE);
+                        }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(4))){
+                            blinkergif5.setVisibility(View.VISIBLE);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
                     TastyToast.makeText(PrivateActivity.this,winner_type,5000,TastyToast.INFO);
+                    new distributeCommissionAsyncTask().execute("http://213.136.81.137:8081/api/distributeCommission");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
     }
-
 
     private void refreshUserInfo(String result){
 
@@ -2723,4 +2723,64 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     }
 
+    public String distributeCommissionApi(String url) {
+        InputStream inputStream = null;
+        String result = "";
+        try {
+
+            HttpClient httpclient = new DefaultHttpClient();
+            HttpPost httpPost = new HttpPost(url);
+
+            String json = "";
+            JSONObject jsonObject = new JSONObject();
+
+            jsonObject.accumulate("desk_id", DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+            json = jsonObject.toString();
+            StringEntity se = new StringEntity(json);
+            se.setContentType("application/json");
+
+            httpPost.setEntity(new StringEntity(json));
+            httpPost.setHeader("Accept", "application/json");
+            httpPost.setHeader("Content-type", "application/json");
+            httpPost.setHeader("Authorization", DataHolder.getDataString(PrivateActivity.this, "token"));
+
+            HttpResponse httpResponse = httpclient.execute(httpPost);
+            inputStream = httpResponse.getEntity().getContent();
+
+            if (inputStream != null) {
+                try {
+                    result = DataHolder.convertInputStreamToString(inputStream);
+                } catch (Exception e) {
+                    Log.e("Check", "" + e);
+                }
+            } else
+                result = "Did not work!";
+
+        } catch (Exception e) {
+            Log.d("InputStream", "" + e);
+        }
+
+        return result;
+    }
+
+    private class distributeCommissionAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return distributeCommissionApi(urls[0]);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("CheckCommission", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                String message = jsonObjMain.getString("message");
+                Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -295,14 +295,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         protected void onPostExecute(String result) {
             Log.i("CheckLogin", "" + result);
             try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
+                JSONObject jsonObjMain = new JSONObject(result);
 
                 String message = jsonObjMain.getString("message");
 
-                DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token").toString());
+                DataHolder.setData(LoginActivity.this, "token", jsonObjMain.getString("token"));
 
                 if (message.equalsIgnoreCase("Login Successful")) {
-                    TastyToast.makeText(LoginActivity.this, "Login Successful", TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
+                    TastyToast.makeText(LoginActivity.this, ""+message, TastyToast.LENGTH_LONG, TastyToast.SUCCESS);
                     JSONArray array = new JSONArray(jsonObjMain.getString("data"));
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject key = array.getJSONObject(i);
@@ -314,7 +314,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         DataHolder.imageURL = key.getString("user_image");
 
                         DataHolder.setData(LoginActivity.this, "user_image", DataHolder.imageURL);
-                        DataHolder.setData(LoginActivity.this, "deskid", Integer.parseInt(key.getString("desk_id")));
+                        DataHolder.setData(LoginActivity.this, "deskid", Integer.parseInt(key.getString("deskid")));
                         DataHolder.setData(LoginActivity.this, "userstatus", key.getString("user_status"));
                         DataHolder.setData(LoginActivity.this, "userid", key.getString("userid"));
 
@@ -334,7 +334,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } catch (JSONException e) {
                 e.printStackTrace();
                 try {
-                    JSONObject jsonObjMain = new JSONObject(result.toString());
+                    JSONObject jsonObjMain = new JSONObject(result);
                     TastyToast.makeText(LoginActivity.this, jsonObjMain.getString("message"), TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
                 } catch (JSONException e1) {
                     e1.printStackTrace();

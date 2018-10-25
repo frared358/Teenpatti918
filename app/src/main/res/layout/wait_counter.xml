@@ -11,8 +11,10 @@
             android:textSize="18sp"
             android:textColor="@color/white"
             android:layout_gravity="center"
-            android:padding="15dp"
-            android:text="Generating Table, Please Wait : " />
+            android:paddingStart="12dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
+            android:text="Generating Table, Please Wait: " />
 
         <TextView
             android:id="@+id/timer"
@@ -22,6 +24,8 @@
             android:textColor="@color/white"
             android:layout_gravity="center"
             android:text=""
-            android:padding="15dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="12dp"
+            android:paddingTop="12dp"
             android:layout_toEndOf="@+id/message"/>
 </RelativeLayout>

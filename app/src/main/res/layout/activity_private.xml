@@ -30,7 +30,6 @@
                     app:layout_marginTopPercent="1%"
                     app:layout_widthPercent="25%" />
 
-
             </android.support.percent.PercentRelativeLayout>
 
             <!--Right side ithree_two_one_leaderboardyout-->
@@ -48,6 +47,7 @@
                     app:layout_marginLeftPercent="1%"
                     app:layout_marginTopPercent="1%"
                     app:layout_widthPercent="8%" />
+
 
             </android.support.percent.PercentRelativeLayout>
         </android.support.percent.PercentRelativeLayout>
@@ -68,7 +68,6 @@
                 android:gravity="center"
                 android:src="@drawable/teenpattitableimage"
                 app:layout_widthPercent="70%" />
-
 
 
             <android.support.percent.PercentRelativeLayout
@@ -222,8 +221,8 @@
 
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/blinkergif2"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_width="200dp"
                     android:visibility="gone"
                     android:src="@drawable/winner_indicator"/>
 
@@ -280,8 +279,8 @@
 
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/blinkergif1"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_width="200dp"
                     android:visibility="gone"
                     android:src="@drawable/winner_indicator"/>
 
@@ -341,8 +340,8 @@
 
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/blinkergif5"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_width="200dp"
                     android:visibility="gone"
                     android:src="@drawable/winner_indicator"/>
 
@@ -403,8 +402,8 @@
 
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/blinkergif4"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_width="200dp"
                     android:visibility="gone"
                     android:src="@drawable/winner_indicator"/>
 
@@ -644,8 +643,8 @@
 
                 <pl.droidsonroids.gif.GifImageView
                     android:id="@+id/blinkergif3"
-                    android:layout_height="match_parent"
-                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:layout_width="200dp"
                     android:visibility="gone"
                     android:src="@drawable/winner_indicator"/>
 

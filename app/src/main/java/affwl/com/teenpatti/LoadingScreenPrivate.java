@@ -31,7 +31,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
         dataHolder.setContext(LoadingScreenPrivate.this);
 
         new DataHolder.updateUserStatusAsyncTask().execute("http://213.136.81.137:8081/api/update_client_status", "online");
-        new GameRequestAyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
+        new GameRequestAsyncTask().execute("http://213.136.81.137:8081/api/gameRequest");
 
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.splash2);
         findViewById(R.id.loadingouter).startAnimation(animation);
@@ -97,7 +97,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
             Log.i("CheckGamex", "" + result);
 
             try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
+                JSONObject jsonObjMain = new JSONObject(result);
                 String msg = jsonObjMain.getString("message");
                 if (msg.equalsIgnoreCase("Cards generated sucessfully") || msg.equalsIgnoreCase("Game request successfully registered. Wait for second user")) {
                     startActivity(new Intent(LoadingScreenPrivate.this, PrivateActivity.class));

@@ -10,20 +10,24 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
 
         <TextView
             android:layout_weight="1"
             android:id="@+id/helpheader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="HIGHEST HAND WINS. RANKING FROM HIGH TO LOW IS:"
+            android:text="Highest Hand Wins. Ranking From High To Low :-"
             android:textColor="#fff"
-            android:textSize="20sp" />
-
+            android:textSize="18sp" />
+        <!--android:text="HIGHEST HAND WINS. RANKING FROM HIGH TO LOW IS:"-->
         <ImageView
-            android:layout_weight="1"
-            android:layout_width="0dp"
+            android:layout_weight="0"
+            android:layout_width="35dp"
             android:layout_height="35dp"
             android:gravity="end"
             android:src="@drawable/cross"
@@ -34,7 +38,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -46,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_one"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -58,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_two"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -70,7 +75,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_three"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -82,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_four"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -94,7 +99,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_five"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -106,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/help_six"
                 android:textColor="#fff"
-                android:textSize="20sp" />
+                android:textSize="15sp" />
 
             <ImageView
                 android:layout_width="match_parent"

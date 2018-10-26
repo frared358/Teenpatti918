@@ -53,7 +53,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
             String json = "";
             JSONObject jsonObject = new JSONObject();
 
-            Log.i("KARAN", DataHolder.getDataInt(LoadingScreenPrivate.this, "deskid") + "\n" + DataHolder.getDataString(LoadingScreenPrivate.this, "userid"));
+            Log.i("TEJAS", DataHolder.getDataInt(LoadingScreenPrivate.this, "deskid") + "\n" + DataHolder.getDataString(LoadingScreenPrivate.this, "userid"));
             jsonObject.accumulate("desk_id", DataHolder.getDataInt(LoadingScreenPrivate.this, "deskid"));
             jsonObject.accumulate("userid", DataHolder.getDataString(LoadingScreenPrivate.this, "userid"));
             jsonObject.accumulate("request_next", "next");//pev

@@ -8,6 +8,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
@@ -89,5 +90,7 @@ dependencies {
     implementation 'io.saeid:fab-loading:1.0.0'
 
     implementation 'com.github.erehmi:countdowntask:1.0.1'
-
+}
+repositories {
+    mavenCentral()
 }

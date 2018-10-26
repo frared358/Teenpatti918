@@ -220,7 +220,7 @@
                     android:layout_alignParentRight="true" />
 
                 <pl.droidsonroids.gif.GifImageView
-                    android:id="@+id/blinkergif2"
+                    android:id="@+id/blinkergif1"
                     android:layout_height="200dp"
                     android:layout_width="200dp"
                     android:visibility="gone"
@@ -278,7 +278,7 @@
                     android:layout_alignParentRight="true"/>
 
                 <pl.droidsonroids.gif.GifImageView
-                    android:id="@+id/blinkergif1"
+                    android:id="@+id/blinkergif2"
                     android:layout_height="200dp"
                     android:layout_width="200dp"
                     android:visibility="gone"
@@ -339,7 +339,7 @@
                     android:layout_alignParentRight="true" />
 
                 <pl.droidsonroids.gif.GifImageView
-                    android:id="@+id/blinkergif5"
+                    android:id="@+id/blinkergif3"
                     android:layout_height="200dp"
                     android:layout_width="200dp"
                     android:visibility="gone"
@@ -642,7 +642,7 @@
                     android:layout_alignParentRight="true"/>
 
                 <pl.droidsonroids.gif.GifImageView
-                    android:id="@+id/blinkergif3"
+                    android:id="@+id/blinkergif"
                     android:layout_height="200dp"
                     android:layout_width="200dp"
                     android:visibility="gone"

@@ -99,7 +99,7 @@ public class LoadingScreenPrivate extends AppCompatActivity {
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 String msg = jsonObjMain.getString("message");
-                if (msg.equalsIgnoreCase("Cards generated sucessfully") || msg.equalsIgnoreCase("Game request successfully registered. Wait for second user")) {
+                if (msg.equalsIgnoreCase("Cards generated sucessfully") || msg.equalsIgnoreCase("Game request successfully registered. Wait for second user")|| msg.equalsIgnoreCase("Game request already registered")) {
                     startActivity(new Intent(LoadingScreenPrivate.this, PrivateActivity.class));
                 }else {
                     Toast.makeText(LoadingScreenPrivate.this, msg, Toast.LENGTH_SHORT).show();

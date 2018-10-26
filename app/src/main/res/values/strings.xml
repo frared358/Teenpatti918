@@ -149,7 +149,7 @@
     <string name="hukaminfo">One HUKAM card in the\n centre of the table\n Any card with the \nsame number as the \nHUKAM card is a \njoker card.</string>
     <string name="muflisinfo">The least ranking \n combination has the \n highest rank and vice versa</string>
     <string name="faceoffinfo">Everyone gets face\n card. A face card is any\n suit card of 10/J/Q/K/\nA denomination</string>
-    <string name="lowestjokerinfo">Each players lowest-\nranking card (and all\n other cards of that \nsame rank/strength/\nnumber) are  jokers\n(wild cards) in that\nplayer's hand  only.If the \ntwo lowest cards are a \npair then that pair is \nconsidered as two jokers.</string>
+    <string name="lowestjokerinfo">Each players lowest-\nranking card (and all\n other cards of that \nsame rank/strength/\nnumber) are  jokers\n(wild cards) in that\nplayers hand  only.If the \ntwo lowest cards are a \npair then that pair is \nconsidered as two jokers.</string>
     <string name="nineinfo">There cards are dealt\n and  the player has to \nmake tthe game closest\n to the figure 999(nine\n hundred ninety nine). \nAll face cards(jack,\nQueen and King) and 10 \nare considered Zero \nfor this game and Ace\n is considered as One.\n For e.g. if you have 5-7-\nJack then closeset\n number
 to 999 will be 750.\n If you have 9-Ace-9 \nthen you havea 991 and \nyou are probably a winner!</string>
 

@@ -80,7 +80,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
 
     LinearLayout below_layout;
-    GifImageView blinkergif1, blinkergif2, blinkergif3, blinkergif4, blinkergif5;
+    GifImageView blinkergif1, blinkergif2, blinkergif3, blinkergif4, blinkergif;
 
     Animation bootvalueanimate1, bootvalueanimate2, bootvalueanimate3, bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
@@ -150,7 +150,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         blinkergif2 = findViewById(R.id.blinkergif2);
         blinkergif3 = findViewById(R.id.blinkergif3);
         blinkergif4 = findViewById(R.id.blinkergif4);
-        blinkergif5 = findViewById(R.id.blinkergif5);
+        blinkergif = findViewById(R.id.blinkergif);
         progressBarChances = findViewById(R.id.progressBarChances);
         viewBlinkCircle = new View(PrivateActivity.this);
 
@@ -243,7 +243,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         handler.postDelayed(new Runnable(){
             @Override
             public void run() {
-                new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(PrivateActivity.this, "userid"));
+                //new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
                 distributeCards();
                 bootCollection();
             }
@@ -1726,6 +1727,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             jsonObject.accumulate("deskid", DataHolder.getDataInt(this, "deskid"));
             jsonObject.accumulate("userid", DataHolder.getDataString(PrivateActivity.this, "userid"));
+            Log.i("Check123sspa",""+ChaalAmount);
             jsonObject.accumulate("chaalamount", ChaalAmount);
             jsonObject.accumulate("chance_status", mchance_Status);
             if (ONE_TIME_SEEN) {
@@ -1954,8 +1956,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         }
                     }
                 }
-                new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-                //new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(PrivateActivity.this, "userid"));
+                //new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+                new UserDataAsyncTask().execute("http://213.136.81.137:8081/api/getclientdesk?user_id=" + DataHolder.getDataString(PrivateActivity.this, "userid"));
                 distributeCards();
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1974,7 +1976,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Toast.makeText(PrivateActivity.this, "orderChanceAyncTas\n\n\n" + result, Toast.LENGTH_SHORT).show();
             Log.i("CheckGameOrderChance2", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -1983,7 +1984,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                     int len = arr.length();
 
-                    for (int i = 0; i < len; i++) {
+                    /*for (int i = 0; i < len; i++) {
                         String s = arr.getString(i);
                         Log.i("TTYY", "" + s);
                     }
@@ -2009,7 +2010,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         for (int j = 0; j < arrayListUserId.size(); j++) {
                             arrayListUserIdSequence.add(arrayListUserId.get(j));
                         }
-                    }
+                    }*/
+                }else if (jsonObjMain.getString("message").equalsIgnoreCase("Single user present in this game")){
+                    showCards();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -2042,8 +2045,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            //Toast.makeText(PrivateActivity.this, "" + result, Toast.LENGTH_SHORT).show();
-            Log.i("Check123", "" + result);
+            Log.i("Checkio", "" + result);
+
             try {
                 JSONObject jsonObjMain = new JSONObject(result);
                 String message = jsonObjMain.getString("message");
@@ -2071,6 +2074,10 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
+                    JSONObject key1 = arr.getJSONObject(0);
+                    StartBlink = key1.getString("user_id");
+
+                    Log.i("TTYY", "" + userid);
                     if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
                         sequence = true;
                     }
@@ -2086,7 +2093,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
                 }
-                //arrayListUnPackedUser = arrayListUserIdSequence;
 
                 for (int i = 0; i < len; i++) {
 
@@ -2108,7 +2114,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     txtVBalanceMainPlayer.setText(key.getString("balance"));
                                     arrayListUnPackedUser.add(userid);
                                     encodedimage0 = user_image;
-                                    Glide.with(getApplicationContext()).load(user_image).into(profile);
+                                    Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile);
 
                                 } else if (a == 1) {
                                     USER_NAME1 = user_name;
@@ -2116,7 +2122,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext1.setText(user_name);
                                     user_status1.setText(user_status);
                                     encodedimage1 = user_image;
-                                    Glide.with(getApplicationContext()).load(user_image).into(profile1);
+                                    Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile1);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status1.setTextColor(Color.GREEN);
@@ -2129,7 +2135,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext2.setText(user_name);
                                     user_status2.setText(user_status);
                                     encodedimage2 = user_image;
-                                    Glide.with(getApplicationContext()).load(user_image).into(profile2);
+                                    Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile2);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status2.setTextColor(Color.GREEN);
@@ -2142,7 +2148,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext3.setText(user_name);
                                     user_status3.setText(user_status);
                                     encodedimage3 = user_image;
-                                    Glide.with(getApplicationContext()).load(user_image).into(profile3);
+                                    Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile3);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status3.setTextColor(Color.GREEN);
@@ -2155,7 +2161,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     nametext4.setText(user_name);
                                     user_status4.setText(user_status);
                                     encodedimage4 = user_image;
-                                    Glide.with(getApplicationContext()).load(user_image).into(profile4);
+                                    Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile4);
                                     if (user_status.equalsIgnoreCase("online")) {
                                         arrayListUnPackedUser.add(userid);
                                         user_status4.setTextColor(Color.GREEN);
@@ -2189,16 +2195,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
+            Log.i("Checkio", "" + result);
 
-            Log.i("Check", "" + result);
-//            Toast.makeText(PrivateActivity.this, "" + DataHolder.getDataString(PrivateActivity.this,"token"), Toast.LENGTH_SHORT).show();
 
             try {
                 JSONObject jsonObjMain = new JSONObject(result);
                 String message = jsonObjMain.getString("message");
                 Log.i("TAG", "" + message);
 
-                BootValue = jsonObjMain.getString("boot_value");
+                /*BootValue = jsonObjMain.getString("boot_value");
                 MaxBlind = jsonObjMain.getString("max_no_blinds");
                 PotLimit = jsonObjMain.getString("pot_limit");
                 PotLimitInt = Integer.parseInt(PotLimit);
@@ -2211,16 +2216,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 boot_value_player2.setText(String.valueOf(ChaalAmount));
                 boot_value_player3.setText(String.valueOf(ChaalAmount));
                 boot_value_player4.setText(String.valueOf(ChaalAmount));
-                boot_value_player5.setText(String.valueOf(ChaalAmount));
+                boot_value_player5.setText(String.valueOf(ChaalAmount));*/
 
                 JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
                 int len = arr.length();
 
-                for (int i = 0; i < len; i++) {
+                /*for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
-
                     JSONObject key1 = arr.getJSONObject(0);
                     StartBlink = key1.getString("user_id");
 
@@ -2239,30 +2243,30 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     for (int j = 0; j < arrayListUserId.size(); j++) {
                         arrayListUserIdSequence.add(arrayListUserId.get(j));
                     }
-                }
+                }*/
 
 
                 for (int i = 0; i < len; i++) {
 
                     JSONObject key = arr.getJSONObject(i);
                     String userid = key.getString("user_id");
-                    String user_name = key.getString("user_name");
+                    /*String user_name = key.getString("user_name");
                     String user_status = key.getString("user_status");
                     String user_image = key.getString("user_image");
-                    String bal = key.getString("balance");
+                    String bal = key.getString("balance");*/
 
                     Log.i("CHECk", "" + arrayListUserIdSequence.size() + "  " + key.getString("first_name"));
                     for (int a = 0; a < arrayListUserIdSequence.size(); a++) {
                         if (userid.equalsIgnoreCase(arrayListUserIdSequence.get(a))) {
                             if (a == 0) {
-                                nametext.setText(user_name);
+                                /*nametext.setText(user_name);
                                 USER_NAME = user_name;
                                 BALANCE = bal;
                                 user_id.setText(userid);
                                 txtVBalanceMainPlayer.setText(key.getString("balance"));
                                 arrayListUnPackedUser.add(userid);
                                 encodedimage0 = user_image;
-                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile);
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile);*/
                                 String Url1 = key.getString("cardone");
                                 String Url2 = key.getString("cardtwo");
                                 String Url3 = key.getString("cardthree");
@@ -2275,7 +2279,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 //nametext1.setText(key.getString("first_name"));
                             } else if (a == 1) {
 
-                                USER_NAME1 = user_name;
+                                /*USER_NAME1 = user_name;
                                 BALANCE1 = bal;
                                 nametext1.setText(user_name);
                                 user_status1.setText(user_status);
@@ -2286,7 +2290,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     user_status1.setTextColor(Color.GREEN);
                                 } else if (user_status.equalsIgnoreCase("offline")) {
                                     user_status1.setTextColor(Color.RED);
-                                }
+                                }*/
 
                                 String Url4 = key.getString("cardone");
                                 String Url5 = key.getString("cardtwo");
@@ -2300,7 +2304,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 //nametext2.setText(key.getString("first_name"));
                             } else if (a == 2) {
 
-                                USER_NAME2 = user_name;
+                                /*USER_NAME2 = user_name;
                                 BALANCE2 = bal;
                                 nametext2.setText(user_name);
                                 user_status2.setText(user_status);
@@ -2311,7 +2315,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     user_status2.setTextColor(Color.GREEN);
                                 } else if (user_status.equalsIgnoreCase("offline")) {
                                     user_status2.setTextColor(Color.RED);
-                                }
+                                }*/
 
                                 String Url7 = key.getString("cardone");
                                 String Url8 = key.getString("cardtwo");
@@ -2325,7 +2329,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 //nametext.setText(key.getString("first_name"));
                             } else if (a == 3) {
 
-                                USER_NAME3 = user_name;
+                                /*USER_NAME3 = user_name;
                                 BALANCE3 = bal;
                                 nametext3.setText(user_name);
                                 user_status3.setText(user_status);
@@ -2336,7 +2340,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     user_status3.setTextColor(Color.GREEN);
                                 } else if (user_status.equalsIgnoreCase("offline")) {
                                     user_status3.setTextColor(Color.RED);
-                                }
+                                }*/
 
                                 String Url10 = key.getString("cardone");
                                 String Url11 = key.getString("cardtwo");
@@ -2350,7 +2354,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                 //nametext3.setText(key.getString("first_name"));
                             } else if (a == 4) {
 
-                                USER_NAME4 = user_name;
+                                /*USER_NAME4 = user_name;
                                 BALANCE4 = key.getString("balance");
                                 nametext4.setText(user_name);
                                 user_status4.setText(user_status);
@@ -2361,7 +2365,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                                     user_status4.setTextColor(Color.GREEN);
                                 } else if (user_status.equalsIgnoreCase("offline")) {
                                     user_status4.setTextColor(Color.RED);
-                                }
+                                }*/
 
                                 String Url13 = key.getString("cardone");
                                 String Url14 = key.getString("cardtwo");
@@ -2471,15 +2475,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                     String winner_rank = key.getString("winner_rank");
 
                     if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(0))){
-                        blinkergif1.setVisibility(View.VISIBLE);
+                        blinkergif.setVisibility(View.VISIBLE);
                     }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(1))){
-                        blinkergif2.setVisibility(View.VISIBLE);
+                        blinkergif1.setVisibility(View.VISIBLE);
                     }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(2))){
-                        blinkergif3.setVisibility(View.VISIBLE);
+                        blinkergif2.setVisibility(View.VISIBLE);
                     }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(3))){
-                        blinkergif4.setVisibility(View.VISIBLE);
+                        blinkergif3.setVisibility(View.VISIBLE);
                     }else if (user_id.equalsIgnoreCase(arrayListUserIdSequence.get(4))){
-                        blinkergif5.setVisibility(View.VISIBLE);
+                        blinkergif4.setVisibility(View.VISIBLE);
                     }
 
                     TastyToast.makeText(PrivateActivity.this,winner_type,5000,TastyToast.INFO);
@@ -2648,114 +2652,125 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 lastTip = key.getString("tip");
                 lastTurn = key.getString("turn");
                 lastNext_user = key.getString("next_user");
-                lastWin_lose = key.getString("win_lose");
+                //lastWin_lose = key.getString("win_lose");
                 lastDatetime = key.getString("datetime");
 
-                Log.i("CHKIL", storeNextValue + "-" + lastNext_user);
-                if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
+                if (!lastShow.equalsIgnoreCase("1")) {
+                    Log.i("CHKIL", storeNextValue + "-" + lastNext_user);
+                    if (!storeNextValue.equalsIgnoreCase(lastNext_user)) {
+                        try {
+                            viewBlinkCircle.clearAnimation();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    storeNextValue = lastNext_user;
+
                     try {
-                        viewBlinkCircle.clearAnimation();
-                    } catch (Exception e) {
+                        if (DataHolder.getDataString(this, "userid").equalsIgnoreCase(lastNext_user)) {
+                            Log.i("ChkilIN0", "-" + lastNext_user);
+
+                            if (TIMER_ROTATION) {
+                                TIMER_ROTATION = false;
+                                displayAmount.setText(lastChaal_amount);
+                                simulateProgress();
+                                Log.i("CHKIL1",ChaalAmount+"");
+                            }
+                        }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
+
+                            viewBlinkCircle = player_blink_circle1;
+                            player_blink_circle1.startAnimation(animBlink);
+                            TIMER_ROTATION = true;
+                            user_status1.setText(lastSeen_blind);
+                            Log.i("ChkilIN1","-"+lastNext_user);
+                        }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
+                            viewBlinkCircle = player_blink_circle2;
+                            player_blink_circle2.startAnimation(animBlink);
+                            TIMER_ROTATION = true;
+                            user_status2.setText(lastSeen_blind);
+
+                            Log.i("ChkilIN2","-"+lastNext_user);
+                        }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
+                            Log.i("ChkilIN3","-"+lastNext_user);
+                            viewBlinkCircle = player_blink_circle3;
+                            player_blink_circle3.startAnimation(animBlink);
+                            TIMER_ROTATION = true;
+                            user_status3.setText(lastSeen_blind);
+                            Log.i("ChkilIN3","-"+lastNext_user);
+                        }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
+
+                            viewBlinkCircle = player_blink_circle4;
+                            player_blink_circle4.startAnimation(animBlink);
+                            TIMER_ROTATION = true;
+                            user_status4.setText(lastSeen_blind);
+                            Log.i("ChkilIN4","-"+lastNext_user);
+                        }
+                    } catch (IndexOutOfBoundsException e) {
                         e.printStackTrace();
                     }
-                }
 
-                storeNextValue = lastNext_user;
-
-                try {
-                    if (DataHolder.getDataString(this, "userid").equalsIgnoreCase(lastNext_user)) {
-                        Log.i("ChkilIN0", "-" + lastNext_user);
-
-                        if (TIMER_ROTATION) {
-                            TIMER_ROTATION = false;
-                            simulateProgress();
-                            Log.i("CHKIL1",ChaalAmount+"");
+                    try {
+                        for (int s=1;s<arrayListUserIdSequence.size();s++) {
+                            if (arrayListUserIdSequence.get(s).equalsIgnoreCase(lastUser_id)) {
+                                Log.i("PACKED_TIMEOUT#",""+lastChance_status);
+                                if (s==1) {
+                                    if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
+                                        user_status1.setText(lastSeen_blind);
+                                    } else {
+                                        user_status1.setText(lastChance_status);
+                                        arrayListUnPackedUser.remove(lastChance_status);
+                                        player1.setImageResource(R.drawable.fade_inner_img);
+                                        card2.setVisibility(View.GONE);
+                                        card7.setVisibility(View.GONE);
+                                        card12.setVisibility(View.GONE);
+                                    }
+                                } else if (s==2) {
+                                    if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
+                                        user_status2.setText(lastSeen_blind);
+                                    } else {
+                                        user_status2.setText(lastChance_status);
+                                        arrayListUnPackedUser.remove(lastChance_status);
+                                        player1.setImageResource(R.drawable.fade_inner_img);
+                                        card1.setVisibility(View.GONE);
+                                        card6.setVisibility(View.GONE);
+                                        card11.setVisibility(View.GONE);
+                                    }
+                                } else if (s==3) {
+                                    if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
+                                        user_status3.setText(lastSeen_blind);
+                                    } else {
+                                        user_status3.setText(lastChance_status);
+                                        arrayListUnPackedUser.remove(lastChance_status);
+                                        player1.setImageResource(R.drawable.fade_inner_img);
+                                        card5.setVisibility(View.GONE);
+                                        card10.setVisibility(View.GONE);
+                                        card15.setVisibility(View.GONE);
+                                    }
+                                } else if (s==4) {
+                                    if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
+                                        user_status4.setText(lastSeen_blind);
+                                    } else {
+                                        user_status4.setText(lastChance_status);
+                                        arrayListUnPackedUser.remove(lastChance_status);
+                                        player1.setImageResource(R.drawable.fade_inner_img);
+                                        card4.setVisibility(View.GONE);
+                                        card9.setVisibility(View.GONE);
+                                        card11.setVisibility(View.GONE);
+                                    }
+                                }
+                            }
                         }
-                    }else if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastNext_user)){
 
-                        viewBlinkCircle = player_blink_circle1;
-                        player_blink_circle1.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status1.setText(lastSeen_blind);
-                        Log.i("ChkilIN1","-"+lastNext_user);
-                    }else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastNext_user)){
-                        viewBlinkCircle = player_blink_circle2;
-                        player_blink_circle2.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status2.setText(lastSeen_blind);
-
-                        Log.i("ChkilIN2","-"+lastNext_user);
-                    }else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastNext_user)){
-                        Log.i("ChkilIN3","-"+lastNext_user);
-                        viewBlinkCircle = player_blink_circle3;
-                        player_blink_circle3.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status3.setText(lastSeen_blind);
-                        Log.i("ChkilIN3","-"+lastNext_user);
-                    }else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastNext_user)){
-
-                        viewBlinkCircle = player_blink_circle4;
-                        player_blink_circle4.startAnimation(animBlink);
-                        TIMER_ROTATION = true;
-                        user_status4.setText(lastSeen_blind);
-                        Log.i("ChkilIN4","-"+lastNext_user);
+                    } catch (IndexOutOfBoundsException e) {
+                        e.printStackTrace();
                     }
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-
-                try {
-                    if (arrayListUserIdSequence.get(1).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
-                            user_status1.setText(lastSeen_blind);
-                        } else {
-                            user_status1.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card2.setVisibility(View.GONE);
-                            card7.setVisibility(View.GONE);
-                            card12.setVisibility(View.GONE);
-                        }
-                    } else if (arrayListUserIdSequence.get(2).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
-                            user_status2.setText(lastSeen_blind);
-                        } else {
-                            user_status2.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card1.setVisibility(View.GONE);
-                            card6.setVisibility(View.GONE);
-                            card11.setVisibility(View.GONE);
-                        }
-                    } else if (arrayListUserIdSequence.get(3).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
-                            user_status3.setText(lastSeen_blind);
-                        } else {
-                            user_status3.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card5.setVisibility(View.GONE);
-                            card10.setVisibility(View.GONE);
-                            card15.setVisibility(View.GONE);
-                        }
-                    } else if (arrayListUserIdSequence.get(4).equalsIgnoreCase(lastUser_id)) {
-                        if (!lastChance_status.equalsIgnoreCase("packed") && !lastChance_status.equalsIgnoreCase("Timeout")) {
-                            user_status4.setText(lastSeen_blind);
-                        } else {
-                            user_status4.setText(lastChance_status);
-                            arrayListUnPackedUser.remove(lastChance_status);
-                            player1.setImageResource(R.drawable.fade_inner_img);
-                            card4.setVisibility(View.GONE);
-                            card9.setVisibility(View.GONE);
-                            card11.setVisibility(View.GONE);
-                        }
-                    }
-
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
+                }else {
+                    showCards();
                 }
             }
             txtVTableAmt.setText(lastPot_value);
+
 
             if (chance_Status.equalsIgnoreCase("packed")) {
                 arrayListUnPackedUser.remove(lastChance_status);
@@ -2783,12 +2798,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             if (arrayListUnPackedUser.size() == 2) {
                 show_btn.setVisibility(View.VISIBLE);
-            }
-
-            if (arrayListUnPackedUser.size() == 1) {
-                //ShowData Set Winner
-                showCards();
-                Toast.makeText(this, "1 user is left", Toast.LENGTH_SHORT).show();
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -2837,7 +2846,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         return result;
     }
-
     private class distributeCommissionAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
@@ -2848,18 +2856,9 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         @Override
         protected void onPostExecute(String result) {
             Log.i("CheckCommission", "" + result);
-            try {
-                JSONObject jsonObjMain = new JSONObject(result.toString());
-                String message = jsonObjMain.getString("message");
-                Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
-
-    private class getWinLosestatusAsyncTask extends AsyncTask<String, Void, String>{
+    private class getWinLosestatusAsyncTask extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... urls) {
@@ -2887,5 +2886,354 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 e.printStackTrace();
             }
         }
+
     }
 }
+
+/*private class getCardDataAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Checkio", "" + result);
+
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                String message = jsonObjMain.getString("message");
+                Log.i("TAG", "" + message);
+
+                BootValue = jsonObjMain.getString("boot_value");
+                MaxBlind = jsonObjMain.getString("max_no_blinds");
+                PotLimit = jsonObjMain.getString("pot_limit");
+                PotLimitInt = Integer.parseInt(PotLimit);
+                chaalLimit = jsonObjMain.getString("chaal_limit");
+                Log.i("ChaalAmountxc", String.valueOf(ChaalAmount));
+                ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
+                displayAmount.setText(String.valueOf(ChaalAmount));
+
+                boot_value_player1.setText(String.valueOf(ChaalAmount));
+                boot_value_player2.setText(String.valueOf(ChaalAmount));
+                boot_value_player3.setText(String.valueOf(ChaalAmount));
+                boot_value_player4.setText(String.valueOf(ChaalAmount));
+                boot_value_player5.setText(String.valueOf(ChaalAmount));
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+                int len = arr.length();
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+                    JSONObject key1 = arr.getJSONObject(0);
+                    StartBlink = key1.getString("user_id");
+
+                    Log.i("TTYY", "" + userid);
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
+                        sequence = true;
+                    }
+                    if (sequence) {
+                        arrayListUserIdSequence.add(userid);
+                    } else {
+                        arrayListUserId.add(userid);
+                    }
+                }
+
+                if (arrayListUserId.size() > 0) {
+                    for (int j = 0; j < arrayListUserId.size(); j++) {
+                        arrayListUserIdSequence.add(arrayListUserId.get(j));
+                    }
+                }
+
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+                    String user_name = key.getString("user_name");
+                    String user_status = key.getString("user_status");
+                    String user_image = key.getString("user_image");
+                    String bal = key.getString("balance");
+
+                    Log.i("CHECk", "" + arrayListUserIdSequence.size() + "  " + key.getString("first_name"));
+                    for (int a = 0; a < arrayListUserIdSequence.size(); a++) {
+                        if (userid.equalsIgnoreCase(arrayListUserIdSequence.get(a))) {
+                            if (a == 0) {
+                                nametext.setText(user_name);
+                                USER_NAME = user_name;
+                                BALANCE = bal;
+                                user_id.setText(userid);
+                                txtVBalanceMainPlayer.setText(key.getString("balance"));
+                                arrayListUnPackedUser.add(userid);
+                                encodedimage0 = user_image;
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile);
+                                String Url1 = key.getString("cardone");
+                                String Url2 = key.getString("cardtwo");
+                                String Url3 = key.getString("cardthree");
+                                cardUrl1 = Url1;
+                                cardUrl2 = Url2;
+                                cardUrl3 = Url3;
+                                Log.i("URL_1", i + " " + Url1);
+                                Log.i("URL_2", i + " " + Url2);
+                                Log.i("URL_3", i + " " + Url3);
+                                //nametext1.setText(key.getString("first_name"));
+                            } else if (a == 1) {
+
+                                USER_NAME1 = user_name;
+                                BALANCE1 = bal;
+                                nametext1.setText(user_name);
+                                user_status1.setText(user_status);
+                                encodedimage1 = user_image;
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile1);
+                                if (user_status.equalsIgnoreCase("online")) {
+                                    arrayListUnPackedUser.add(userid);
+                                    user_status1.setTextColor(Color.GREEN);
+                                } else if (user_status.equalsIgnoreCase("offline")) {
+                                    user_status1.setTextColor(Color.RED);
+                                }
+
+                                String Url4 = key.getString("cardone");
+                                String Url5 = key.getString("cardtwo");
+                                String Url6 = key.getString("cardthree");
+                                cardUrl4 = Url4;
+                                cardUrl5 = Url5;
+                                cardUrl6 = Url6;
+                                Log.i("URL 4", i + " " + Url4);
+                                Log.i("URL 5", i + " " + Url5);
+                                Log.i("URL 6", i + " " + Url6);
+                                //nametext2.setText(key.getString("first_name"));
+                            } else if (a == 2) {
+
+                                USER_NAME2 = user_name;
+                                BALANCE2 = bal;
+                                nametext2.setText(user_name);
+                                user_status2.setText(user_status);
+                                encodedimage2 = user_image;
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile2);
+                                if (user_status.equalsIgnoreCase("online")) {
+                                    arrayListUnPackedUser.add(userid);
+                                    user_status2.setTextColor(Color.GREEN);
+                                } else if (user_status.equalsIgnoreCase("offline")) {
+                                    user_status2.setTextColor(Color.RED);
+                                }
+
+                                String Url7 = key.getString("cardone");
+                                String Url8 = key.getString("cardtwo");
+                                String Url9 = key.getString("cardthree");
+                                cardUrl7 = Url7;
+                                cardUrl8 = Url8;
+                                cardUrl9 = Url9;
+                                Log.i("URL 7", i + " " + Url7);
+                                Log.i("URL 8", i + " " + Url8);
+                                Log.i("URL 9", i + " " + Url9);
+                                //nametext.setText(key.getString("first_name"));
+                            } else if (a == 3) {
+
+                                USER_NAME3 = user_name;
+                                BALANCE3 = bal;
+                                nametext3.setText(user_name);
+                                user_status3.setText(user_status);
+                                encodedimage3 = user_image;
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile3);
+                                if (user_status.equalsIgnoreCase("online")) {
+                                    arrayListUnPackedUser.add(userid);
+                                    user_status3.setTextColor(Color.GREEN);
+                                } else if (user_status.equalsIgnoreCase("offline")) {
+                                    user_status3.setTextColor(Color.RED);
+                                }
+
+                                String Url10 = key.getString("cardone");
+                                String Url11 = key.getString("cardtwo");
+                                String Url12 = key.getString("cardthree");
+                                cardUrl10 = Url10;
+                                cardUrl11 = Url11;
+                                cardUrl12 = Url12;
+                                Log.i("URL 10", i + " " + Url10);
+                                Log.i("URL 11", i + " " + Url11);
+                                Log.i("URL 12", i + " " + Url12);
+                                //nametext3.setText(key.getString("first_name"));
+                            } else if (a == 4) {
+
+                                USER_NAME4 = user_name;
+                                BALANCE4 = key.getString("balance");
+                                nametext4.setText(user_name);
+                                user_status4.setText(user_status);
+                                encodedimage4 = user_image;
+                                Glide.with(getApplicationContext()).load(user_image).apply(new RequestOptions().override(100, 100)).into(profile4);
+                                if (user_status.equalsIgnoreCase("online")) {
+                                    arrayListUnPackedUser.add(userid);
+                                    user_status4.setTextColor(Color.GREEN);
+                                } else if (user_status.equalsIgnoreCase("offline")) {
+                                    user_status4.setTextColor(Color.RED);
+                                }
+
+                                String Url13 = key.getString("cardone");
+                                String Url14 = key.getString("cardtwo");
+                                String Url15 = key.getString("cardthree");
+                                cardUrl13 = Url13;
+                                cardUrl14 = Url14;
+                                cardUrl15 = Url15;
+                                Log.i("URL 13", i + " " + Url13);
+                                Log.i("URL 14", i + " " + Url14);
+                                Log.i("URL 15", i + " " + Url15);
+                                //nametext4.setText(key.getString("first_name"));
+                            }
+                        }
+                    }
+                }
+
+                new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }*/
+
+/*private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("Checkio", "" + result);
+
+            try {
+                JSONObject jsonObjMain = new JSONObject(result);
+                String message = jsonObjMain.getString("message");
+                Log.i("TAG", "" + message);
+
+                BootValue = jsonObjMain.getString("boot_value");
+                MaxBlind = jsonObjMain.getString("max_no_blinds");
+                PotLimit = jsonObjMain.getString("pot_limit");
+                PotLimitInt = Integer.parseInt(PotLimit);
+                chaalLimit = jsonObjMain.getString("chaal_limit");
+                Log.i("ChaalAmountxc", String.valueOf(ChaalAmount));
+                ChaalAmount = Integer.parseInt(jsonObjMain.getString("boot_value"));//Start Chaal
+                displayAmount.setText(String.valueOf(ChaalAmount));
+
+                boot_value_player1.setText(String.valueOf(ChaalAmount));
+                boot_value_player2.setText(String.valueOf(ChaalAmount));
+                boot_value_player3.setText(String.valueOf(ChaalAmount));
+                boot_value_player4.setText(String.valueOf(ChaalAmount));
+                boot_value_player5.setText(String.valueOf(ChaalAmount));
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+                int len = arr.length();
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+                    if (userid.equals(DataHolder.getDataString(PrivateActivity.this, "userid"))) {
+                        sequence = true;
+                    }
+                    if (sequence) {
+                        arrayListUserIdSequence.add(userid);
+                    } else {
+                        arrayListUserId.add(userid);
+                    }
+                }
+
+                if (arrayListUserId.size() > 0) {
+                    for (int j = 0; j < arrayListUserId.size(); j++) {
+                        arrayListUserIdSequence.add(arrayListUserId.get(j));
+                    }
+                }
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    String userid = key.getString("user_id");
+                    String user_name = key.getString("user_name");
+                    String user_status = key.getString("user_status");
+                    String user_image = key.getString("user_image");
+
+                    for (int a = 0; a < arrayListUserIdSequence.size(); a++) {
+                        try {
+                            Log.i("arrayListSequencex", arrayListUserIdSequence.get(a));
+                            if (userid.equals(arrayListUserIdSequence.get(a))) {
+                                if (a == 0) {
+                                    nametext.setText(user_name);
+                                    USER_NAME = user_name;
+                                    BALANCE = key.getString("balance");
+                                    user_id.setText(userid);
+                                    txtVBalanceMainPlayer.setText(key.getString("balance"));
+                                    arrayListUnPackedUser.add(userid);
+                                    encodedimage0 = user_image;
+                                    Glide.with(getApplicationContext()).load(user_image).into(profile);
+
+                                } else if (a == 1) {
+                                    USER_NAME1 = user_name;
+                                    BALANCE1 = key.getString("balance");
+                                    nametext1.setText(user_name);
+                                    user_status1.setText(user_status);
+                                    encodedimage1 = user_image;
+                                    Glide.with(getApplicationContext()).load(user_image).into(profile1);
+                                    if (user_status.equalsIgnoreCase("online")) {
+                                        arrayListUnPackedUser.add(userid);
+                                        user_status1.setTextColor(Color.GREEN);
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
+                                        user_status1.setTextColor(Color.RED);
+                                    }
+                                } else if (a == 2) {
+                                    USER_NAME2 = user_name;
+                                    BALANCE2 = key.getString("balance");
+                                    nametext2.setText(user_name);
+                                    user_status2.setText(user_status);
+                                    encodedimage2 = user_image;
+                                    Glide.with(getApplicationContext()).load(user_image).into(profile2);
+                                    if (user_status.equalsIgnoreCase("online")) {
+                                        arrayListUnPackedUser.add(userid);
+                                        user_status2.setTextColor(Color.GREEN);
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
+                                        user_status2.setTextColor(Color.RED);
+                                    }
+                                } else if (a == 3) {
+                                    USER_NAME3 = user_name;
+                                    BALANCE3 = key.getString("balance");
+                                    nametext3.setText(user_name);
+                                    user_status3.setText(user_status);
+                                    encodedimage3 = user_image;
+                                    Glide.with(getApplicationContext()).load(user_image).into(profile3);
+                                    if (user_status.equalsIgnoreCase("online")) {
+                                        arrayListUnPackedUser.add(userid);
+                                        user_status3.setTextColor(Color.GREEN);
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
+                                        user_status3.setTextColor(Color.RED);
+                                    }
+                                } else if (a == 4) {
+                                    USER_NAME4 = user_name;
+                                    BALANCE4 = key.getString("balance");
+                                    nametext4.setText(user_name);
+                                    user_status4.setText(user_status);
+                                    encodedimage4 = user_image;
+                                    Glide.with(getApplicationContext()).load(user_image).into(profile4);
+                                    if (user_status.equalsIgnoreCase("online")) {
+                                        arrayListUnPackedUser.add(userid);
+                                        user_status4.setTextColor(Color.GREEN);
+                                    } else if (user_status.equalsIgnoreCase("offline")) {
+                                        user_status4.setTextColor(Color.RED);
+                                    }
+                                }
+                            }
+                        } catch (ArrayIndexOutOfBoundsException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            new getCardDataAsyncTask().execute("http://213.136.81.137:8081/api/get_desk_cards?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
+
+        }
+    }*/

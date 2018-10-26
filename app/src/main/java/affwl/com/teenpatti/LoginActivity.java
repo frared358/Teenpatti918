@@ -117,7 +117,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             } else {
                 new LoginAsyncTask().execute("http://213.136.81.137:8081/api/authClient");
             }
-            Toast.makeText(this, "Clicked", Toast.LENGTH_SHORT).show();
 
         } else if (v.getId() == R.id.rememberMeCheckBox) {
             mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);

@@ -164,6 +164,6 @@ to 999 will be 750.\n If you have 9-Ace-9 \nthen you havea 991 and \nyou are pro
     <string name="help_four">Color (Flush): Three cards of the same suit that are not in sequence. When comparing two colors, first compare the highest card. If these are equal, compare the second and if these are equal compare the lowest. Highest flush is A–K–J and the lowest flush is 5–3–2.</string>
     <string name="help_five">Pair (two of a kind): Two cards of the same rank. Between two pairs, the one with the higher value is the winner. If the pairs are of equal value then the kicker card determines the winner. The highest pair is A–A–K and the lowest is 2–2–3.</string>
     <string name="help_six">High Card : A hand in which the three cards are not in sequence, not all the same suit and no two cards have the same rank. If two players share a common high card, the next highest card is used to determine the winner. The best high card hand would be an AKJ of different suits and the worst is 5–3–2.</string>
-    <string name="wins_lose">Wins/Lose</string>
+    <string name="wins_lose">W/L : </string>
 
 </resources>

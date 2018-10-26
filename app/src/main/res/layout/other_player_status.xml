@@ -5,6 +5,14 @@
     android:layout_height="wrap_content"
     android:background="#e0960101">
 
+    <ImageView
+        android:id="@+id/close_other_user"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/cross"/>
+
     <LinearLayout
         android:id="@+id/other_user_layout"
         android:layout_width="wrap_content"
@@ -40,8 +48,10 @@
                     android:layout_height="18dp"
                     android:layout_margin="5dp"
                     android:text=""
-                    android:textColor="@color/colorWhite"
-                    android:textSize="15sp" />
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorWhite"/>
 
                 <View
                     android:id="@+id/other_player_view"
@@ -55,8 +65,10 @@
                     android:layout_height="18dp"
                     android:layout_margin="5dp"
                     android:text=""
-                    android:textColor="@color/colorWhite"
-                    android:textSize="15sp" />
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorWhite" />
 
                 <View
                     android:id="@+id/other_player_balance_view"
@@ -69,9 +81,11 @@
                     android:layout_width="match_parent"
                     android:layout_height="18dp"
                     android:layout_margin="5dp"
-                    android:text="Wins/Lose"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="15sp" />
+                    android:text="@string/wins_lose"
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorWhite" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

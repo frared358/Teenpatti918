@@ -136,41 +136,24 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         DataHolder.setData(this, "ExpiredDate", System.currentTimeMillis() + TimeUnit.HOURS.toMillis(24));
     }
 
-    private void displayAlertMessage(String title, String message) {
+    private void displayAlertMessage(String title) {
 
-        TextView tv_alert_ok, tv_alert_title, tv_alert_message, tv_alert_cancel;
-        ImageView alert_box_close;
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(LoginActivity.this);
+        builder.setMessage(title);
+        builder.setCancelable(true);
 
-        final Dialog myAlertDialog = new Dialog(this);
-        myAlertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        myAlertDialog.setCanceledOnTouchOutside(false);
-        myAlertDialog.setContentView(R.layout.alert_box);
-
-        tv_alert_ok = myAlertDialog.findViewById(R.id.tv_alert_ok);
-        tv_alert_cancel = myAlertDialog.findViewById(R.id.tv_alert_cancel);
-        alert_box_close = myAlertDialog.findViewById(R.id.alert_box_close);
-        tv_alert_title = myAlertDialog.findViewById(R.id.tv_alert_title);
-        tv_alert_message = myAlertDialog.findViewById(R.id.tv_alert_message);
-
-        tv_alert_title.setText(title);
-        tv_alert_message.setText(message);
-
-        alert_box_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myAlertDialog.dismiss();
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                System.exit(0);
             }
         });
-
-        tv_alert_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myAlertDialog.dismiss();
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
             }
         });
-
-        tv_alert_cancel.setVisibility(View.GONE);
-        myAlertDialog.show();
+        android.app.AlertDialog alert = builder.create();
+        alert.show();
     }
 
 
@@ -349,7 +332,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        displayAlertMessage("","");
+        displayAlertMessage("Are You Sure, You want to Exit?");
         MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mp.start();
         finish();

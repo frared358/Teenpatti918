@@ -6,6 +6,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#e0960101">
 
+    <ImageView
+        android:id="@+id/close_user"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/cross"
+        android:onClick="closeDetailsPopup"/>
+
     <LinearLayout
         android:id="@+id/userstatuslayout"
         android:layout_width="wrap_content"
@@ -37,11 +46,14 @@
                 <TextView
                     android:id="@+id/player_name"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:text=""
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:textSize="13sp"
                     android:textColor="@color/colorWhite"
-                    android:textSize="15sp" />
+                    />
 
                 <View
                     android:id="@+id/player_view"
@@ -52,11 +64,13 @@
                 <TextView
                     android:id="@+id/player_balance"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:text=""
-                    android:textColor="@color/colorWhite"
-                    android:textSize="15sp" />
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorWhite" />
 
                 <View
                     android:id="@+id/player_balance_view"
@@ -67,11 +81,13 @@
                 <TextView
                     android:id="@+id/player_wins"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:text="@string/wins_lose"
-                    android:textColor="@color/colorWhite"
-                    android:textSize="15sp" />
+                    android:paddingStart="15dp"
+                    android:paddingTop="5dp"
+                    android:textSize="13sp"
+                    android:textColor="@color/colorWhite"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

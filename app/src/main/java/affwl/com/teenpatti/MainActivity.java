@@ -354,53 +354,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //////////// Onclick method for teenpatti table /////////////
     @Override
     public void onBackPressed() {
-        displayExitAlert("Alert", "Do you want to Exit?");
+        displayExitAlert("Are You Sure, You want to Exit?");
         MediaPlayer mp = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mp.start();
     }
 
-    private void displayExitAlert(String title, String message) {
+    private void displayExitAlert(String title) {
 
-        TextView tv_alert_ok, tv_alert_title, tv_alert_message, tv_alert_cancel;
-        ImageView alert_box_close;
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage(title);
+        builder.setCancelable(true);
 
-        final Dialog myAlertDialog = new Dialog(this);
-        myAlertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        myAlertDialog.setCanceledOnTouchOutside(false);
-        myAlertDialog.setContentView(R.layout.alert_box);
-
-        tv_alert_ok = myAlertDialog.findViewById(R.id.tv_alert_ok);
-        tv_alert_cancel = myAlertDialog.findViewById(R.id.tv_alert_cancel);
-        alert_box_close = myAlertDialog.findViewById(R.id.alert_box_close);
-        tv_alert_title = myAlertDialog.findViewById(R.id.tv_alert_title);
-        tv_alert_message = myAlertDialog.findViewById(R.id.tv_alert_message);
-
-        tv_alert_title.setText(title);
-        tv_alert_message.setText(message);
-        tv_alert_ok.setText("Yes");
-        tv_alert_cancel.setText("No");
-
-        alert_box_close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myAlertDialog.dismiss();
-            }
-        });
-
-        tv_alert_ok.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                MainActivity.this.finish();
                 System.exit(0);
             }
         });
-
-        tv_alert_cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                myAlertDialog.dismiss();
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
             }
         });
-        myAlertDialog.show();
+        AlertDialog alert = builder.create();
+        alert.show();
 
     }
 
@@ -853,6 +830,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 }
 

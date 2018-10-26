@@ -25,6 +25,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -72,8 +73,8 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 @SuppressLint("WrongViewCast")
 
 public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
-    ImageView player_blink_circle1, player_blink_circle2, player_blink_circle3, player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
-    TextView player_balance, player_name, other_player_name, other_player_balance, displayAmount, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
+    ImageView close_other_user,close_user,player_blink_circle1, player_blink_circle2, player_blink_circle3, player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
+    TextView player_balance, player_name, player_wins, other_player_name, other_player_balance, displayAmount, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
     TextView user_status1, user_status2, user_status3, user_status4, boot_value_player1, boot_value_player2, boot_value_player3, boot_value_player4, boot_value_player5;
     PopupWindow popupWindow, infopopupWindow, chatpopupWindow, ustatuspopupWindow, dealerpopupWindow, oustatuspopupWindow, sendmsgpopupWindow, chngdpopupWindow, PlayerStatusWindow, OPlayerStatusWindow;
     RelativeLayout relativeLayout, relativeLayout2, relativeLayout3, privatetble;
@@ -84,7 +85,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     Animation bootvalueanimate1, bootvalueanimate2, bootvalueanimate3, bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
     View viewBlinkCircle;
-    Handler handler;
+    Handler handler, userhandler;
+    Runnable rUser;
     private CircleProgressBar progressBarChances;
     ScheduledExecutorService scheduleTaskExecutor;
 
@@ -94,7 +96,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     private CountDownTask mCountDownTask;
     Dialog timerDialog;
     MediaPlayer mediaPlayer;
-    String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4;
+    String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4,PlayerWinLose, PlayerWinLose1, PlayerWinLose2, PlayerWinLose3, PlayerWinLose4;
     private LoadingView mLoadViewLong;
     DataHolder dataHolder;
     @Override
@@ -257,6 +259,29 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 return;
             }
         }*/
+
+        userhandler = new Handler();
+        rUser = new Runnable() {
+
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(PrivateActivity.this);
+                builder.setMessage("No Intercation, Session Expired Please Login again");
+                builder.setCancelable(true);
+
+                builder.setPositiveButton(
+                        "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                startActivity(new Intent(PrivateActivity.this,LoginActivity.class));
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+//                Toast.makeText(PrivateActivity.this, "user is inactive from last 5 minutes", Toast.LENGTH_SHORT).show();
+            }
+        };
+        startHandler();
     }
 
     /**
@@ -639,13 +664,22 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
     }
 
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        stopHandler();//stop first and then start
+        startHandler();
+    }
+    public void stopHandler() {
+        userhandler.removeCallbacks(rUser);
+    }
+    public void startHandler() {
+        userhandler.postDelayed(rUser, 5*60* 1000); //for 5 minutes
+    }
     /**
      * Separate User Data
      * End
      */
-
-
-
     private void waitTimer(){
         timerDialog = new Dialog(this);
         timerDialog.setCanceledOnTouchOutside(false);
@@ -1144,6 +1178,15 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 });*/
     }
 
+    public void hideBootValue(){
+
+        boot_value_player1.setVisibility(View.INVISIBLE);
+        boot_value_player2.setVisibility(View.INVISIBLE);
+        boot_value_player3.setVisibility(View.INVISIBLE);
+        boot_value_player4.setVisibility(View.INVISIBLE);
+        boot_value_player5.setVisibility(View.INVISIBLE);
+    }
+
     public void bootCollection() {
 
         bootvalueanimate1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim1);
@@ -1152,31 +1195,43 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         bootvalueanimate4 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim4);
         bootvalueanimate5 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim5);
 
+
         boot_value_player1.startAnimation(bootvalueanimate1);
-        bootvalueanimate1.setStartOffset(3000);
-        boot_value_player1.setVisibility(View.INVISIBLE);
+//        bootvalueanimate1.setStartOffset(3000);
+        boot_value_player1.setVisibility(View.VISIBLE);
 
         boot_value_player2.startAnimation(bootvalueanimate2);
-        bootvalueanimate2.setStartOffset(3000);
-        boot_value_player2.setVisibility(View.INVISIBLE);
+//        bootvalueanimate2.setStartOffset(3000);
+        boot_value_player2.setVisibility(View.VISIBLE);
 
         boot_value_player3.startAnimation(bootvalueanimate3);
-        bootvalueanimate3.setStartOffset(3000);
-        boot_value_player3.setVisibility(View.INVISIBLE);
+//        bootvalueanimate3.setStartOffset(3000);
+        boot_value_player3.setVisibility(View.VISIBLE);
 
         boot_value_player4.startAnimation(bootvalueanimate4);
-        bootvalueanimate4.setStartOffset(3000);
-        boot_value_player4.setVisibility(View.INVISIBLE);
+//        bootvalueanimate4.setStartOffset(3000);
+        boot_value_player4.setVisibility(View.VISIBLE);
 
         boot_value_player5.startAnimation(bootvalueanimate5);
-        bootvalueanimate5.setStartOffset(3000);
-        boot_value_player5.setVisibility(View.INVISIBLE);
+//        bootvalueanimate5.setStartOffset(3000);
+        boot_value_player5.setVisibility(View.VISIBLE);
 
-//        blinkergif1.setVisibility(View.VISIBLE);
-//        blinkergif2.setVisibility(View.VISIBLE);
-//        blinkergif3.setVisibility(View.VISIBLE);
-//        blinkergif4.setVisibility(View.VISIBLE);
-//        blinkergif5.setVisibility(View.VISIBLE);
+        bootvalueanimate5.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                hideBootValue();
+                Toast.makeText(PrivateActivity.this, "hideBootValue()", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     @Override
@@ -1226,6 +1281,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+
 
     String encodedimage0 ,encodedimage1, encodedimage2, encodedimage3, encodedimage4;
     @Override
@@ -1286,24 +1342,38 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.inner_player_img:
 
+
+
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
 
                 PlayerStatusWindow = new PopupWindow(customView, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
+                close_user = customView.findViewById(R.id.close_user);
+
                 player_name = customView.findViewById(R.id.player_name);
                 player_balance = customView.findViewById(R.id.player_balance);
                 player_status_circle = customView.findViewById(R.id.player_status_circle);
+                player_wins = customView.findViewById(R.id.player_wins);
 
                 player_name.setText(USER_NAME);
                 player_balance.setText(BALANCE);
+                player_wins.setText(PlayerWinLose);
 
                 PlayerStatusWindow.showAtLocation(privatetble, Gravity.CENTER, 0, 0);
                 Glide.with(getApplicationContext()).load(encodedimage0).into(player_status_circle);
+
+                close_user.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        PlayerStatusWindow.dismiss();
+                    }
+                });
                 /*if (!encodedimage0.equalsIgnoreCase("")) {
                     byte[] b = Base64.decode(encodedimage0, Base64.DEFAULT);
                     Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
                     player_status_circle.setImageBitmap(bmp);
+
                 }*/
                 break;
 
@@ -1397,6 +1467,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         OPlayerStatusWindow = new PopupWindow(view, RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT, true);
 
+        close_other_user = view.findViewById(R.id.close_other_user);
+
         other_player_name = view.findViewById(R.id.other_player_name);
         other_player_balance = view.findViewById(R.id.other_player_balance);
         oplayer_status_circle = view.findViewById(R.id.oplayer_status_circle);
@@ -1408,6 +1480,13 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         OPlayerStatusWindow.showAtLocation(privatetble, Gravity.CENTER, 0, 0);
         Glide.with(getApplicationContext()).load(oencodedimage).into(oplayer_status_circle);
+
+        close_other_user.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OPlayerStatusWindow.dismiss();
+            }
+        });
         /*if (!oencodedimage.equalsIgnoreCase("")) {
             byte[] b = Base64.decode(oencodedimage, Base64.DEFAULT);
             Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -2304,7 +2383,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 }
 
                 new orderChance2AyncTask().execute("http://213.136.81.137:8081/api/orderChance?desk_id=" + DataHolder.getDataInt(PrivateActivity.this, "deskid"));
-
+                new getWinLosestatusAsyncTask().execute("http://213.136.81.137:8081/api/getmatchesuser?userid=" + DataHolder.getDataString(PrivateActivity.this, "userid"));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -2361,7 +2440,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Log.i("Check1235451", "" + result);
+            Log.i("CheckDeskCards", "" + result);
             Toast.makeText(PrivateActivity.this, ""+result, Toast.LENGTH_LONG).show();
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
@@ -2385,7 +2464,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         @Override
         protected void onPostExecute(String result) {
-            Log.i("Check123545", "" + result);
+            Log.i("CheckWinner", "" + result);
             try {
                 JSONObject jsonObjMain = new JSONObject(result.toString());
                 JSONArray array = jsonObjMain.getJSONArray("WinnerTeenpatti");
@@ -2415,7 +2494,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }
-
 
     private void refreshUserInfo(String result){
 
@@ -2780,10 +2858,37 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             Log.i("CheckCommission", "" + result);
         }
     }
+    private class getWinLosestatusAsyncTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... urls) {
+            return DataHolder.getApi(urls[0], PrivateActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.i("CheckWinLosestatus", "" + result);
+            try {
+                JSONObject jsonObjMain = new JSONObject(result.toString());
+                String message = jsonObjMain.getString("message");
+                Toast.makeText(PrivateActivity.this, message, Toast.LENGTH_SHORT).show();
+
+                JSONArray arr = new JSONArray(jsonObjMain.getString("data"));
+                int len = arr.length();
+
+                for (int i = 0; i < len; i++) {
+
+                    JSONObject key = arr.getJSONObject(i);
+                    PlayerWinLose = key.getString("matchplayed");
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
 }
-
-
-
 
 /*private class getCardDataAsyncTask extends AsyncTask<String, Void, String> {
 
@@ -2988,9 +3093,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         }
     }*/
-
-
-
 
 /*private class UserDataAsyncTask extends AsyncTask<String, Void, String> {
 

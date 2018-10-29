@@ -45,7 +45,7 @@
                 <TextView
                     android:id="@+id/other_player_name"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:text=""
                     android:paddingStart="15dp"
@@ -62,7 +62,7 @@
                 <TextView
                     android:id="@+id/other_player_balance"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:text=""
                     android:paddingStart="15dp"
@@ -79,13 +79,13 @@
                 <TextView
                     android:id="@+id/other_player_wins"
                     android:layout_width="match_parent"
-                    android:layout_height="18dp"
+                    android:layout_height="25dp"
                     android:layout_margin="5dp"
                     android:text="@string/wins_lose"
                     android:paddingStart="15dp"
                     android:paddingTop="5dp"
                     android:textSize="13sp"
-                    android:textColor="@color/colorWhite" />
+                    android:textColor="@color/colorWhite"/>
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

@@ -19,6 +19,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -69,7 +70,7 @@ import java.util.concurrent.TimeUnit;
 import static affwl.com.teenpatti.DataHolder.encodeimage;
 import static android.provider.Settings.Secure.ANDROID_ID;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, Runnable {
 
     ImageView join_game, avatarimage, avatar1, avatar2, avatar3, avatar4, avatar5, avatar6, avatar7, avatar8, showPopupBtn, closeRateus, closeHelpBtn, closeTrophyBtn, profile, orangechipsbtn, close312help, closesixpattihelp, short321info, tourney_shortinfo_closebtn, shortsixpattiinfo, bluechipsbtn, cyanchipsbtn, shortinfo_tourney, tourney_join_closebtn, ygreenchipsbtn, closebtn_create_table, mainlimegchipsbtn, variation_closebtn, facebook, whatsapp, general;
     PopupWindow HelpUspopupWindow, TrophypopupWindow, tounpopupWindow, howto321popup, sixpattipopup, howtosixpattipopup, join_tourney_popupWindow, shortinfo_tourney_popupwindow, create_table_private_popupwindow, join_table_popupwindow;
@@ -81,6 +82,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Drawable img;
     ImageView image;
     Date sdate, current_time;
+
+    private static int TIMEOUT_POLL_PERIOD = 15000; // 15 seconds
+    private static int TIMEOUT_PERIOD = 5*60*1000; // 5 minutes
+    private View content = null;
+    private long lastActivity = SystemClock.uptimeMillis();
 
 
     private TextView user_id;
@@ -97,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int PERMISSION_REQUEST_CODE = 200;
     private static final int PERMISSION_REQUEST_ACCESS_COARSE_LOCATION = 200;
 
+    Handler handler, userhandler;
+    Runnable rUser;
 
     int value = 0;
     int value1 = 0;
@@ -113,24 +121,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.teenpatti_activity_main);
 
-        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
-        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
-                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
-                Log.i("SPEED", "WIFI level " + level);
-                if (level == 5 || level == 4 || level == 3) {
-                    TastyToast.makeText(getApplicationContext(), "Internet Proper " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
-                } else if (level == 2 || level == 1 || level == 0) {
-                    TastyToast.makeText(getApplicationContext(), "Internet Moderate " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
-                } else {
-                    TastyToast.makeText(getApplicationContext(), "Internet Slow " + level, TastyToast.LENGTH_LONG, TastyToast.DEFAULT);
-                }
-
-            }
-        }, 0, 1, TimeUnit.MINUTES);
-
+        content=findViewById(android.R.id.content);
+        content.setKeepScreenOn(true);
+        run();
 
         user_id = findViewById(R.id.user_id);
         deviceid = findViewById(R.id.android_id);
@@ -154,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         showPopupBtn = findViewById(R.id.help_btn_loader);
 
         profile = findViewById(R.id.profile);
-
 
         avatar1.setOnClickListener(this);
         avatar2.setOnClickListener(this);
@@ -217,6 +209,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dataHolder = new DataHolder();
         dataHolder.setContext(this);
 
+        userhandler = new Handler();
+        rUser = new Runnable() {
+            @Override
+            public void run() {
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                TastyToast.makeText(MainActivity.this,"Session Expired",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
+
+                /*Check User Internet Speed*/
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level" + level);
+                if (level <= 2) {
+                    TastyToast.makeText(MainActivity.this,"Internet Connection Slow",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
+                }
+            }
+        };
+        startHandler();
+    }
+
+    @Override
+    public void onUserInteraction() {
+        super.onUserInteraction();
+        stopHandler();
+        startHandler();
+    }
+
+    public void stopHandler() {
+        userhandler.removeCallbacks(rUser);
+    }
+
+    public void startHandler() {
+        userhandler.postDelayed(rUser,300* 1000);
+    }
+
+    @Override
+    public void onDestroy() {
+        content.removeCallbacks(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void run() {
+        if ((SystemClock.uptimeMillis() - lastActivity) > TIMEOUT_PERIOD) {
+            content.setKeepScreenOn(false);
+        }
+        content.postDelayed(MainActivity.this, TIMEOUT_POLL_PERIOD);
     }
 
     @Override
@@ -336,6 +375,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
                 break;
+
         }
     }
 
@@ -586,6 +626,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void OpenPrivateTable(View view) {
         startActivity(new Intent(MainActivity.this, LoadingScreenPrivate.class));
 //        new getTableAsyncTask().execute("http://213.136.81.137:8081/api/getTableinfo");
+        lastActivity=SystemClock.uptimeMillis();
         mediaPlayer = MediaPlayer.create(this, R.raw.click);
         mediaPlayer.start();
     }
@@ -752,7 +793,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 JSONObject jsonObjMain = new JSONObject(s);
 
                 String message = jsonObjMain.getString("message");
-                TastyToast.makeText(MainActivity.this,"Profile Picture Changed Successfully",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
+                TastyToast.makeText(MainActivity.this,"Profile Picture Changed",TastyToast.LENGTH_SHORT,TastyToast.SUCCESS);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

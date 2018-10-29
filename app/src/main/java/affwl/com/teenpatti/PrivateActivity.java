@@ -5,27 +5,21 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.percent.PercentLayoutHelper;
 import android.support.percent.PercentRelativeLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -36,12 +30,10 @@ import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.dinuscxj.progressbar.CircleProgressBar;
 import com.sdsmdg.tastytoast.TastyToast;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -51,15 +43,12 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import io.github.erehmi.countdown.CountDownTask;
 import io.github.erehmi.countdown.CountDownTimers;
@@ -72,7 +61,13 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 @SuppressWarnings("deprecation")
 @SuppressLint("WrongViewCast")
 
-public class PrivateActivity extends AppCompatActivity implements View.OnClickListener {
+public class PrivateActivity extends AppCompatActivity implements View.OnClickListener, Runnable{
+
+    private static int TIMEOUT_POLL_PERIOD = 15000; // 15 seconds
+    private static int TIMEOUT_PERIOD = 5*60*1000; // 5 minutes
+    private View content = null;
+    private long lastActivity = SystemClock.uptimeMillis();
+
     ImageView close_other_user,close_user,player_blink_circle1, player_blink_circle2, player_blink_circle3, player_blink_circle4, handle_right, backbtn, imgVInfo, infoclosebtn, profile, profile1, profile2, profile3, profile4, plus_btn, minus_btn, myplayerbtn, ustatusclosebtn, dealerbtn, dealerclsbtn, oplayerbtn, oustatusclosebtn, msgclosebtn, chngdealerclosebtn, close_player_status, oplayer_status_circle, player_status_circle, card1, card2, card3, card4, card5, card6, card7, card8, card9, card10, card11, card12, card13, card14, card15, myplayer, winnerblinker1, winnerblinker2, player1, player2, player3, player4;
     TextView player_balance, player_name, player_wins, other_player_name, other_player_balance, displayAmount, txtVBalanceMainPlayer, txtVTableAmt, txtVBootValue, txtVPotlimit, txtVMaxBlind, txtVChaalLimit, btn_see_cards, user_id, user_id1, user_id2, user_id3, user_id4, closebtn, tipsbtn, chngdbtn, canceltipbtn, plusbtn, minusbtn, backtolobby, nametext, nametext1, nametext2, nametext3, nametext4, code, blind_btn, chaal_btn, show_btn, pack_btn;
     TextView user_status1, user_status2, user_status3, user_status4, boot_value_player1, boot_value_player2, boot_value_player3, boot_value_player4, boot_value_player5;
@@ -82,14 +77,14 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     LinearLayout below_layout;
     GifImageView blinkergif1, blinkergif2, blinkergif3, blinkergif4, blinkergif;
 
-    Animation bootvalueanimate1, bootvalueanimate2, bootvalueanimate3, bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
+    Animation bootvaluereverse1, bootvaluereverse2, bootvaluereverse3, bootvaluereverse4, bootvaluereverse5, bootvalueanimate1, bootvalueanimate2, bootvalueanimate3, bootvalueanimate4, bootvalueanimate5, animations, animatecard1, animatecard2, animatecard3, animatecard4, animatecard5, animatecard6, animatecard7, animatecard8, animatecard9, animatecard10, animatecard11, animatecard12, animatecard13, animatecard14, animatecard15, animBlink;
     PercentRelativeLayout rl_bottom_caption;
     View viewBlinkCircle;
     Handler handler, userhandler;
     Runnable rUser;
     private CircleProgressBar progressBarChances;
-    ScheduledExecutorService scheduleTaskExecutor;
 
+    ScheduledExecutorService scheduleTaskExecutor;
     private TextView timer;
     private long mDeadlineMillis;
 
@@ -99,6 +94,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
     String USER_NAME, USER_NAME1, USER_NAME2, USER_NAME3, USER_NAME4, BALANCE, BALANCE1, BALANCE2, BALANCE3, BALANCE4,PlayerWinLose, PlayerWinLose1, PlayerWinLose2, PlayerWinLose3, PlayerWinLose4;
     private LoadingView mLoadViewLong;
     DataHolder dataHolder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,12 +102,22 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         waitTimer();
 
+        content=findViewById(android.R.id.content);
+        content.setKeepScreenOn(true);
+        run();
+
+        boot_value_player1 = findViewById(R.id.boot_value_player1);
+        boot_value_player2 = findViewById(R.id.boot_value_player2);
+        boot_value_player3 = findViewById(R.id.boot_value_player3);
+        boot_value_player4 = findViewById(R.id.boot_value_player4);
+        boot_value_player5 = findViewById(R.id.boot_value_player5);
+
+
         mLoadViewLong = (LoadingView) findViewById(R.id.loading_view_repeat);
         mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar1, LoadingView.FROM_TOP);
         mLoadViewLong.addAnimation(Color.parseColor("#C7E7FB"), R.drawable.avatar2, LoadingView.FROM_BOTTOM);
         mLoadViewLong.addAnimation(Color.parseColor("#FF4218"), R.drawable.avatar3, LoadingView.FROM_TOP);
         mLoadViewLong.addAnimation(Color.parseColor("#C7E7FB"), R.drawable.avatar4, LoadingView.FROM_BOTTOM);
-
 
         /*mLoadViewLong.startAnimation();
         mLoadViewLong.resumeAnimation();
@@ -122,22 +128,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         dataHolder =new DataHolder();
         dataHolder.setContext(this);
 
-
-        scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
-        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
-                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
-                Log.i("SPEED", "WIFI level" + level);
-                if (level <= 2) {
-                    Toast.makeText(PrivateActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PrivateActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
-                }
-
-            }
-        }, 0, 1, TimeUnit.MINUTES);
         other_player_name = findViewById(R.id.other_player_name);
         other_player_balance = findViewById(R.id.other_player_balance);
 
@@ -231,12 +221,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         // load the animation
         animBlink = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.blink);
 
-        boot_value_player1 = findViewById(R.id.boot_value_player1);
-        boot_value_player2 = findViewById(R.id.boot_value_player2);
-        boot_value_player3 = findViewById(R.id.boot_value_player3);
-        boot_value_player4 = findViewById(R.id.boot_value_player4);
-        boot_value_player5 = findViewById(R.id.boot_value_player5);
-
         new getBootValueAsyncTask().execute("http://213.136.81.137:8081/api/collectBootValue");
 
         Handler handler = new Handler();
@@ -250,7 +234,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         },5000);
 
-      /*if (!isTaskRoot()) {
+        /*if (!isTaskRoot()) {
             final Intent intent = getIntent();
             if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(intent.getAction())) {
                 Log.w("INTENTCHECK", "Main Activity is not the root.  Finishing Main Activity instead of launching.");
@@ -262,27 +246,26 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
         userhandler = new Handler();
         rUser = new Runnable() {
-
             @Override
             public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PrivateActivity.this);
-                builder.setMessage("No Intercation, Session Expired Please Login again");
-                builder.setCancelable(true);
+                startActivity(new Intent(PrivateActivity.this,LoginActivity.class));
+                TastyToast.makeText(PrivateActivity.this,"Session Expired",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
 
-                builder.setPositiveButton(
-                        "OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                startActivity(new Intent(PrivateActivity.this,LoginActivity.class));
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
-//                Toast.makeText(PrivateActivity.this, "user is inactive from last 5 minutes", Toast.LENGTH_SHORT).show();
+                /*Check User Internet Speed*/
+                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
+                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
+                Log.i("SPEED", "WIFI level" + level);
+                if (level <= 2) {
+                    TastyToast.makeText(PrivateActivity.this,"Internet Connection Slow",TastyToast.LENGTH_LONG,TastyToast.DEFAULT);
+                }
             }
         };
         startHandler();
+        lastActivity=SystemClock.uptimeMillis();
+//        userOne();
     }
+
 
     /**
      * Separate User Data
@@ -302,8 +285,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         bootvalueanimate1.setStartOffset(3000);
 
         animatecard1 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left1);
-        animatecard6 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left2);
-        animatecard11 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left3);
+        animatecard2 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left2);
+        animatecard3 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.translate_top_left3);
 
         card1.startAnimation(animatecard1);
         animatecard6.setStartOffset(1000);
@@ -312,8 +295,8 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card11.startAnimation(animatecard11);
 
         card1.bringToFront();
-        card6.bringToFront();
-        card11.bringToFront();
+        card2.bringToFront();
+        card3.bringToFront();
 
 
         animatecard1.setAnimationListener(new Animation.AnimationListener() {
@@ -331,7 +314,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             public void onAnimationEnd(Animation animation) {
 
                 // Pass the Intent to switch to other Activity
-
                 View view1 = findViewById(R.id.card1);
                 PercentRelativeLayout.LayoutParams params1 = (PercentRelativeLayout.LayoutParams) view1.getLayoutParams();
                 PercentLayoutHelper.PercentLayoutInfo info1 = params1.getPercentLayoutInfo();
@@ -364,6 +346,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+
     public void userTwo() {
 
         boot_value_player2 = findViewById(R.id.boot_value_player2);
@@ -437,6 +420,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
 
     }
+
     public void userThree() {
 
         boot_value_player3 = findViewById(R.id.boot_value_player3);
@@ -515,6 +499,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         });
 
     }
+
     public void userFour() {
 
         boot_value_player4 = findViewById(R.id.boot_value_player4);
@@ -589,6 +574,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+
     public void userFive() {
 
         boot_value_player5 = findViewById(R.id.boot_value_player5);
@@ -663,23 +649,26 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             }
         });
     }
+     /**
+     * Separate User Data
+     * End
+     */
 
     @Override
     public void onUserInteraction() {
         super.onUserInteraction();
-        stopHandler();//stop first and then start
+        stopHandler();
         startHandler();
     }
+
     public void stopHandler() {
         userhandler.removeCallbacks(rUser);
     }
+
     public void startHandler() {
-        userhandler.postDelayed(rUser, 5*60* 1000); //for 5 minutes
+        userhandler.postDelayed(rUser,300* 1000);
     }
-    /**
-     * Separate User Data
-     * End
-     */
+
     private void waitTimer(){
         timerDialog = new Dialog(this);
         timerDialog.setCanceledOnTouchOutside(false);
@@ -769,7 +758,6 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         card9.startAnimation(animatecard9);
         animatecard10.setStartOffset(1800);
         card10.startAnimation(animatecard10);
-
 
         animatecard11.setStartOffset(2000);
         card11.startAnimation(animatecard11);
@@ -1176,15 +1164,22 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                         //below_layout.setVisibility(View.GONE);
                     }
                 });*/
+
     }
 
-    public void hideBootValue(){
+    public void HideBootValue(){
 
-        boot_value_player1.setVisibility(View.INVISIBLE);
-        boot_value_player2.setVisibility(View.INVISIBLE);
-        boot_value_player3.setVisibility(View.INVISIBLE);
-        boot_value_player4.setVisibility(View.INVISIBLE);
-        boot_value_player5.setVisibility(View.INVISIBLE);
+        bootvaluereverse1 = AnimationUtils.loadAnimation(PrivateActivity.this,R.anim.boot1_reverse);
+        bootvaluereverse2 = AnimationUtils.loadAnimation(PrivateActivity.this,R.anim.boot2_reverse);
+        bootvaluereverse3 = AnimationUtils.loadAnimation(PrivateActivity.this,R.anim.boot3_reverse);
+        bootvaluereverse4 = AnimationUtils.loadAnimation(PrivateActivity.this,R.anim.boot4_reverse);
+        bootvaluereverse5 = AnimationUtils.loadAnimation(PrivateActivity.this,R.anim.boot5_reverse);
+
+        boot_value_player1.startAnimation(bootvaluereverse1);
+        boot_value_player2.startAnimation(bootvaluereverse2);
+        boot_value_player3.startAnimation(bootvaluereverse3);
+        boot_value_player4.startAnimation(bootvaluereverse4);
+        boot_value_player5.startAnimation(bootvaluereverse5);
     }
 
     public void bootCollection() {
@@ -1195,43 +1190,12 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         bootvalueanimate4 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim4);
         bootvalueanimate5 = AnimationUtils.loadAnimation(PrivateActivity.this, R.anim.boot_anim5);
 
-
         boot_value_player1.startAnimation(bootvalueanimate1);
-//        bootvalueanimate1.setStartOffset(3000);
-        boot_value_player1.setVisibility(View.VISIBLE);
-
         boot_value_player2.startAnimation(bootvalueanimate2);
-//        bootvalueanimate2.setStartOffset(3000);
-        boot_value_player2.setVisibility(View.VISIBLE);
-
         boot_value_player3.startAnimation(bootvalueanimate3);
-//        bootvalueanimate3.setStartOffset(3000);
-        boot_value_player3.setVisibility(View.VISIBLE);
-
         boot_value_player4.startAnimation(bootvalueanimate4);
-//        bootvalueanimate4.setStartOffset(3000);
-        boot_value_player4.setVisibility(View.VISIBLE);
-
         boot_value_player5.startAnimation(bootvalueanimate5);
-//        bootvalueanimate5.setStartOffset(3000);
-        boot_value_player5.setVisibility(View.VISIBLE);
 
-        bootvalueanimate5.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                hideBootValue();
-                Toast.makeText(PrivateActivity.this, "hideBootValue()", Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
     }
 
     @Override
@@ -1245,8 +1209,17 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     @Override
     protected void onDestroy() {
+        content.removeCallbacks(this);
         super.onDestroy();
         backPress();
+    }
+
+    @Override
+    public void run() {
+        if ((SystemClock.uptimeMillis() - lastActivity) > TIMEOUT_PERIOD) {
+            content.setKeepScreenOn(false);
+        }
+        content.postDelayed(PrivateActivity.this, TIMEOUT_POLL_PERIOD);
     }
 
     /////////// Onclick for Backtolobby /////////////
@@ -1341,8 +1314,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 break;
 
             case R.id.inner_player_img:
-
-
+                HideBootValue();
 
                 mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
                 mediaPlayer.start();
@@ -1366,6 +1338,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
                 close_user.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        HideBootValue();
                         PlayerStatusWindow.dismiss();
                     }
                 });
@@ -1379,18 +1352,22 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
             case R.id.inner_player_img1:
                 individualUserInfo(customView2, USER_NAME1, BALANCE1, encodedimage1);
+                HideBootValue();
                 break;
 
             case R.id.inner_player_img2:
                 individualUserInfo(customView2, USER_NAME2, BALANCE2, encodedimage2);
+                HideBootValue();
                 break;
 
             case R.id.inner_player_img3:
                 individualUserInfo(customView2, USER_NAME3, BALANCE3, encodedimage3);
+                HideBootValue();
                 break;
 
             case R.id.inner_player_img4:
                 individualUserInfo(customView2, USER_NAME4, BALANCE4, encodedimage4);
+                HideBootValue();
                 break;
 
             case R.id.back:
@@ -1462,6 +1439,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
 
     //individual User Info
     public void individualUserInfo(View view, String username, String Balance, String oencodedimage) {
+
         mediaPlayer = MediaPlayer.create(getApplicationContext(), R.raw.click);
         mediaPlayer.start();
 
@@ -1485,6 +1463,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void onClick(View view) {
                 OPlayerStatusWindow.dismiss();
+                HideBootValue();
             }
         });
         /*if (!oencodedimage.equalsIgnoreCase("")) {
@@ -1767,6 +1746,7 @@ public class PrivateActivity extends AppCompatActivity implements View.OnClickLi
         Log.e("CheckINSERT", "" + result);
         return result;
     }
+
 
     private class ChanceAsyncTask extends AsyncTask<String, Void, String> {
 

@@ -140,6 +140,17 @@
                     android:background="@drawable/boot_bg" />
 
                 <TextView
+                    android:id="@+id/txtVINFO"
+                    android:layout_height="30dp"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:textColor="#ff0900"
+                    android:textSize="15sp"
+                    app:layout_heightPercent="45%"
+                    app:layout_widthPercent="50%"
+                    />
+
+                <TextView
                     android:id="@+id/txtVTableAmt"
                     android:layout_height="37dp"
                     android:layout_centerInParent="true"

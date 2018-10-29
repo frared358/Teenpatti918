@@ -1,25 +1,21 @@
 package affwl.com.teenpatti;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.MediaPlayer;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.sdsmdg.tastytoast.TastyToast;
@@ -46,7 +42,12 @@ import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_PHONE_STATE;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener, Runnable{
+
+    private static int TIMEOUT_POLL_PERIOD=15000; // 15 seconds
+    private static int TIMEOUT_PERIOD=5*60*1000; // 5 minutes
+    private View content=null;
+    private long lastActivity=SystemClock.uptimeMillis();
 
     Session session;
     TextView playNow;
@@ -68,6 +69,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         edittextusername = findViewById(R.id.edittextusername);
         edittextpassword = findViewById(R.id.edittextpassword);
         rememberMeCheckBox = findViewById(R.id.rememberMeCheckBox);
+
+        content=findViewById(android.R.id.content);
+        content.setKeepScreenOn(true);
+        run();
+
         playNow = findViewById(R.id.playNow);
         playNow.setOnClickListener(this);
         rememberMeCheckBox.setOnClickListener(this);
@@ -82,22 +88,23 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         checkPermission();
         requestPermission();
 
-        ScheduledExecutorService scheduleTaskExecutor = Executors.newScheduledThreadPool(5);
-        scheduleTaskExecutor.scheduleAtFixedRate(new Runnable() {
-            public void run() {
-                WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-                int linkSpeed = wifiManager.getConnectionInfo().getRssi();
-                int level = WifiManager.calculateSignalLevel(linkSpeed, 5);
-                Log.i("SPEED", "WIFI level" + level);
-                if (level <= 2) {
-                    Toast.makeText(LoginActivity.this, "Slow Internet level = " + level, Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(LoginActivity.this, "Internet Proper level = " + level, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }, 0, 1, TimeUnit.MINUTES);
+        lastActivity=SystemClock.uptimeMillis();
 
+    }
 
+    @Override
+    public void onDestroy() {
+        content.removeCallbacks(this);
+
+        super.onDestroy();
+    }
+
+    @Override
+    public void run() {
+        if ((SystemClock.uptimeMillis() - lastActivity) > TIMEOUT_PERIOD) {
+            content.setKeepScreenOn(false);
+        }
+        content.postDelayed(this, TIMEOUT_POLL_PERIOD);
     }
 
     //selecting avatar
@@ -268,6 +275,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
         return result;
     }
+
 
     private class LoginAsyncTask extends AsyncTask<String, Void, String> {
 
